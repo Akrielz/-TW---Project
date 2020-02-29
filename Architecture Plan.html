@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arhitecture</title>
+</head>
+
+<body>
+    <ul>
+        <li>PreHome [Page]</li>
+        <ul>
+            <li>A simple presentation for the Storage Tool[Text]</li>
+            <li>Go to Register [Button]</li>
+            <ul>
+                <li>Redirects user to Register [Page]</li>
+            </ul>
+            <li>Go to Login [Button]</li>
+            <ul>
+                <li>Redirects user to Login [Page]</li>
+            </ul>
+            
+        </ul>
+        <li>Login [Page]</li>
+        <ul>
+            <li>Username [Field]</li>
+            <li>Password [Field]</li>
+            <li>Login [Button]</li>
+            <ul>
+                <li>If (login input correct) Then: Redirects user to Home [Page]</li>
+                <li>Else: Error login message + Password [Field] resets</li>
+            </ul>
+
+            <li>Go to Register [Button]</li>
+            <ul>
+                <li>Redirects user to Register [Page]</li>
+            </ul>
+        </ul>
+
+        <li>Register [Page]</li>
+        <ul>
+            <li>Username [Field]</li>
+            <li>Password [Field]</li>
+            <li>Confirm Password [Field]</li>
+            <li>Option 1: </li>
+            <ul>
+                <li>Email [Field]</li>
+                <ul>
+                    <li>This option may require the use of an Automated Mail API for validation</li>
+                </ul>
+            </ul>
+            <li>Option 2: </li>
+            <ul>
+                <li>Security Question [Field]</li>
+                <li>Security Answer [Field]</li>
+            </ul>
+            <li>Register [Button]</li>
+            <ul>
+                <li>Error Message If:</li>
+                <ul>
+                    <li>Passwords not matching</li>
+                    <li>Password not having at least 8 characters</li>
+                    <li>Password not having at least 1 letter</li>
+                    <li>Password not having at least 1 digit</li>
+                    <li>Any field exceeds the character limits</li>
+                    <li>Invalid Email (Option 1)</li>
+                </ul>
+                <li>Else:</li>
+                <ul>
+                    <li>Hash(Password)</li>
+                    <li>Option 1: </li>
+                    <ul>
+                        <li>Set the status "inactive" until mail confirmation</li>
+                        <li>Send activation mail to the Email Adress</li>
+                        <li>#Any account without email confirmed will be deleted after 24 hours#</li>
+                    </ul>
+                    <li>Option 2: </li>
+                    <ul>
+                        <li>Hash(Security Answer)</li>
+                    </ul>
+                    <li>Create the Account and add it in the Data Base</li>
+                    <li>Redirects user to Home Page</li>
+                </ul>
+            </ul>
+
+            <li>Go to Login [Button]</li>
+            <ul>
+                <li>Redirects user to Login [Page]</li>
+            </ul>
+
+            <li>Go to PreHome [Button]</li>
+            <ul>
+                <li>Redirects user to PreHome [Page]</li>
+            </ul>
+        </ul>
+        
+        <li>Home [Page]</li>
+        <ul>
+            <li>Information about used storage space [Statistics]</li>
+            <li>Navigation Menu [SideBar]</li>
+        </ul>
+
+        <li>Linking [Page]</li>
+        <ul>
+            <li>Link to DropBox [Button]</li>
+            <ul>
+                <li>Login into the DropBox Account through the API</li>
+                <li>Link the STOL Accont to the DropBox Account</li>
+            </ul>
+            <li>Link to Google Drive [Button]</li>
+            <ul>
+                <li>Login into the Google Drive Account through the API</li>
+                <li>Link the STOL Accont to the Google Drive Account</li>
+            </ul>
+            <li>Link to Microsoft OneDrive [Button]</li>
+            <ul>
+                <li>Login into the Microsoft OneDrive Account through the API</li>
+                <li>Link the STOL Accont to the Microsoft OneDrive Account</li>
+            </ul>
+            <li>Navigation Menu [SideBar]</li>
+        </ul>
+
+        <li>My Uploads [Page]</li>
+        <ul>
+            <li>The history of the user's uploads [List]</li>
+            <li>For each uploaded file:</li>
+            <ul>
+                <li>Relevant information about files [Statistics]</li>
+                <li>Download [Button]</li>
+                <ul>
+                    <li>Restore the necessary files </li>
+                    <li>Starts downloading the files</li>
+                </ul>
+                <li>Public Download Link[Button]</li>
+                <ul>
+                    <li>Creates a public link that can be shared with anyone</li>
+                    <li>The link will redirect any user to a minipage with only the shared files and a Download [Button] for them</li>
+                </ul>
+            </ul>
+            <li>Navigation Menu [SideBar]</li>
+        </ul>
+
+        <li>Upload File [Page]</li>
+        <ul>
+            <li>Displays the raw/compressed space necessary [Text]</li>
+            <li>Add File [Button]</li>
+            <ul>
+                <li>Will open a browsing interface for the Operating System to select the file</li>
+                <li>#This button should also accept "drag and drop" mechanic#</li>
+            </ul>
+            <li>Upload [Button]</li>
+            <ul>
+                <li>Compresses all the selected files (localy)</li>
+                <li>If (enough space on linked platforms) Then: Upload files</li>
+                <li>Else: Error message</li>
+            </ul>
+            <li>Navigation Menu [SideBar]</li>
+        </ul>
+
+        <li>Account Settings [Page]</li>
+        <ul>
+            <li>Edit Standard Info [Button]</li>
+            <ul>
+                <li>First Name [Field]</li>
+                <li>Last Name [Field]</li>
+                <li>Nick Name [Field]</li>
+                <li>Etc...</li>
+                <li>#Any field that exceeds the character limits should trigger an error message instead of an request#</li>
+                <li>#Any change requests requires the password validation#</li>
+                <li>#Any aproved change will be directly applied in the Data Base#</li>
+            </ul>
+            <li>Edit Secure Info [Button]</li>
+            <ul>
+                <li>Password [Field]</li>
+                <li>Email Adress [Field] (Option 1)</li>
+                <li>Etc...</li>
+                <li>#Any field that exceeds the character limits should trigger an error message instead of an request#</li>
+                <li>#Any change requests requires the (old) password validation and: #</li>
+                <ul>
+                    <li>#Option 1: (old) Email validation#</li>
+                    <li>#Option 2: Security Answer validation#</li>
+                </ul>
+                <li>#Any aproved change will be directly applied in the Data Base#</li>
+            </ul>
+            <li>Navigation Menu [SideBar]</li>
+        </ul>
+
+        <li>Navigation Menu [SideBar]</li>
+        <ul>
+            <li>Go to Home [Button]</li>
+            <ul>
+                <li>Redirects user to Home [Page]</li>
+            </ul>
+            <li>Go to Linking [Button]</li>
+            <ul>
+                <li>Redirects user to Linking [Page]</li>
+            </ul>
+            <li>Go to My Uploads [Button]</li>
+            <ul>
+                <li>Redirects user to My Uploads [Page]</li>
+            </ul>
+            <li>Go to Upload File [Button]</li>
+            <ul>
+                <li>Redirects user to Upload File [Page]</li>
+            </ul>
+            <li>Go to Account Settings [Button]</li>
+            <ul>
+                <li>Redirects user to Account Settings [Page]</li>
+            </ul>
+            <li>Logout [Button]</li>
+            <ul>
+                <li>Redirects user PreHome [Page]</li>
+            </ul>
+        </ul>
+        
+    </ul>    
+</body>
+</html>
