@@ -1,0 +1,38 @@
+{
+  "root": {
+    "info": "Stefan",
+    "childs": [
+      {
+        "info": "Info",
+        "childs": [
+          {
+            "info": "POO",
+            "childs": []
+          },
+          {
+            "info": "Java",
+            "childs": []
+          }
+        ]
+      },
+      {
+        "info": "Fizica",
+        "childs": [
+          {
+            "info": "Optica",
+            "childs": []
+          },
+          {
+            "info": "Mecanica",
+            "childs": [
+              {
+                "info": "Oscilatii",
+                "childs": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

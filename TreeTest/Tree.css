@@ -1,0 +1,35 @@
+.dir-info {
+    background-color: #cfeefd;
+    color: #1d3e81;
+}
+
+.file-info {
+    background-color: #cfeefd;
+    color: #3b1041;
+}
+
+.file-info i,
+.dir-info i{
+    font-size: 0.75rem;
+    color: #00a86d;
+    align-self: center;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.tree-node {
+    position: relative;
+    left: 10px;
+    right: 0;
+    margin: 3px;
+}
+
+#tree_div {
+    display: flex;
+    width: 10%;
+    min-width: 50px;
+    max-width: 200px;
+    border: 2px solid green;
+    border-radius: 10px;
+    padding: 10px;
+}

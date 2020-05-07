@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tree</title>
+    <link rel="stylesheet" href="Tree.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="application/javascript" src="DirTree.js"></script>
+    <script type="application/javascript" src="readFile.js"></script>
+</head>
+<body>
+    <h1>This should be a Tree</h1>
+    <button id = "showFile">Show File</button>
+    <button id = "showTree">Show Tree</button>
+    <p id = "warning"></p>
+    <pre id = "pre_info"></pre>
+    <div id = "tree_div"></div>
+    <script type="application/javascript">
+        var pre = document.getElementById("pre_info");
+        var treeButton = document.getElementById("showTree");
+        var fileButton = document.getElementById("showFile");
+        var tree_div = document.getElementById("tree_div");
+        var warn = document.getElementById("warning");
+        var fileOk = 0;
+        var treeOk = 0;
+        var treeClicked = 0;
+
+        var json = "";
+
+        readTextFile("tree.json",function (text) {
+            json = text;
+        });
+
+        onShowFileClicked = function(){
+            if(fileOk === 0) {
+                pre.innerText = json;
+                fileButton.innerText = "Hide File";
+                fileOk = 1;
+            }
+            else{
+                pre.innerText = "";
+                fileButton.innerText = "Show File";
+                fileOk = 0;
+            }
+        };
+
+        onShowTreeClicked = function(){
+            treeClicked = treeClicked + 1;
+            warn.innerText = "Tree clicked " + treeClicked + " times.";
+
+            if(treeOk === 0) {
+                tree_div.appendChild(generateTree(json).generate());
+                treeButton.innerText = "Hide Tree";
+                treeOk = 1;
+            }
+            else{
+                tree_div.innerHTML = "";
+                treeButton.innerText = "Show Tree";
+                treeOk = 0;
+            }
+        };
+
+        fileButton.onclick = onShowFileClicked;
+        treeButton.onclick = onShowTreeClicked;
+
+    </script>
+</body>
+</html>
