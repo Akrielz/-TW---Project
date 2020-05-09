@@ -109,6 +109,36 @@ class DatabaseHandler
         return result.toArray();
     }
 
+    async GetAllUsers()
+    {
+        let collection = this.Database.collection('Users');
+        let result = await collection.find();
+        return result.toArray();
+    }
+
+    async DeleteFromFolderDataBase(folderID)
+    {
+        this.Database.collection('Folders', function (err, collection) {
+            collection.deleteOne({user_id : folderID});
+        });
+        return true;
+    }
+
+    async InsertIntoFolderDataBase(folderJson)
+    {
+        this.Database.collection('Folders', function (err, collection) {
+            collection.insertOne(folderJson);
+        });
+        return true;
+    }
+
+    async GetFromFolderDataBase(folderID)
+    {
+        let collection = this.Database.collection('Folders');
+        let result = await collection.find({user_id : folderID});
+        return result.toArray();
+    }
+
 }
 
 async function UnitTesting()
@@ -126,19 +156,24 @@ async function UnitTesting()
         console.log(file);
         await handler.DeleteFromFilesDataBase(1);
 
-        await handler.InsertIntoUsersDataBase({username : "Aky", owner_id : 1, user_id : 1, hashed_password : "magdn3ibn382104r893tf245gg"});
-        await handler.InsertIntoUsersDataBase({username : "Ruben", owner_id : 111, user_id : 2, hashed_password : "gqjengv5"});
-        await handler.InsertIntoUsersDataBase({username : "Stefy", owner_id : 12, user_id : 3, hashed_password : "d4809rfn5gb904ug"});
+        await handler.InsertIntoUsersDataBase({username : "Aky",   owner_id : 1,    user_id : 1, hashed_password : "magdn3ibn382104r893tf245gg"});
+        await handler.InsertIntoUsersDataBase({username : "Ruben", owner_id : 111,  user_id : 2, hashed_password : "gqjengv5"});
+        await handler.InsertIntoUsersDataBase({username : "Stefy", owner_id : 12,   user_id : 3, hashed_password : "d4809rfn5gb904ug"});
+
+        await handler.InsertIntoFolderDataBase({name : "teme", id : "1234567890", owner_id : 1, childs : [{name : "tema1", type : "pdf"}]});
+        await handler.InsertIntoFolderDataBase({name : "proiect", id : "90", owner_id : 111, childs : [{name : "tema", type : "xlsx"}]});
+
 
         let user = await handler.GetFromUsersDataBase(1);
         console.log(user);
         await handler.DeleteFromUsersDataBase(3);
 
+        let users = await handler.GetAllUsers();
+        console.log(users)
+
         handler.UnInit();
     }, 150);
 }
-
-
 
 UnitTesting();
 
