@@ -23,9 +23,17 @@ async function parsePostRequest(req, dbHandler) {
             jsonObject.owner_id = uuidv4();
             jsonObject.root = uuidv4();
 
-            // TODO: de verificat daca mail-ul nu este deja folosit, trebuie scisa o functie noua pentru DB
+            // TODO: de verificat daca mail-ul nu este deja folosit, trebuie scrisa o functie noua pentru DB
 
-            dbHandler.InsertIntoUsersDataBase(jsonObject);
+            await dbHandler.InsertIntoUsersDataBase(jsonObject);
+
+            let folderJSON = {};
+            folderJSON.name = "root";
+            folderJSON.folder_id = jsonObject.root;
+            folderJSON.owner_id = jsonObject.owner_id;
+            folderJSON.childs = [];
+
+            await dbHandler.InsertIntoFolderDataBase(folderJSON);
 
             resultJSON = JSON.stringify({Status: "OK", Message: "User created! Please login!"});
         }
@@ -33,11 +41,18 @@ async function parsePostRequest(req, dbHandler) {
         if (parsedURL[2] === "upload-request" && parsedURL[1] === jsonObject['owner_id']) {
             const {v4: uuidv4} = require('uuid');
 
+            //TODO : update current folder with new file, add folder to file json <DONE>
+
             jsonObject.file_id = uuidv4();
 
             jsonObject.chunks = [];
 
             await dbHandler.InsertIntoFilesDataBase(jsonObject);
+
+            let dirItem = {};
+            dirItem.type = "file";
+            dirItem.id = jsonObject.file_id;
+            await dbHandler.AddItemToFolder(jsonObject['folder_id'], dirItem);
 
             resultJSON = JSON.stringify({Status: "OK", ID: jsonObject['file_id']});
         }
@@ -100,7 +115,7 @@ async function parsePostRequest(req, dbHandler) {
             fileResult['number_of_chunks'] = fileJSON['number_of_chunks'];
             fileResult['chunks'] = fileJSON['chunks'];
 
-            resultJSON = JSON.stringify(fileResult);
+            resultJSON = JSON.stringify({Status : "OK", data : fileResult});
 
         }
 
@@ -122,6 +137,59 @@ async function parsePostRequest(req, dbHandler) {
                 () => {
                     resultJSON = JSON.stringify({Status: "OK", name: jsonObject['name'], data: fileData});
                 });
+        }
+
+        if (parsedURL[2] === "list-dir" && parsedURL[1] === jsonObject['owner_id']) {
+
+            let dirTEMP = await dbHandler.GetFromFolderDataBase(jsonObject['folder_id']);
+            let dirJSON = dirTEMP[0];
+
+            if (dirJSON['owner_id'] === jsonObject['owner_id']) {
+                resultJSON = JSON.stringify({Status : "OK", list : dirJSON['childs']});
+            }
+        }
+
+        if (parsedURL[2] === "create-dir" && parsedURL[1] === jsonObject['owner_id']) {
+            const {v4: uuidv4} = require('uuid');
+            // TODO: insert folder to database, update current folder, return current folder updated <DONE>
+
+            jsonObject.folder_id = uuidv4();
+            jsonObject.childs = [];
+            await dbHandler.InsertIntoFolderDataBase(jsonObject);
+
+
+            let dirItem = {};
+            dirItem.type = "folder";
+            dirItem.name = jsonObject['name'];
+            dirItem.id = jsonObject.folder_id;
+            await dbHandler.AddItemToFolder(jsonObject['parent_folder_id'], dirItem);
+
+            resultJSON = JSON.stringify({Status: "OK"});
+
+        }
+
+        if (parsedURL[2] === "remove-file" && parsedURL[1] === jsonObject['owner_id']) {
+            const fs = require('fs');
+            // TODO: remove file from folder, update current folder, return OK <DONE>
+
+            await dbHandler.RemoveFileFromFolder(jsonObject['folder_id'], jsonObject['file_id']);
+            let fileTemp = await dbHandler.GetFromFilesDataBase(jsonObject['file_id']);
+            let fileJSON = fileTemp[0];
+            let fileChunk;
+            console.log(fileJSON['chunks']);
+            for (fileChunk = 0; fileChunk < fileJSON['chunks'].length; fileChunk++)
+            {
+                console.log(fileJSON['chunks'][fileChunk]);
+                let path = ".\\temp\\" + fileJSON['chunks'][fileChunk]["name"] + ".stol";
+                await fs.unlinkSync(path);
+            }
+            await dbHandler.DeleteFromFilesDataBase(fileJSON['file_id']);
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+        if (parsedURL[2] === "remove-dir" && parsedURL[1] === jsonObject['owner_id']) {
+            // TODO: remove folder, remove all files recursively
+            // TODO: add function that already implemented, but not tested(alpha version)
         }
 
     });

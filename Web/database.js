@@ -168,6 +168,84 @@ class DatabaseHandler
         return true;
     }
 
+    async AddItemToFolder(folderID, itemJson)
+    {
+        let collection = this.Database.collection('Folders');
+
+        let result = await this.GetFromFolderDataBase(folderID);
+
+        let folderJson = result[0];
+
+        folderJson['childs'].push(itemJson);
+
+        console.log(folderJson);
+        const newValues = {$set: {childs: folderJson['childs']}};
+        await collection.updateOne({folder_id : folderID}, newValues);
+        return true;
+    }
+
+    async RemoveFolderData(folderID)
+    {
+        let collection = this.Database.collection('Files');
+
+        let result = await this.GetFromFolderDataBase(folderID);
+
+        let folderJson = result[0];
+
+        let listItems = [];
+
+        let item;
+        let counter;
+        for (counter = 0; counter < folderJson['childs'].length; counter++)
+        {
+            item = folderJson['childs'][counter];
+            if(item['type'] === "folder")
+            {
+                let temp = await this.RemoveFolderData(item['id']);
+                let buff;
+                for (buff in temp)
+                {
+                    listItems.push(buff);
+                }
+            }
+            else
+            {
+                listItems.push(item);
+                await this.RemoveFileFromFolder(item['id']);
+
+                let fileTemp = await this.GetFromFilesDataBase(item['id']);
+                let fileJSON = fileTemp[0];
+                let fileChunk;
+                console.log(fileJSON['chunks']);
+                for (fileChunk = 0; fileChunk < fileJSON['chunks'].length; fileChunk++)
+                {
+                    console.log(fileJSON['chunks'][fileChunk]);
+                    let path = ".\\temp\\" + fileJSON['chunks'][fileChunk]["name"] + ".stol";
+                    await fs.unlinkSync(path);
+                }
+                await this.DeleteFromFilesDataBase(fileJSON['file_id']);
+            }
+        }
+        await this.DeleteFromFolderDataBase(folderID);
+
+        return listItems;
+    }
+
+    async RemoveFileFromFolder(folderID, fileID)
+    {
+        let collection = this.Database.collection('Folders');
+
+        let result = await this.GetFromFolderDataBase(folderID);
+
+        let folderJson = result[0];
+
+        let filtered = await folderJson['childs'].filter(function(e) { return e['id'] !== fileID});
+
+        const newValues = {$set: {childs: filtered}};
+        await collection.updateOne({folder_id : folderID}, newValues);
+        return true;
+    }
+
     async GetFromFolderDataBase(folderID)
     {
         let collection = this.Database.collection('Folders');
