@@ -1,0 +1,78 @@
+User Create : POST "/create-user" 
+{
+	"username" : "user",
+	"hashed_password" : "hash-parola",
+	"email" : "mail@yahoo.com"
+}
+Returns okay and message
+
+User Login : POST "/login"
+{
+	"username" : "user",
+	"email" : "",
+	"hashed_password" : "hash-parola"
+} // only one is required
+Returns user id and root folder id
+
+Upload request : POST "/{user_id}/upload-request"
+{
+	"owner_id" : "49b90f91-7dca-49a5-b05a-01bfdb627f83",
+	"folder_id" : "8a9448eb-da58-4e29-a874-1a49b23bf6ac",
+	"name" : "file.txt",
+	"file_size" : 123456,
+	"number_of_chunks" : 1
+}
+Return Status and file_id for chunks
+
+Chunk upload : POST "/{user_id}/upload-chunk"
+{
+	"owner_id" : "49b90f91-7dca-49a5-b05a-01bfdb627f83",
+	"file_id" : "d3ed1693-e5da-4fe5-9561-f3d6534e330c",
+	"chunk_number" : 1,
+	"data" : "ruben este mega bengos la JS",
+	"data_size" : 28,
+	"md5" : "not_yet_implemented"
+}
+Return Status
+
+Download request : POST "/{user_id}/download-request"
+{
+	"owner_id" : "49b90f91-7dca-49a5-b05a-01bfdb627f83",
+	"file_id" : "d3ed1693-e5da-4fe5-9561-f3d6534e330c"
+}
+Return status and file data which needs to be parsed for chunk downloads
+
+Download chunk : POST "/{user_id}/download-chunk"
+{
+	"owner_id" : "49b90f91-7dca-49a5-b05a-01bfdb627f83",
+	"file_id" : "8a9448eb-da58-4e29-a874-1a49b23bf6ac",
+	"data_size": 28,
+    "md5": "not_yet_implemented",
+    "name": "2083c0fb-f71e-47b4-9b1c-dc08b5056942"
+} // all data is provided at request
+Returns status, chunk name and data in it
+
+Create Dir : POST "/{user_id}/create-dir"
+{
+	"owner_id" : "4677be50-6856-49ff-86cc-393d5665bd4d",
+	"parent_folder_id" : "5b0be448-1e51-4a8a-b396-599e634650a6",
+	"name" : "anabanana"
+}
+Returns status
+
+List Directory : POST "/{user_id}/list-dir"
+{
+	"owner_id" : "49b90f91-7dca-49a5-b05a-01bfdb627f83",
+	"folder_id" : "8a9448eb-da58-4e29-a874-1a49b23bf6ac",
+}
+Return status and folder field 'childs'
+
+Remove Item : POST "/{user_id}/remove-item"
+{
+	"owner_id" : "12532286-879f-4d3f-8b2b-6d5105eccf92",
+	"file_id" : "f5d600b4-c5a8-4327-a5a4-4f7c4d568952",
+	"folder_id" : "ce311186-96c7-4845-aa83-53283cadd26d"
+}
+Return status okay
+
+Remove Dir - Alpha Work
