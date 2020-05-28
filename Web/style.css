@@ -68,7 +68,8 @@ div.blankSpace {
 
 .button:hover {
     background-color: rgb(0, 115, 209);
-    transition: background-color 0.4s;
+    transform: scale(1.2);
+    transition: all .25s ease-in-out;
 }
 
 /* PREHOME STYLE */
@@ -137,7 +138,7 @@ p.prehomeMotationText {
     opacity: 1;
 }
 
-/* LOGIN PAGE */
+/* LOGIN AND REGISTER STYLE */
 div.loginBackground {
     position: absolute;
     left: 0px;
@@ -168,6 +169,16 @@ div.loginForm {
     border-radius: 25px;
 }
 
+div.registerForm {
+    position: absolute;
+    left: 35%;
+    top: 10%;
+    width: 30%;
+    height: 80%;
+    background-color: rgb(249, 249, 249);
+    border-radius: 25px;
+}
+
 div.loginTitle {
     position: relative;
     left: 0px;
@@ -182,12 +193,34 @@ div.loginTitle > p {
     font-family: "Times New Roman", Times, serif;
 }
 
-div.inputForm {
+div.registerTitle {
+    position: relative;
+    left: 0px;
+    top: 2%;
+    width: 100%;
+    height: 8%;
+}
+
+div.registerTitle > p {
+    font-size: 40px;
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+}
+
+div.inputFormLogin {
     position: relative;
     left: 0px;
     top: 5%;
     width: 100%;
     height: 30%;
+}
+
+div.inputFormRegister {
+    position: relative;
+    left: 0px;
+    top: 5%;
+    width: 100%;
+    height: 50%;
 }
 
 input[type=text] {
@@ -200,9 +233,32 @@ input[type=text] {
     height: 50px;
     outline: none;
     border-width: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
 }
 
 input[type=text]:focus{
+    background-color: rgb(249, 249, 249);
+    outline: none;
+    transition: background-color, border-width 0.4s;
+    border-width: 2px;
+}
+
+input[type=password] {
+    width: 80%;
+    padding: 12px 20px;
+    margin: 8px 10%;
+    box-sizing: border-box;
+    background-color: rgb(238, 238, 238);
+    border-radius: 10px;
+    height: 50px;
+    outline: none;
+    border-width: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+
+input[type=password]:focus{
     background-color: rgb(249, 249, 249);
     outline: none;
     transition: background-color, border-width 0.4s;
@@ -226,10 +282,27 @@ div.loginButtonSection {
     height: 20%;
 }
 
+div.registerButtonSection {
+    position: relative;
+    left: 0px;
+    width: 100%;
+    height: 80px;
+    top: 5%;
+}
+
 div.loginRedirect {
     position: relative;
     left: 0px;
     top: 5%;
+    width: 100%;
+    height: 15%;
+    text-align: center;
+}
+
+div.registerRedirect {
+    position: relative;
+    left: 0px;
+    top: 10%;
     width: 100%;
     height: 15%;
     text-align: center;
@@ -248,6 +321,44 @@ a.loginButton {
     border-radius: 25px;
 }
 
+div.registerButtonCenter{
+    position: relative;
+    left: 50%;
+}
+
+a.registerButton {
+    position: relative;
+    background-color: rgb(0, 126, 229);
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    font-size: 20px;
+    font-family: sans-serif, "Times New Roman", Times, serif;
+    display: inline-block;
+    cursor: pointer;
+    width: 240px;
+    height: 80px;
+    left: -120px;
+    transition: all .25s ease-in-out;
+}
+
+a.registerButton:hover {
+    transform: scale(1.2);
+}
+
+p.registerButtonText {
+    position: relative;
+    display: inline-block;
+    padding: 15px;
+    margin-left: 0px;
+    top: -5px;
+    font-size: 20px;
+    font-family: sans-serif, "Times New Roman", Times, serif;
+    color : white;
+}
+
 a.loginButton:hover {
     background-color: rgb(0, 115, 209);
     transition: background-color 0.4s;
@@ -263,6 +374,18 @@ div.loginRedirect > p > a:hover {
     color: black;
 }
 
+div.registerRedirect > p > a {
+    font-size: 20px;
+    color: rgb(153, 153, 153);
+    text-decoration: none;
+}
+
+div.registerRedirect > p > a:hover {
+    color: black;
+    transform: scale(1.2);
+    transition: all .25s ease-in-out;
+}
+
 .arrow {
     border: solid white;
     border-width: 0 15px 15px 0;
@@ -271,4 +394,356 @@ div.loginRedirect > p > a:hover {
     margin-top: 25px;
     margin-left: -10px;
     transform: rotate(-45deg);
+}
+
+/* NAVIGATION MENU STYLE */
+nav.navigationMenu {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+
+    background-color: rgba(22, 22, 22, 0.8);
+    color: #333;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5em;
+}
+
+nav.navigationMenu div {
+    position: relative;
+    width: 90%;
+    left: 5%;
+}
+
+nav.navigationMenu ul {
+    position: relative;
+
+    border-bottom: 1px solid #ccc;
+    list-style: none;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+
+    /*background-color: rgba(22, 22, 22, 1);*/
+    border: 0;
+    display: flex;
+    padding: 0 2rem;
+    left: -2rem;
+    width: 100%;
+}
+
+nav.navigationMenu ul li {
+    background-image: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(68,140,203, 1) 50%,
+      rgba(68,140,203,1) 95%,
+      rgba(0,114,188,1) 95%
+    );
+    flex: 1 1 auto;
+    background-size: 100% 200%;
+    background-position: top center;
+    color: #666;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+nav.navigationMenu ul li:hover {
+    background-position: bottom center;
+    color: rgba(0,0,0,0.75);
+    transform: scale(1.2);
+    transition: all .25s ease-in-out;
+}
+
+nav.navigationMenu ul li a {
+    display: block;
+    padding: 1rem 0;
+    text-decoration: none;
+    color: white;
+}
+
+nav.navigationMenu ul li a:hover {
+    color: #eee;
+    transition: all .25s ease-in-out;
+}
+
+/* HOME STYLE */
+
+div.preStatistics {
+    position: absolute;
+    left: 15%;
+    width: 70%;
+    height: 16%;
+    top: 8%;
+}
+
+div.preStatistics p {
+    position: relative;
+    font-size: 45px;
+    top: 0px;
+    color: white;
+}
+
+div.statistics {
+    position: absolute;
+    left: 15%;
+    width: 70%;
+    height: 700px;
+    top: 24%;
+}
+
+div.procentExplainer {
+    border: 2px solid rgb(33, 33, 33);
+    background-color: rgba(66, 66, 66, 0.9);
+    border-radius: 25px;
+    width: 30%;
+    height: 30%;
+}
+
+div.procentExplainer:hover {
+    transform: scale(1.1);
+    transition: all .25s ease-in-out;
+}
+
+div.procentExplainer p{
+    position: relative;
+    font-size: 25px;
+    text-align: center;
+    color: rgb(246, 246, 246);
+}
+
+div.progressBar {
+	position: absolute;
+	background: #555;
+	-moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+	padding: 10px;
+	box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+    width: 100%;
+    left: -3.5%;
+}
+
+div.loadedBar {
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    transition: all 1s;
+    display: block;
+    height: 100%;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: rgb(43,194,83);
+    box-shadow: 
+        inset 0 2px 9px  rgba(255,255,255,0.3),
+        inset 0 -2px 6px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+div.procentExplainer > div {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    left: 10%;
+    top: 10%;
+    margin: auto;
+}
+
+div.textFrame {
+    position: absolute;
+    width: 100%;
+    height: 10%;
+}
+
+div.textFrame > p {
+    top: -80%;
+}
+
+div.pieFrame {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    height: 90%;
+}
+
+div.pie {
+    position: absolute;
+    width: 100%;
+    padding-top: 100%;
+    border: 1px solid black;
+    border-width: 1px;
+    border-radius: 50%;
+    background: conic-gradient(deeppink 20%, #fb3 0, #fb3 30%, yellowgreen 0);
+}
+
+#statistic0 {
+    position: absolute;
+    left: 0%;
+    top: 0%;
+}
+
+#statistic1 {
+    position: absolute;
+    left: 35%;
+    top: 0%;
+}
+
+#statistic2 {
+    position: absolute;
+    left: 70%;
+    top: 0%;
+}
+
+#statistic3 {
+    position: absolute;
+    left: 0%;
+    top: 35%;
+}
+
+#statistic4 {
+    position: absolute;
+    left: 0%;
+    top: 70%;
+}
+
+#statistic5 {
+    position: absolute;
+    left: 35%;
+    height: 65%;
+    top: 35%;
+}
+
+#statistic6 {
+    position: absolute;
+    left: 70%;
+    height: 18%;
+    top: 35%;
+}
+
+#statistic7 {
+    position: absolute;
+    left: 70%;
+    height: 18%;
+    top: 58.5%;
+}
+
+#statistic8 {
+    position: absolute;
+    left: 70%;
+    height: 18%;
+    top: 82%;
+}
+
+#statistic6 p {
+    font-size: 15px;
+}
+
+#statistic7 p {
+    font-size: 15px;
+}
+
+#statistic8 p {
+    font-size: 15px;
+}
+
+div.homeBackground {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-image: url("./images/home/home_background3.png");
+    background-size: 1920px 1080x;
+}
+
+/* LINKING PAGE STYLE */
+
+div.linkingBackground {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-image: url("./images/linking/linking_background3.png");
+    background-size: 1920px 1080x;
+}
+
+div.linkingFrame {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    height: 70%;
+    width: 80%;
+    background-color: rgba(22, 22, 22, 0);
+}
+
+div.linkingFrame > div {
+    position: relative;
+    width: 100%;
+    top: 5%;
+    height: 90%;
+    /*border: 3px solid wheat;*/
+}
+
+.flexContainerLinking {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.flexContainerLinking div {
+    position: relative;
+    width: 25%;
+    margin: 10px;
+    text-align: center;
+
+    flex: 25%;
+    max-width: 28%;
+    padding: 0 4px;
+    align-self: auto;
+
+    background-color: rgba(22, 22, 22, 1);
+    border: 3px solid black;
+
+    border: 2px solid rgb(33, 33, 33);
+    background-color: rgba(66, 66, 66, 0.95);
+}
+
+.flexContainerLinking p {
+    font-size: 20px;
+    font-family: sans-serif, "Times New Roman", Times, serif;
+    margin: 20px 10%;
+    color: rgb(240, 240, 240);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.flexContainerLinking a.button:hover {
+    width: 51%;
+    transform: scale(1.00);
+}
+
+.flexContainerLinking a.button {
+    width: 51%;
+}
+
+.flexContainerLinking label {
+    color: rgb(240, 240, 240);
+}
+
+.flexContainerLinking input[type=text] {
+    width: 65%;
+}
+
+.accessCode:hover{
+    transform: scale(1.1);
+    transition: all .25s ease-in-out;
+    cursor: pointer;
 }
