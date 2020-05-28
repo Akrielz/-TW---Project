@@ -5,7 +5,7 @@ const PORT = 3000;
 async function parsePostRequest(req, dbHandler) {
     let parsedURL = req.url.split("/");
 
-    let data = ""
+    let data = "";
     let resultJSON = "";
     await new Promise((resolve, reject) => {
         req.on('data', chunk => {

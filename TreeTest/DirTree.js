@@ -90,6 +90,41 @@ function generateTree(json) {
     return new Tree2(tree_root);
 }
 
+function element(node:Node2) {
+    let element = document.createElement('div');
+    element.className="element";
+
+    let img = document.createElement('img');
+    img.alt = node.childs.length>0?"folder":"file";
+    img.src = "./resources/images/" + img.alt + ".png";
+
+    let name = document.createElement('p');
+    name.innerText = node.info;
+
+    element.appendChild(img);
+    element.appendChild(name);
+
+    return element;
+}
+
+function content(node:Node2){
+    let content = document.createElement('div');
+    content.className = 'content flexContainer';
+
+    if(node.childs.length === 0){
+        let p = document.createElement('p');
+        p.innerText = "TODO preview...";
+        content.appendChild(p);
+        return content;
+    }
+
+    for(let child of node.childs){
+        content.appendChild(element(child));
+    }
+
+    return content;
+}
+
 /*
 
 function generateTreeFromJson(json){

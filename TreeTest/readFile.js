@@ -9,3 +9,7 @@ function readTextFile(file, callback) {
     };
     rawFile.send(null);
 }
+
+function zero(){
+    return 0;
+}
