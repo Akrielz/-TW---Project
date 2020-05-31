@@ -45,6 +45,11 @@ img.logo {
     height: 200px;
 }
 
+img.minilogo {
+    width: 100px;
+    height: 100px;
+}
+
 div.blankSpace {
     position: relative;
     width: 100%;
@@ -72,6 +77,30 @@ div.blankSpace {
     transition: all .25s ease-in-out;
 }
 
+.fixed {
+    position: fixed;
+    width: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color:rgba(0,0,0,0.2);
+}
+  
+::-webkit-scrollbar-track {
+    background-color:rgba(0,0,0,0.5);
+    border-radius: 25px;
+}
+   
+::-webkit-scrollbar-thumb {
+    background-color: rgba(66, 66, 66, 0.9);
+    border-radius: 25px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(55, 55, 55);
+}
+
 /* PREHOME STYLE */
 div.prehomeStartTop {
     position: relative;
@@ -79,6 +108,7 @@ div.prehomeStartTop {
     height: 800px;
     background-image: url("./images/prehome/top_background.png");
     background-size: 1920px 800px;
+    background-repeat: no-repeat;
 }
 
 div.prehomeSubTitleBox {
@@ -91,7 +121,7 @@ div.prehomeSubTitleBox {
 
 p.prehomeStartTitle {
     position: absolute;
-    top: 0x;
+    top: 0px;
     left: 170px;
     font-family: "Times New Roman", Times, serif;
     color: rgb(232, 232, 232);
@@ -145,12 +175,13 @@ div.loginBackground {
     top: 0px;
     width: 100%;
     height: 100%;
-    background-image: url("./images/login_page/login_background2.png");
-    background-size: 1920px 1080x;
+    background-image: url("./images/login_page/login_background5.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 div.backgroundDim {
-    position: absolute;
+    position: fixed;
     left: 0px;
     top: 0px;
     width: 100%;
@@ -165,7 +196,8 @@ div.loginForm {
     top: 15%;
     width: 30%;
     height: 70%;
-    background-color: rgb(249, 249, 249);
+    border: 2px solid rgb(33, 33, 33);
+    background-color: rgba(66, 66, 66, 0.95);
     border-radius: 25px;
 }
 
@@ -175,7 +207,8 @@ div.registerForm {
     top: 10%;
     width: 30%;
     height: 80%;
-    background-color: rgb(249, 249, 249);
+    border: 2px solid rgb(33, 33, 33);
+    background-color: rgba(66, 66, 66, 0.95);
     border-radius: 25px;
 }
 
@@ -191,6 +224,7 @@ div.loginTitle > p {
     font-size: 40px;
     text-align: center;
     font-family: "Times New Roman", Times, serif;
+    color: white;
 }
 
 div.registerTitle {
@@ -205,6 +239,10 @@ div.registerTitle > p {
     font-size: 40px;
     text-align: center;
     font-family: "Times New Roman", Times, serif;
+}
+
+div.registerTitle > p {
+    color: white;
 }
 
 div.inputFormLogin {
@@ -229,18 +267,17 @@ input[type=text] {
     margin: 8px 10%;
     box-sizing: border-box;
     background-color: rgb(238, 238, 238);
-    border-radius: 10px;
     height: 50px;
     outline: none;
     border-width: 0px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 20px;
+    border-radius: 10px;
 }
 
 input[type=text]:focus{
     background-color: rgb(249, 249, 249);
     outline: none;
-    transition: background-color, border-width 0.4s;
     border-width: 2px;
 }
 
@@ -386,6 +423,16 @@ div.registerRedirect > p > a:hover {
     transition: all .25s ease-in-out;
 }
 
+div.loginRedirect > p > a:hover,
+div.registerRedirect > p > a:hover {
+    color: white;
+}
+
+div.loginRedirect > p > a,
+div.registerRedirect > p > a {
+    color: rgb(200, 200, 200);
+}
+
 .arrow {
     border: solid white;
     border-width: 0 15px 15px 0;
@@ -396,7 +443,32 @@ div.registerRedirect > p > a:hover {
     transform: rotate(-45deg);
 }
 
+.inputFormLogin input[type=text]:focus,
+.inputFormRegister input[type=text]:focus,
+.inputFormLogin input[type=password]:focus,
+.inputFormRegister input[type=password]:focus{
+    border-width: 0px;
+    background-color: rgba(249, 249, 249, 0.0);
+    transition: all 0.4s;
+    outline: none;
+    border-bottom: 2px solid rgb(0, 115, 209);
+    padding: 0px 2px;
+}
+
+.inputFormLogin input[type=text],
+.inputFormRegister input[type=text],
+.inputFormLogin input[type=password],
+.inputFormRegister input[type=password]{
+    position: relative;
+    background-color: rgba(249, 249, 249, 0.0);
+    color: white;
+    border-bottom: 2px solid rgb(44, 44, 44);
+    border-radius: 0px;
+    padding: 0px 2px;
+}
+
 /* NAVIGATION MENU STYLE */
+
 nav.navigationMenu {
     position: relative;
     box-sizing: border-box;
@@ -525,6 +597,7 @@ div.progressBar {
 }
 
 div.loadedBar {
+    width: 0%;
     text-align: center;
     line-height: 30px;
     color: white;
@@ -576,7 +649,7 @@ div.pie {
     border: 1px solid black;
     border-width: 1px;
     border-radius: 50%;
-    background: conic-gradient(deeppink 20%, #fb3 0, #fb3 30%, yellowgreen 0);
+    /*background-color: conic-gradient(deeppink 20%, #fb3 0, #fb3 30%, yellowgreen 0);*/
 }
 
 #statistic0 {
@@ -656,10 +729,11 @@ div.homeBackground {
     width: 100%;
     height: 100%;
     background-image: url("./images/home/home_background3.png");
-    background-size: 1920px 1080x;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-/* LINKING PAGE STYLE */
+/* LINKING STYLE */
 
 div.linkingBackground {
     position: absolute;
@@ -668,7 +742,8 @@ div.linkingBackground {
     width: 100%;
     height: 100%;
     background-image: url("./images/linking/linking_background3.png");
-    background-size: 1920px 1080x;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 div.linkingFrame {
@@ -709,11 +784,9 @@ div.linkingFrame > div {
     padding: 0 4px;
     align-self: auto;
 
-    background-color: rgba(22, 22, 22, 1);
-    border: 3px solid black;
-
     border: 2px solid rgb(33, 33, 33);
     background-color: rgba(66, 66, 66, 0.95);
+    border-radius: 25px;
 }
 
 .flexContainerLinking p {
@@ -732,6 +805,7 @@ div.linkingFrame > div {
 
 .flexContainerLinking a.button {
     width: 51%;
+    border-radius: 10px;
 }
 
 .flexContainerLinking label {
@@ -746,4 +820,555 @@ div.linkingFrame > div {
     transform: scale(1.1);
     transition: all .25s ease-in-out;
     cursor: pointer;
+}
+
+/* SETTINGS STYLE */
+
+div.settingsBackground {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-image: url("./images/settings/settings_background3.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+div.settingsFrame {
+    position: absolute;
+    width: 60%;
+    left: 20%;
+    height: 60%;
+    top: 24%;
+
+    border: 2px solid rgb(33, 33, 33);
+    background-color: rgba(66, 66, 66, 0.95);
+}
+
+/* NAVIGATION SETTINGS STYLE */
+div.settingsMenu {
+    position: absolute;
+    width: 20%;
+    height: 100%;
+    background-color: rgba(55, 55, 55, 0.8);
+}
+
+div.settingsContent {
+    position: absolute;
+    width: 80%;
+    left: 20%;
+    height: 100%;
+}
+
+nav.navigationSettings {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    color: #333;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 1.3em;
+    line-height: 1.6em;
+    border-right: 2px solid rgb(33, 33, 33);
+}
+
+nav.navigationSettings > div {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    top: 1.5%;
+}
+
+nav.navigationSettings ul {
+    position: relative;
+
+    border-bottom: 1px solid #ccc;
+    list-style: none;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 2rem;
+    left: -2rem;
+    width: 100%;
+}
+
+nav.navigationSettings ul li {
+    flex: 1 1 auto;
+    background-size: 100% 200%;
+    background-position: top center;
+    color: #666;
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    border-bottom: 2px solid rgb(33, 33, 33);
+}
+
+nav.navigationSettings ul li:hover {
+    background-position: bottom center;
+    color: rgba(0,0,0,0.75);
+    transform: scale(1.05);
+    transition: all .25s ease-in-out;
+    background-image: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(68,140,203, 1) 50%,
+      rgba(68,140,203, 1) 95%,
+      rgba(0 ,114,188, 1) 95%
+    );
+}
+
+nav.navigationSettings ul li a {
+    position: relative;
+    display: block;
+    padding: 1rem 0;
+    text-decoration: none;
+    color: white;
+    left: 6%;
+}
+
+nav.navigationSettings ul li a:hover {
+    color: #eee;
+    transition: all .25s ease-in-out;
+}
+
+.ico {
+    position: relative;
+    top: -50%;
+    width: 15px;
+    height: 15px;
+    left: -3%;
+    filter: invert(100%) sepia(5%) saturate(225%) hue-rotate(136deg) brightness(111%) contrast(100%);
+}
+
+/* SETTINGS CONTENT STYLE */
+div.settingsContent div.settingsTopSide {
+    position: absolute;
+    top: 0%;
+    height: 12.3%;
+    width: 94%;
+    left: 3%;
+    border-bottom: 2px solid rgb(44, 44, 44);
+}
+
+div.settingsContent div.settingsTopSide p {
+    position: relative;
+    color: white;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 2.5em;
+    left: 2%;
+    top: -40%;
+}
+
+div.settingsContent div.settingsTopSide button {
+    position: absolute;
+    left: 80%;
+    width: 20%;
+    height: 70%;
+    top: 10%;
+}
+
+div.settingsContent div.settingsTopSide button:hover {
+    background-color: rgb(0, 115, 209);
+    transform: scale(1.0);
+    transition: all .25s ease-in-out;
+}
+
+div.settingsContent div.settingsBotSide {
+    position: absolute;
+    top: 12.5%;
+    height: 87.5%;
+    left: 4%;
+    width: 92%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.settingsBotSide::-webkit-scrollbar-thumb {
+    background-color: rgba(200, 200, 200, 0.8);
+    border-radius: 25px;
+}
+  
+div.settingsBotSide::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(55, 55, 55);
+}
+
+div.settingsBotSide::-webkit-scrollbar {
+    width: 10px;
+    background-color:rgba(0,0,0,0.2);
+}
+  
+div.settingsBotSide::-webkit-scrollbar-track {
+    background-color:rgba(0,0,0,0.5);
+    border-radius: 25px;
+}
+
+[class^="flexContainerSettings"] {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+[class^="flexContainerSettings"] > div {
+    position: relative;
+    margin: 10px;
+    text-align: left;
+
+    flex: 45%;
+    max-width: 45%;
+    padding: 0 4px;
+    align-self: auto;
+
+    border-bottom: 2px solid rgb(44, 44, 44);
+}
+
+.flexContainerSettings2 div {
+    flex: 90%;
+    max-width: 93.5%;
+    padding: 0 4px;
+    align-self: auto;
+}
+
+[class^="flexContainerSettings"] label {
+    position: relative;
+    left: -10%;
+}
+
+[class^="flexContainerSettings"] input[type=text] {
+    position: relative;
+    width: 110%;
+    background-color: rgba(249, 249, 249, 0.0);
+    left: -15%;
+    color: white;
+}
+
+.flexContainerSettings2 input[type=text] {
+    left: -12.5%;
+}
+
+[class^="flexContainerSettings"] input[type=text]:focus {
+    border-width: 0px;
+    background-color: rgba(249, 249, 249, 0.0);
+    transition: all 0.4s;
+    outline: none;
+}
+
+[class^="flexContainerSettings"] input[type=password] {
+    position: relative;
+    width: 110%;
+    background-color: rgba(249, 249, 249, 0.0);
+    left: -15%;
+    color: white;
+}
+
+.flexContainerSettings2 input[type=password] {
+    left: -12.5%;
+}
+
+[class^="flexContainerSettings"] input[type=password]:focus {
+    border-width: 0px;
+    background-color: rgba(249, 249, 249, 0.0);
+    transition: all 0.4s;
+    outline: none;
+}
+
+[class^="flexContainerSettings"] input[type="date"] {
+    position: relative;
+    background: rgba(44, 44, 44, 0) 
+        url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png) 
+        92% 50% no-repeat;
+    color: white;
+    width: 115%;
+    padding: 12px 20px;
+    margin: 8px 10%;
+    box-sizing: border-box;
+    height: 50px;
+    outline: none;
+    border-width: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    left: -15%;
+}
+
+[class^="flexContainerSettings"] input[type="date"]::-webkit-inner-spin-button {
+    display: none;
+}
+
+[class^="flexContainerSettings"] input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
+
+[class^="flexContainerSettings"] .container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: white;
+    font-size: 17px;
+    text-transform: none;
+    font-weight: normal;
+}
+
+[class^="flexContainerSettings"] .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+[class^="flexContainerSettings"] .checkmark {
+    position: absolute;
+    top: -15%;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+}
+  
+[class^="flexContainerSettings"] .container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+[class^="flexContainerSettings"] .container input:checked ~ .checkmark {
+    background-color: #2196F3;
+    transition: all 0.5s;
+}
+
+[class^="flexContainerSettings"] .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+[class^="flexContainerSettings"] .container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+[class^="flexContainerSettings"] .container .checkmark:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+
+.flexContainerPreference {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.flexContainerPreference div {
+    position: relative;
+    width: 25%;
+    margin: 10px;
+    text-align: center;
+
+    flex: 25%;
+    max-width: 28%;
+    padding: 0 4px;
+    align-self: auto;
+}
+
+.flexContainerPreference p {
+    font-size: 12px;
+    font-family: sans-serif, "Times New Roman", Times, serif;
+    margin: 20px 10%;
+    color: rgb(240, 240, 240);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+[class^="flexContainerSettings"] input[type=number] {
+    position: relative;
+    left: -12.5%;
+    width: 60%;
+    padding: 12px 20px;
+    margin: 8px 10%;
+    box-sizing: border-box;
+    background-color: rgba(238, 238, 238, 0.0);
+    text-align: left;
+    height: 50px;
+    outline: none;
+    border-width: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    color: white;
+    border-bottom: 0px solid rgb(44, 44, 44);
+}
+
+[class^="flexContainerSettings"] input::-webkit-outer-spin-button,
+[class^="flexContainerSettings"] input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+[class^="flexContainerSettings"] input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.flexContainerPreference input[type=number] {
+    position: relative;
+    width: 60%;
+    left: 0%;
+    padding: 12px 0px;
+    margin: 8px 10%;
+    box-sizing: border-box;
+    background-color: rgba(238, 238, 238, 0.0);
+    text-align: center;
+    height: 50px;
+    outline: none;
+    border-width: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    color: white;
+    border-bottom: 2px solid rgb(44, 44, 44);
+}
+
+.flexContainerPreference input::-webkit-outer-spin-button,
+.flexContainerPreference input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.flexContainerPreference input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* HISTORY STYLE */
+
+div.historyBackground {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-image: url("./images/history/history_background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+div.historyPanel {
+    position: absolute;
+    top: 15%;
+    width: 70%;
+    left: 15%;
+    height: 80%;
+    overflow: auto;
+}
+
+div.timeDivider {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    width: 80%;
+    left: 10%;
+}
+
+div.timeDivider > label {
+    position: relative;
+    color: white;
+    left: -9%;
+    font-size: 30px;
+}
+
+div.historyElement {
+    position: relative;
+    border: 2px solid rgb(33, 33, 33);
+    background-color: rgba(66, 66, 66, 0.9);
+    height: 50px;
+    justify-content: space-between;
+    line-height: 75px;
+    margin: 5px;
+}
+
+
+div.historyElement p {
+    color: white;
+    position: relative;
+    top: -80%;
+    left: 10px;
+    font-size: 25px;
+}
+
+div.elementType {
+    position: absolute;
+    left: 0%;
+    width: 20%;
+    /*border-right: 2px solid rgb(44, 44, 44);*/
+    height: 100%;
+    top: 0%;
+}
+
+div.elementName {
+    position: absolute;
+    left: 20%;
+    width: 60%;
+    height: 100%;
+    text-align: center;
+    /*border-right: 2px solid rgb(44, 44, 44);*/
+}
+
+div.elementTime {
+    position: absolute;
+    left: 80%;
+    width: 10%;
+    height: 100%;
+    /*border-right: 2px solid rgb(44, 44, 44);*/
+}
+
+div.elementTime > p {
+    text-align: center;
+    left: 0px;
+}
+
+div.elementButtons {
+    position: absolute;
+    left: 90%;
+    width: 10%;
+    height: 100%;
+    /*border-right: 2px solid rgb(44, 44, 44);*/
+    text-align: right;
+}
+
+div.elementButtons a {
+    position: relative;
+    top: 35%;
+    margin: 10px;
+}
+
+div.elementButtons .ico {
+    width: 25px;
+    height: 25px;
+}
+
+div.elementButtons .close {
+    position: relative;
+    width: 33px;
+    height: 33px;
+    top: -42%;
+}
+
+div.elementButtons .ico:hover {
+    transform: scale(1.2);
+    transition: all .25s ease-in-out;
+    filter: invert(60%) sepia(73%) saturate(4779%) hue-rotate(184deg) brightness(100%) contrast(91%);
 }
