@@ -2,11 +2,85 @@ const HTTP = require('http');
 const HOSTNAME = '127.0.0.1';
 const PORT = 3000;
 
+async function parseGetRequest(req, dbHandler) {
+    const {v4: uuidv4} = require('uuid');
+
+    let parsedURL = req.url.split("/");
+
+    let resultJSON = "";
+    await new Promise( async (resolve, reject) => {
+
+        if (parsedURL[2] === "download-request") {
+
+            let fileTEMP = await dbHandler.GetFromFilesDataBase(parsedURL[3]);
+            let fileJSON = fileTEMP[0];
+
+            let fileResult = {};
+            fileResult['name'] = fileJSON['name'];
+            fileResult['file_size'] = fileJSON['file_size'];
+            fileResult['number_of_chunks'] = fileJSON['number_of_chunks'];
+            fileResult['chunks'] = fileJSON['chunks'];
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Download file";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = fileJSON['name'];
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
+
+            resultJSON = JSON.stringify({Status: "OK", data: fileResult});
+
+            resolve();
+        }
+
+        if (parsedURL[2] === "download-chunk") {
+            const fs = require('fs');
+
+            let filePath = ".\\temp\\" + parsedURL[3] + ".stol";
+            let fileData = "temp";
+
+            await new Promise((resolve, reject) => {
+                fs.readFile(filePath, (err, data) => {
+                    fileData = data.toString();
+                    resolve();
+                });
+            }).then(
+                () => {
+                    resultJSON = JSON.stringify({Status: "OK", name: parsedURL[3], data: fileData});
+                });
+
+            resolve();
+        }
+
+        if (parsedURL[2] === "list-dir") {
+
+            let dirTEMP = await dbHandler.GetFromFolderDataBase(parsedURL[3]);
+            let dirJSON = dirTEMP[0];
+
+            if (dirJSON['owner_id'] === parsedURL[2]) {
+                resultJSON = JSON.stringify({Status: "OK", list: dirJSON['childs']});
+            }
+
+            resolve();
+        }
+
+    }).then( async () => {
+
+        if (resultJSON === "") {
+            resultJSON = JSON.stringify({Status: "Failed", Error: "Incorrect command"});
+        }
+    });
+
+    return resultJSON;
+}
+
 async function parsePostRequest(req, dbHandler) {
     let parsedURL = req.url.split("/");
 
-    let data = "";
+    let data = ""
     let resultJSON = "";
+
     await new Promise((resolve, reject) => {
         req.on('data', chunk => {
             data = data + chunk;
@@ -26,6 +100,7 @@ async function parsePostRequest(req, dbHandler) {
             // TODO: de verificat daca mail-ul nu este deja folosit, trebuie scrisa o functie noua pentru DB
 
             await dbHandler.InsertIntoUsersDataBase(jsonObject);
+            await dbHandler.InsertIntoActionsDataBase(jsonObject.owner_id);
 
             let folderJSON = {};
             folderJSON.name = "root";
@@ -48,6 +123,14 @@ async function parsePostRequest(req, dbHandler) {
             jsonObject.chunks = [];
 
             await dbHandler.InsertIntoFilesDataBase(jsonObject);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Upload file";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = jsonObject.name;
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
 
             let dirItem = {};
             dirItem.type = "file";
@@ -104,51 +187,6 @@ async function parsePostRequest(req, dbHandler) {
                 resultJSON = JSON.stringify({Status: "Incorrect password"});
         }
 
-        if (parsedURL[2] === "download-request" && parsedURL[1] === jsonObject['owner_id']) {
-
-            let fileTEMP = await dbHandler.GetFromFilesDataBase(jsonObject['file_id']);
-            let fileJSON = fileTEMP[0];
-
-            let fileResult = {};
-            fileResult['name'] = fileJSON['name'];
-            fileResult['file_size'] = fileJSON['file_size'];
-            fileResult['number_of_chunks'] = fileJSON['number_of_chunks'];
-            fileResult['chunks'] = fileJSON['chunks'];
-
-            resultJSON = JSON.stringify({Status : "OK", data : fileResult});
-
-        }
-
-        if (parsedURL[2] === "download-chunk" && parsedURL[1] === jsonObject['owner_id']) {
-            const fs = require('fs');
-
-            // TODO: de verificat MD5-ul fisierului pentru integritate
-            // TODO: de facut o verificare ca user-ul care face request-ul chiar detine fisierul, chestia asta nu ar trebui sa afecteze in cloud, ca daca nu e al lui, nu va exista in cloud-ul lui, tho
-            // TODO: putem interoga baza de date, dar devine tideous la fisiere cu multe chunks, efectiv sa luam json-ul din db si sa vedem ca ce cer ei e al lor si e din acel fisier
-
-            let filePath = ".\\temp\\" + jsonObject['name'] + ".stol";
-            let fileData = "temp";
-            await new Promise((resolve, reject) => {
-                fs.readFile(filePath, (err, data) => {
-                    fileData = data.toString();
-                    resolve();
-                });
-            }).then(
-                () => {
-                    resultJSON = JSON.stringify({Status: "OK", name: jsonObject['name'], data: fileData});
-                });
-        }
-
-        if (parsedURL[2] === "list-dir" && parsedURL[1] === jsonObject['owner_id']) {
-
-            let dirTEMP = await dbHandler.GetFromFolderDataBase(jsonObject['folder_id']);
-            let dirJSON = dirTEMP[0];
-
-            if (dirJSON['owner_id'] === jsonObject['owner_id']) {
-                resultJSON = JSON.stringify({Status : "OK", list : dirJSON['childs']});
-            }
-        }
-
         if (parsedURL[2] === "create-dir" && parsedURL[1] === jsonObject['owner_id']) {
             const {v4: uuidv4} = require('uuid');
             // TODO: insert folder to database, update current folder, return current folder updated <DONE>
@@ -157,6 +195,13 @@ async function parsePostRequest(req, dbHandler) {
             jsonObject.childs = [];
             await dbHandler.InsertIntoFolderDataBase(jsonObject);
 
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Create Directory";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = jsonObject.name;
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
 
             let dirItem = {};
             dirItem.type = "folder";
@@ -167,6 +212,30 @@ async function parsePostRequest(req, dbHandler) {
             resultJSON = JSON.stringify({Status: "OK"});
 
         }
+    });
+
+    if (resultJSON === "") {
+        resultJSON = JSON.stringify({Status: "Failed", Error: "Incorrect command"});
+    }
+    return resultJSON;
+}
+
+async function parseDeleteRequest(req, dbHandler) {
+    let parsedURL = req.url.split("/");
+
+    let data = ""
+    let resultJSON = "";
+    await new Promise((resolve, reject) => {
+        req.on('data', chunk => {
+            data = data + chunk;
+        });
+        req.on('end', () => {
+            resolve();
+        });
+    }).then(async () => {
+        const {v4: uuidv4} = require('uuid');
+
+        let jsonObject = JSON.parse(data);
 
         if (parsedURL[2] === "remove-file" && parsedURL[1] === jsonObject['owner_id']) {
             const fs = require('fs');
@@ -184,6 +253,16 @@ async function parsePostRequest(req, dbHandler) {
                 await fs.unlinkSync(path);
             }
             await dbHandler.DeleteFromFilesDataBase(fileJSON['file_id']);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['id'] = uuidv4();
+            actionJson['type'] = "Remove file";
+            actionJson['name'] = fileJSON.name;
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
+
+
             resultJSON = JSON.stringify({Status: "OK"});
         }
 
@@ -200,8 +279,9 @@ async function parsePostRequest(req, dbHandler) {
     return resultJSON;
 }
 
+
 async function main() {
-    const {DatabaseHandler} = require('./database.js');
+    const {DatabaseHandler} = require('./repository/database.js');
 
     let dbHandler = new DatabaseHandler("mongodb://localhost:27017", "TW");
 
@@ -213,22 +293,29 @@ async function main() {
             if (req.url) {
 
                 if (req.method === 'GET') {
-
+                    parseGetRequest(req, dbHandler).then(resultJSON => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        //console.log("Result: " + resultJSON);
+                        res.end(resultJSON);
+                    });
                 }
-                // TODO: trebuie mutate din POST toate comenzile, nu sunt toate in POST evident
-                // TODO: trebuie facut suportul pentru download si pentru foldere, momentan nu e facut nimic :( Im only human
-                // TODO: odata facut suportul pentru foldere, trebuie aplicat si la fisiere
                 if (req.method === 'POST') {
                     parsePostRequest(req, dbHandler).then(resultJSON => {
                         res.statusCode = 200;
                         res.setHeader('Content-Type', 'application/json');
-                        console.log("Result: " + resultJSON);
+                        //console.log("Result: " + resultJSON);
                         res.end(resultJSON);
                     });
                 }
 
                 if (req.method === 'DELETE') {
-
+                    parseDeleteRequest(req, dbHandler).then(resultJSON => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        //console.log("Result: " + resultJSON);
+                        res.end(resultJSON);
+                    });
                 }
 
                 if (req.method === 'PUT') {
