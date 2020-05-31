@@ -1,6 +1,6 @@
-function toDateTime(secs) {
+function toDateTime(miliSecs) {
     var t = new Date(1970, 0, 1);
-    t.setMilliseconds(secs);
+    t.setMilliseconds(miliSecs);
     return t;
 }
 
@@ -13,6 +13,8 @@ function createTimeDivider(title, historyElements){
     label.innerHTML = title;
     timeDivider.appendChild(label);
 
+    let elements = [];
+    let contor = 0;
     for (let i = 0; i < historyElements.length; i++){
         let historyElement = document.createElement("div");
         historyElement.classList.add("historyElement");
@@ -55,15 +57,19 @@ function createTimeDivider(title, historyElements){
         closeImg.classList.add("ico");
         closeImg.classList.add("close");
         closeImg.alt = "close";
+        
         aClose.appendChild(closeImg);
+        aClose.addEventListener('click', () => {
+            timeDivider.removeChild(elements[i]);
+            contor++;
 
-        if (false){
-            let uploadImg = document.createElement("img");
-            uploadImg.src = "./images/history/upload.svg";
-            uploadImg.classList.add("ico");
-            uploadImg.alt = "upload";
-            a.appendChild(uploadImg);
-        }
+            elements[i] = undefined;
+
+            if (contor == historyElements.length){
+                historyPanel.removeChild(timeDivider);
+            }
+        })
+
         elementButtons.appendChild(aClose);
 
         historyElement.appendChild(elementType);
@@ -71,17 +77,38 @@ function createTimeDivider(title, historyElements){
         historyElement.appendChild(elementTime);
         historyElement.appendChild(elementButtons);
 
-        timeDivider.appendChild(historyElement);
+        elements.push(historyElement);
+        timeDivider.appendChild(elements[i]);
     }
 
     historyPanel.appendChild(timeDivider);
 }
 
+function splitOnTimeDividers(historyElements){
+    historyElements.sort((a,b) => {
+        return b.time - a.time;
+    });
+
+    let map = {};
+    for (let i = 0; i < historyElements.length; i++){
+        date = toDateTime(historyElements[i].time).toDateString();
+        if (map[date] === undefined){
+            map[date] = [];
+        }
+        map[date].push(historyElements[i]);
+    }
+
+    for (let key in map){
+        createTimeDivider(key, map[key]);
+    }
+}
+
 //Astea vor fi datele preluate de la server
 let historyElements = [
-    {type : "T1", name : "N1", time : "1590934937383"},
-    {type : "T2", name : "N2", time : "1590934937383"},
-    {type : "T3", name : "N3", time : "1590934937383"}
+    {type : "T1", name : "N1", time : 1590936937383},
+    {type : "T2", name : "N2", time : 1590934939383},
+    {type : "T3", name : "N3", time : 1590954934383},
+    {type : "T4", name : "N4", time : 1590534934383}
 ];
 
-createTimeDivider("A Month Ago", historyElements);
+splitOnTimeDividers(historyElements);
