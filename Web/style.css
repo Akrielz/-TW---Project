@@ -602,6 +602,7 @@ div.loadedBar {
     line-height: 30px;
     color: white;
     transition: all 1s;
+    font-size : 0px;
     display: block;
     height: 100%;
     border-top-right-radius: 8px;
