@@ -602,6 +602,7 @@ div.loadedBar {
     line-height: 30px;
     color: white;
     transition: all 1s;
+    font-size : 0px;
     display: block;
     height: 100%;
     border-top-right-radius: 8px;
@@ -649,7 +650,7 @@ div.pie {
     border: 1px solid black;
     border-width: 1px;
     border-radius: 50%;
-    /*background-color: conic-gradient(deeppink 20%, #fb3 0, #fb3 30%, yellowgreen 0);*/
+    background-background: conic-gradient(deeppink 20%, #fb3 0, #fb3 30%, yellowgreen 0);
 }
 
 #statistic0 {

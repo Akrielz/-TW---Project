@@ -6,7 +6,7 @@
     <title>Accout Settings</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="getValuesFromDatabase()">
     <div class= "settingsBackground">
     </div>
     <div class = "backgroundDim">
@@ -61,29 +61,29 @@
         
             <div class = "settingsTopSide">
                 <p>Personal Info</p>
-                <button class="button">Apply</button>
+                <button class="button" onclick="applyValues()">Apply</button>
             </div>
 
             <div class = "settingsBotSide">
             <div class = "flexContainerSettings">
                 <div> <br>
                 <label for="firstName"> First name</label>
-                <input type="text" id="firstName" name="firstName" value="Yuu">
+                <input type="text" id="firstName" name="firstName">
                 </div>
 
                 <div> <br>
                 <label for="lastName"> Last name</label>
-                <input type="text" id="lastName" name="lastName" value="Aky">
+                <input type="text" id="lastName" name="lastName">
                 </div>
 
                 <div> <br>
                 <label for="gender"> Gender </label>
-                <input type="text" id="gender" name="gender" value="Unknown">
+                <input type="text" id="gender" name="gender">
                 </div>
 
                 <div> <br>
                 <label for="country"> Country </label>
-                <input type="text" id="country" name="country" value="Japan">
+                <input type="text" id="country" name="country">
                 </div>
 
                 <div> <br>
@@ -96,6 +96,56 @@
         </div>
 
     </div>
+
+    <script>
+        async function getValuesFromDatabase()
+        {
+            // aici se vor seta field-urile din aceasta pagina, flower power
+
+            let userID = localStorage.getItem("stol_owner_id");
+
+
+            var url = 'http://127.0.0.1:3000/' + userID + '/user/1';
+            const response = await fetch(url, {
+                method: 'GET'
+            });
+            const myJson = await response.json();
+
+            console.log(myJson)
+
+            // here it must be modified to use the result json
+
+            document.getElementById("firstName").value = myJson["personal_info"]["first_name"];
+            document.getElementById("lastName").value = myJson["personal_info"]["last_name"];
+            document.getElementById("gender").value = myJson["personal_info"]["gender"];
+            document.getElementById("country").value = myJson["personal_info"]["country"];
+            document.getElementById("birthday").value = myJson["personal_info"]["birthday"];
+        }
+
+        async function applyValues()
+        {
+            let firstName = document.getElementById("firstName").value;
+            let lastName = document.getElementById("lastName").value;
+            let gender = document.getElementById("gender").value;
+            let country = document.getElementById("country").value;
+            let birthday = document.getElementById("birthday").value;
+
+            let userID = localStorage.getItem("stol_owner_id");
+
+
+            var url = 'http://127.0.0.1:3000/' + userID + '/user/1';
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({first_name : firstName, last_name : lastName, gender : gender, country : country, birthday : birthday})
+            });
+            const myJson = await response.json();
+
+
+        }
+    </script>
 
 </body>
 </html>
