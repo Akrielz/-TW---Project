@@ -58,9 +58,55 @@ async function parseGetRequest(req, dbHandler) {
             let dirTEMP = await dbHandler.GetFromFolderDataBase(parsedURL[3]);
             let dirJSON = dirTEMP[0];
 
-            if (dirJSON['owner_id'] === parsedURL[2]) {
+            if (dirJSON['owner_id'] === parsedURL[1]) {
                 resultJSON = JSON.stringify({Status: "OK", list: dirJSON['childs']});
             }
+
+            resolve();
+        }
+
+        if(parsedURL[2] === "user" && parsedURL[3] === "1") {
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJSON = userTEMP[0];
+            console.log(userJSON);
+            console.log(userJSON["personal_info"]);
+            resultJSON = JSON.stringify({Status: "OK", personal_info : userJSON["personal_info"]});
+
+            resolve();
+        }
+
+        if(parsedURL[2] === "user" && parsedURL[3] === "2") {
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJSON = userTEMP[0];
+
+            resultJSON = JSON.stringify({Status: "OK", email : userJSON["email"]});
+
+            resolve();
+        }
+
+        if(parsedURL[2] === "user" && parsedURL[3] === "3") {
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJSON = userTEMP[0];
+
+            resultJSON = JSON.stringify({Status: "OK", cloud_settings : userJSON["cloud_settings"]});
+
+            resolve();
+        }
+
+        if(parsedURL[2] === "user" && parsedURL[3] === "4") {
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJSON = userTEMP[0];
+
+            resultJSON = JSON.stringify({Status: "OK", bandwidth : userJSON["bandwidth"]});
+
+            resolve();
+        }
+
+        if(parsedURL[2] === "user" && parsedURL[3] === "home") {
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJSON = userTEMP[0];
+
+            resultJSON = JSON.stringify({Status: "OK", statistics: userJSON["statistics"], bandwidth: userJSON["bandwidth"], name : userJSON["personal_info"]["last_name"]});
 
             resolve();
         }
@@ -96,6 +142,32 @@ async function parsePostRequest(req, dbHandler) {
 
             jsonObject.owner_id = uuidv4();
             jsonObject.root = uuidv4();
+
+            jsonObject.personal_info = {};
+            jsonObject["personal_info"].first_name = "Doe";
+            jsonObject["personal_info"].last_name = "John";
+            jsonObject["personal_info"].gender = "Apache helicopter";
+            jsonObject["personal_info"].country = "Kurlanda de Est";
+            jsonObject["personal_info"].birthday = "1900-01-01";
+
+            jsonObject.cloud_settings = {};
+            jsonObject["cloud_settings"].method = 1;
+            jsonObject["cloud_settings"].order = "123";
+
+            jsonObject.bandwidth = {};
+            jsonObject["bandwidth"].storage_google = 1024;
+            jsonObject["bandwidth"].storage_dropbox = 1024;
+            jsonObject["bandwidth"].storage_onedrive = 1024;
+            jsonObject["bandwidth"].max_upload = 1024;
+            jsonObject["bandwidth"].max_download = 1024;
+
+            jsonObject.statistics = {};
+            jsonObject["statistics"].total_upload = 0;
+            jsonObject["statistics"].total_download = 0;
+            jsonObject["statistics"].total_google = 0;
+            jsonObject["statistics"].total_onedrive = 0;
+            jsonObject["statistics"].total_dropbox = 0;
+
 
             // TODO: de verificat daca mail-ul nu este deja folosit, trebuie scrisa o functie noua pentru DB
 
@@ -220,6 +292,66 @@ async function parsePostRequest(req, dbHandler) {
     return resultJSON;
 }
 
+async function parsePutRequest(req, dbHandler) {
+    let parsedURL = req.url.split("/");
+
+    let data = ""
+    let resultJSON = "";
+    await new Promise((resolve, reject) => {
+        req.on('data', chunk => {
+            data = data + chunk;
+        });
+        req.on('end', () => {
+            resolve();
+        });
+    }).then(async () => {
+        let jsonObject = JSON.parse(data);
+
+        // update data
+
+        if (parsedURL[2] === "user" && parsedURL[3] === "1") {
+            await dbHandler.UpdateUserInDatabasePersonal(parsedURL[1], jsonObject);
+
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+        if (parsedURL[2] === "user" && parsedURL[3] === "2") {
+
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJson = userTEMP[0];
+
+            if(userJson["hashed_password"] === jsonObject["hashed_old_password"])
+            {
+                await dbHandler.UpdateUserInDataBaseSecurity(parsedURL[1], jsonObject["email"], jsonObject["hashed_new_password"]);
+                resultJSON = JSON.stringify({Status: "OK"});
+            }
+            else
+            {
+                resultJSON = JSON.stringify({Status: "Wrong password"});
+            }
+        }
+
+        if (parsedURL[2] === "user" && parsedURL[3] === "3") {
+            await dbHandler.UpdateUserInDataBaseCloudSettings(parsedURL[1], jsonObject);
+
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+        if (parsedURL[2] === "user" && parsedURL[3] === "4") {
+            await dbHandler.UpdateUserInDataBaseBandwidth(parsedURL[1], jsonObject);
+
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+
+    });
+
+    if (resultJSON === "") {
+        resultJSON = JSON.stringify({Status: "Failed", Error: "Incorrect command"});
+    }
+    return resultJSON;
+}
+
 async function parseDeleteRequest(req, dbHandler) {
     let parsedURL = req.url.split("/");
 
@@ -281,6 +413,7 @@ async function parseDeleteRequest(req, dbHandler) {
 
 
 async function main() {
+
     const {DatabaseHandler} = require('./repository/database.js');
 
     let dbHandler = new DatabaseHandler("mongodb://localhost:27017", "TW");
@@ -291,20 +424,28 @@ async function main() {
         HTTP.createServer((req, res) => {
 
             if (req.url) {
-
+                console.log("Mare request incoming");
+                console.log("=============================================================================")
                 if (req.method === 'GET') {
                     parseGetRequest(req, dbHandler).then(resultJSON => {
                         res.statusCode = 200;
                         res.setHeader('Content-Type', 'application/json');
+                        res.setHeader('Access-Control-Allow-Origin', '*');
+                        res.setHeader('Access-Control-Allow-Headers', '*');
+                        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
                         //console.log("Result: " + resultJSON);
                         res.end(resultJSON);
                     });
                 }
                 if (req.method === 'POST') {
+                    console.log("Am primit un post command");
                     parsePostRequest(req, dbHandler).then(resultJSON => {
                         res.statusCode = 200;
                         res.setHeader('Content-Type', 'application/json');
-                        //console.log("Result: " + resultJSON);
+                        res.setHeader('Access-Control-Allow-Origin', '*');
+                        res.setHeader('Access-Control-Allow-Headers', '*');
+                        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+                        console.log("Result: " + resultJSON);
                         res.end(resultJSON);
                     });
                 }
@@ -313,13 +454,32 @@ async function main() {
                     parseDeleteRequest(req, dbHandler).then(resultJSON => {
                         res.statusCode = 200;
                         res.setHeader('Content-Type', 'application/json');
+                        res.setHeader('Access-Control-Allow-Origin', '*');
+                        res.setHeader('Access-Control-Allow-Headers', '*');
+                        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
                         //console.log("Result: " + resultJSON);
                         res.end(resultJSON);
                     });
                 }
 
                 if (req.method === 'PUT') {
+                    parsePutRequest(req, dbHandler).then(resultJSON => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.setHeader('Access-Control-Allow-Origin', '*');
+                        res.setHeader('Access-Control-Allow-Headers', '*');
+                        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+                        //console.log("Result: " + resultJSON);
+                        res.end(resultJSON);
+                    });
+                }
 
+                if(req.method === 'OPTIONS') {
+                    res.statusCode = 200;
+                    res.setHeader('Access-Control-Allow-Origin', '*');
+                    res.setHeader('Access-Control-Allow-Headers', '*');
+                    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+                    res.end();
                 }
             }
 
