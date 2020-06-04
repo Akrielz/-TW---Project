@@ -1,0 +1,63 @@
+{
+  "root": {
+    "info": "Stefan",
+    "childs": [
+      {
+        "info": "Info",
+        "childs": [
+          {
+            "info": "POO",
+            "childs": []
+          },
+          {
+            "info": "Java",
+            "childs": []
+          },
+		  {
+            "info": "FAI",
+            "childs": []
+          },
+		  {
+            "info": "Psihologie",
+            "childs": []
+          },
+		  {
+            "info": "Criptografie",
+            "childs": []
+          },
+		  {
+            "info": "Optionale",
+            "childs": [
+				{
+					"info": "ACTN",
+					"childs": []
+				},
+				{
+					"info": "Grafica",
+					"childs": []
+				}
+			]
+          }
+        ]
+      },
+      {
+        "info": "Fizica",
+        "childs": [
+          {
+            "info": "Optica",
+            "childs": []
+          },
+          {
+            "info": "Mecanica",
+            "childs": [
+              {
+                "info": "Oscilatii",
+                "childs": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
