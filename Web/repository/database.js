@@ -120,6 +120,42 @@ class DatabaseHandler
         return true;
     }
 
+    async UpdateUserInDatabasePersonal(userID, fieldJSON)
+    {
+        let collection = this.Database.collection('Users');
+
+        const newValues = {$set: {personal_info: fieldJSON}};
+        await collection.updateOne({owner_id : userID}, newValues);
+        return true;
+    }
+
+    async UpdateUserInDataBaseSecurity(userID, email, hashed_password)
+    {
+        let collection = this.Database.collection('Users');
+
+        const newValues = {$set: {email: email, hashed_password: hashed_password}};
+        await collection.updateOne({owner_id : userID}, newValues);
+        return true;
+    }
+
+    async UpdateUserInDataBaseBandwidth(userID, fieldJson)
+    {
+        let collection = this.Database.collection('Users');
+
+        const newValues = {$set: {bandwidth: fieldJson}};
+        await collection.updateOne({owner_id : userID}, newValues);
+        return true;
+    }
+
+    async UpdateUserInDataBaseCloudSettings(userID, fieldJson)
+    {
+        let collection = this.Database.collection('Users');
+
+        const newValues = {$set: {cloud_settings: fieldJson}};
+        await collection.updateOne({owner_id : userID}, newValues);
+        return true;
+    }
+
     async GetFromUsersDataBaseByUserID(userID)
     {
         let collection = this.Database.collection('Users');
