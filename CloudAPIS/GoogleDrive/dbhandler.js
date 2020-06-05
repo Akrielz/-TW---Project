@@ -111,21 +111,20 @@ class DatabaseHandler
         return {name:"0",gid:"0"};
     }
 
-    async deleteFile(user, name)
+    async deleteFile(refresh, name)
     {
-        //TODO: not finished yet
         let collection = this.Database.collection('users');
-        let folderJson = result[0];
+        let user = await this.find(refresh);
 
-        let filtered = await folderJson['childs'].filter(function(e) { return e['id'] !== fileID});
+        let filtered = await user.files.filter(function(e) { return e.name !== name});
 
-        const newValues = {$set: {childs: filtered}};
-        await collection.updateOne({folder_id : folderID}, newValues);
+        const newValues = {$set: {files: filtered}};
+        await collection.updateOne({refresh : user.refresh}, newValues);
         return true;
     }
 
     debug(text){
-        console.log("DBHANDLER:" + text);
+        //console.log("DBHANDLER:" + text);
     }
 }
 

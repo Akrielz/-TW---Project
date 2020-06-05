@@ -92,10 +92,6 @@ class GDUploads{
             "title": name,
             "parents": parents
         };
-        let media = {
-            mimeType: "application/vnd.google-apps.folder",
-            body: ""
-        };
 
         let metadata = JSON.stringify(fileMetadata);
 
@@ -170,7 +166,42 @@ class GDUploads{
             },
             res => {
                 res.on('data', d => data += d);
-                res.on('end', () => {data=data||{};obj = JSON.parse(data)});
+                res.on('end', () => {data=data||'{"ok":1}';obj = JSON.parse(data)});
+            }
+        );
+        req.end();
+
+        let ok = 0;
+        while (!obj) {
+            if (obj) ok = 1;
+            await sleep(100);
+            //console.log('not yet');
+        }
+        return obj;
+    }
+
+    async downloadText(token,gid){
+        let data = "";
+        let obj = 0;
+        let req = https.request(
+            {
+                headers: {
+                    "Authorization": "Bearer " + token,
+                },
+                hostname: this.driveHost,
+                path: this.otherPath + "/" + gid + "?alt=media",
+                method: "GET",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    try{
+                        obj = JSON.parse(data).error;
+                    }catch (e) {
+                        obj = {content:data}
+                    }
+                });
             }
         );
         req.end();

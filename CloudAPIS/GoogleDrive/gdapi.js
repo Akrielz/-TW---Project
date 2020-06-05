@@ -11,7 +11,7 @@ const credentials = new Credentials();
 setTimeout(()=>{
     if(credentials.clientId) console.log("Credentials read");
     else console.log("Error reading credentials");
-},200);
+},500);
 
 const PORT = 6002;
 
@@ -203,8 +203,19 @@ class Server {
                             res.end();
                             return;
                         }
-                        //TODO
-                        break;
+                        let ok = await serv.deleteFile(obj.refresh,gid);
+                        if(ok){
+                            await serv.db.deleteFile(obj.refresh, fileName);
+                            res.writeHead(200,predefinedHead);
+                            res.write('{"message":"File deleted"}');
+                            res.end();
+                            return;
+                        }else{
+                            res.writeHead(500,predefinedHead);
+                            res.write('{"message":"Error while deleting the file"}');
+                            res.end();
+                            return;
+                        }
                     }
                     case "PUT": {
                         if(gid === "0"){
@@ -223,8 +234,18 @@ class Server {
                             res.end();
                             return;
                         }
-                        //TODO
-                        break;
+                        let content = await serv.downloadFile(obj.refresh,gid);
+                        if(content){
+                            res.writeHead(200,predefinedHead);
+                            res.write('{"message":"Success","content":"' + content + '"}');
+                            res.end();
+                            return;
+                        }else{
+                            res.writeHead(500,predefinedHead);
+                            res.write('{"message":"Error downloading the file"}');
+                            res.end();
+                            return;
+                        }
                     }
                     default:{
                         break;
@@ -272,6 +293,21 @@ class Server {
         return 1;
     }
 
+    async deleteFile(refresh,gid){
+        let token = await this.getToken(refresh);
+        //console.log("got token: " + token);
+        let obj = await this.up.deleteFile(token,gid);
+        if(obj.ok) {return 1;}
+        return 0;
+    }
+
+    async downloadFile(refresh,gid){
+        let token = await this.getToken(refresh);
+        //console.log("got token: " + token);
+        let obj = await this.up.downloadText(token,gid);
+        return obj.content||0;
+    }
+
     async findUser(refresh) {
         //console.log(this.db);
         while (!this.db.Database) {
@@ -280,8 +316,6 @@ class Server {
         }
         return this.db.find(refresh);
     }
-
-//findUser().then();
 
     async createUser(refresh) {
 
