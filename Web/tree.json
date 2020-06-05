@@ -1,57 +1,64 @@
 {
   "root": {
-    "info": "Stefan",
+    "info": {
+      "name": "Stefan",
+      "id": "a1ec6838-7b3c-4234-a4d7-740f8d438ba3",
+      "type": "folder"
+    },
     "childs": [
       {
-        "info": "Info",
+        "info": {
+          "name": "Info",
+          "id": "d721daaa-7b69-43ba-9bce-bb5f9d75069d",
+          "type": "folder"
+        },
         "childs": [
           {
-            "info": "POO",
+            "info": {
+              "name": "POO",
+              "id": "string",
+              "type": "folder"
+            },
             "childs": []
           },
           {
-            "info": "Java",
+            "info": {
+              "name": "Java",
+              "id": "string",
+              "type": "file"
+            },
             "childs": []
-          },
-		  {
-            "info": "FAI",
-            "childs": []
-          },
-		  {
-            "info": "Psihologie",
-            "childs": []
-          },
-		  {
-            "info": "Criptografie",
-            "childs": []
-          },
-		  {
-            "info": "Optionale",
-            "childs": [
-				{
-					"info": "ACTN",
-					"childs": []
-				},
-				{
-					"info": "Grafica",
-					"childs": []
-				}
-			]
           }
         ]
       },
       {
-        "info": "Fizica",
+        "info": {
+          "name": "Fizica",
+          "id": "string",
+          "type": "folder"
+        },
         "childs": [
           {
-            "info": "Optica",
+            "info": {
+              "name": "Optica",
+              "id": "string",
+              "type": "folder"
+            },
             "childs": []
           },
           {
-            "info": "Mecanica",
+            "info": {
+              "name": "Mecanica",
+              "id": "string",
+              "type": "folder"
+            },
             "childs": [
               {
-                "info": "Oscilatii",
+                "info": {
+                  "name": "Oscilatii",
+                  "id": "string",
+                  "type": "file"
+                },
                 "childs": []
               }
             ]

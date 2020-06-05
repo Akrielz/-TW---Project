@@ -6,11 +6,25 @@ function align(x) {
     return s;
 }
 
-class Node2 {
+let type_info = {
+    "name": "string",
+    "id": "string",
+    "type": "file/folder"
+};
+
+let newFile = {
+    type:"new_file"
+};
+let newFolder = {
+    type:"new_folder"
+};
+
+class Node {
     constructor(_info) {
         this.info = _info;
         this.childs = [];
         this.parent = null;
+        this.type = null;
         console.log("created node "+ _info);
     }
 
@@ -23,14 +37,14 @@ class Node2 {
         var div = document.createElement('div');
         var inside = document.createElement('div');
         var pic = document.createElement('img');
-        if(this.childs.length > 0){
+        if(this.info.type === "folder"){
             inside.className = "dir-info";
             inside.innerHTML = "<i class = \"fa fa-plus-square\"></i>" +
-                "<i class = \"fa fa-folder\"></i>" + this.info;
+                "<i class = \"fa fa-folder\"></i>" + this.info.name;
         }
         else {
             inside.className = "file-info";
-            inside.innerHTML = "<i class = \"fa fa-file\"></i>" + this.info;
+            inside.innerHTML = "<i class = \"fa fa-file\"></i>" + this.info.name;
         }
         //inside.innerText = align(depth) + this.info;
         navMap.set(inside,this);
@@ -56,7 +70,7 @@ class Node2 {
     }
 }
 
-class Tree2{
+class Tree{
     constructor(root) {
         this.root = root;
     }
@@ -79,7 +93,7 @@ function generateTree(json) {
 
     console.log("json read");
 
-    var tree_root = new Node2(pre_root.info);
+    var tree_root = new Node(pre_root.info);
     var s = [];
     var t = [];
     var current_node;
@@ -91,12 +105,12 @@ function generateTree(json) {
         current_node = t.pop();
         for (var child of current_element.childs){
             s.push(child);
-            var child_node = new Node2(child.info);
+            var child_node = new Node(child.info);
             current_node.addChild(child_node);
             t.push(child_node);
         }
     }
-    return new Tree2(tree_root);
+    return new Tree(tree_root);
 }
 
 function element(node) {
@@ -104,33 +118,68 @@ function element(node) {
     element.className="element";
 
     let img = document.createElement('img');
-    if(node!=null) {
-        img.alt = node.childs.length > 0 ? "folder" : "file";
+    let name = document.createElement('p');
+    if(!node.type) {
+        img.alt = node.info.type;
+        name.innerText = node.info.name;
     }
     else{
-        img.alt = "plus";
+        img.alt = node.type;
+        if(node.type === "new_file"){
+            name.innerText = "Upload new file";
+        }
+        else{
+            name.innerText = "Create new folder";
+        }
     }
     img.src = "./images/file_manager/" + img.alt + "1.svg";
-    let name = document.createElement('p');
-    name.innerText = node?node.info:"create folder";
 
     element.appendChild(img);
     element.appendChild(name);
 
-    if(node!=null){
+    if(!node.type){
         element.onclick = ()=>{
-            /*console.log("clicked: ");
-            console.log(element);
-            for (var ent of contentMap){
-                console.log(ent);
-            }
-            console.log(contentMap.get(element));*/
+
             showNode(node);
+        }
+    }
+    else{
+        if(node.type==="new_file") {
+            element.onclick = () => {
+                console.log("creating new " + node.type);
+            }
+        }
+        else{
+            element.onclick = () => createFolder(node);
         }
     }
 
     return element;
 }
+
+let createFolder = async function(node){
+    let uid = localStorage.getItem("stol_owner_id");
+    console.log(uid);
+    console.log("creaza " + node.type + " in " + node.parent.info.name);
+    let folder = prompt("Enter folder name:", "New folder");
+    if (folder == null || folder === "") {
+        alert("Folder creation cancelled");
+    } else {
+        let url = "http://127.0.0.1:3000/" + uid + "/create-dir";
+        let options = {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                name:folder,
+                owner_id:uid,
+                parent_folder_id: node.parent.info.id
+            })
+        };
+        const response = await fetch(url,options);
+    }
+};
 
 function showContent(node){
     hideContent();
@@ -147,7 +196,7 @@ function content(node){
     let content = document.createElement('div');
     content.className = 'content flexContainer';
 
-    if(node.childs.length === 0){
+    if(node.info.type === "file"){
         let p = document.createElement('p');
         p.innerText = "TODO preview...";
         content.appendChild(p);
@@ -159,32 +208,20 @@ function content(node){
         contentMap.set(elem,child);
         content.appendChild(elem);
     }
-    content.appendChild(element(null));
-
+    content.appendChild(element({
+        type:"new_folder",
+        parent: node
+    }));
+    content.appendChild(element({
+        type:"new_file",
+        parent: node
+    }));
     return content;
 }
 
-/*
-
-function generateTreeFromJson(json){
-    var pre_tree = JSON.parse(json);
-    var root = pre_tree.root;
-
-    var tree_root = new Node(root.info,null);
-    var current_node = tree_root;
-    var current_parent;
-    var current_element;
-    var queue = [];
-    queue.push(root);
-
-    while(queue.size() > 0){
-        current_element = queue.shift();
-
-        for(var i in current_element.childs){
-            var child = current_element.childs[i];
-            current_node.addChild(new Node2(child.info));
-            queue.push(child);
-        }
-    }
+async function getJsonTree(){
+    let uid = localStorage.getItem("stol_owner_id");
+    let url = "http://127.0.0.1:3000/" + uid + "/tree";
+    let response = await fetch(url);
+    return response.json();
 }
-*/

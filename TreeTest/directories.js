@@ -1,10 +1,3 @@
-function align(x) {
-    var s = "";
-    for(var i = 0; i < x; i++){
-        s = s + "__";
-    }
-    return s;
-}
 
 class Node2 {
     constructor(_info) {
@@ -20,9 +13,9 @@ class Node2 {
     }
 
     generate(depth){
-        var div = document.createElement('div');
-        var inside = document.createElement('div');
-        var pic = document.createElement('img');
+        let div = document.createElement('div');
+        let inside = document.createElement('div');
+        let pic = document.createElement('img');
         if(this.childs.length > 0){
             inside.className = "dir-info";
             inside.innerHTML = "<i class = \"fa fa-plus-square\"></i>" +
@@ -49,8 +42,6 @@ class Node2 {
         for(let child of this.childs){
             div.appendChild(child.generate(depth+1));
         }
-
-
 
         return div;
     }

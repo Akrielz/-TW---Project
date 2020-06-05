@@ -39,7 +39,7 @@ function generateTree(json) {
         for (var i in current_element.childs){
             var child = current_element.childs[i];
             s.push(child);
-            var child_node = new Node2(child.info);
+            var child_node = new Node(child.info);
             current_node.addChild(child_node);
             t.push(child_node);
         }

@@ -10,6 +10,15 @@ async function parseGetRequest(req, dbHandler) {
     let resultJSON = "";
     await new Promise( async (resolve, reject) => {
 
+        if(parsedURL[2] === "tree"){
+            let userTemp = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJson = userTemp[0];
+            let treeJson = await dbHandler.GetTree(userJson.root);
+            let responseJson = {root:treeJson};
+            resultJSON = JSON.stringify(responseJson);
+            resolve();
+        }
+
         if (parsedURL[2] === "download-request") {
 
             let fileTEMP = await dbHandler.GetFromFilesDataBase(parsedURL[3]);
@@ -124,7 +133,7 @@ async function parseGetRequest(req, dbHandler) {
 async function parsePostRequest(req, dbHandler) {
     let parsedURL = req.url.split("/");
 
-    let data = ""
+    let data = "";
     let resultJSON = "";
 
     await new Promise((resolve, reject) => {
@@ -206,6 +215,7 @@ async function parsePostRequest(req, dbHandler) {
 
             let dirItem = {};
             dirItem.type = "file";
+            dirItem.name = jsonObject.name;
             dirItem.id = jsonObject.file_id;
             await dbHandler.AddItemToFolder(jsonObject['folder_id'], dirItem);
 
@@ -225,7 +235,7 @@ async function parsePostRequest(req, dbHandler) {
                 let chunkJSON = {};
                 chunkJSON['chunk_number'] = jsonObject['chunk_number'];
                 chunkJSON['data_size'] = jsonObject['data_size'];
-                chunkJSON['md5'] = jsonObject['md5']
+                chunkJSON['md5'] = jsonObject['md5'];
                 chunkJSON['name'] = uuidv4();
 
                 let fileName = ".\\temp\\" + chunkJSON['name'] + ".stol";
@@ -295,7 +305,7 @@ async function parsePostRequest(req, dbHandler) {
 async function parsePutRequest(req, dbHandler) {
     let parsedURL = req.url.split("/");
 
-    let data = ""
+    let data = "";
     let resultJSON = "";
     await new Promise((resolve, reject) => {
         req.on('data', chunk => {
@@ -355,7 +365,7 @@ async function parsePutRequest(req, dbHandler) {
 async function parseDeleteRequest(req, dbHandler) {
     let parsedURL = req.url.split("/");
 
-    let data = ""
+    let data = "";
     let resultJSON = "";
     await new Promise((resolve, reject) => {
         req.on('data', chunk => {
@@ -425,7 +435,7 @@ async function main() {
 
             if (req.url) {
                 console.log("Mare request incoming");
-                console.log("=============================================================================")
+                console.log("=============================================================================");
                 if (req.method === 'GET') {
                     parseGetRequest(req, dbHandler).then(resultJSON => {
                         res.statusCode = 200;

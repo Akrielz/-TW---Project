@@ -1,32 +1,64 @@
 {
   "root": {
-    "info": "Stefan",
+    "info": {
+      "name": "Stefan",
+      "id": "string",
+      "type": "folder"
+    },
     "childs": [
       {
-        "info": "Info",
+        "info": {
+          "name": "Info",
+          "id": "string",
+          "type": "folder"
+        },
         "childs": [
           {
-            "info": "POO",
+            "info": {
+              "name": "POO",
+              "id": "string",
+              "type": "folder"
+            },
             "childs": []
           },
           {
-            "info": "Java",
+            "info": {
+              "name": "Java",
+              "id": "string",
+              "type": "file"
+            },
             "childs": []
           }
         ]
       },
       {
-        "info": "Fizica",
+        "info": {
+          "name": "Fizica",
+          "id": "string",
+          "type": "folder"
+        },
         "childs": [
           {
-            "info": "Optica",
+            "info": {
+              "name": "Optica",
+              "id": "string",
+              "type": "folder"
+            },
             "childs": []
           },
           {
-            "info": "Mecanica",
+            "info": {
+              "name": "Mecanica",
+              "id": "string",
+              "type": "folder"
+            },
             "childs": [
               {
-                "info": "Oscilatii",
+                "info": {
+                  "name": "Oscilatii",
+                  "id": "string",
+                  "type": "file"
+                },
                 "childs": []
               }
             ]

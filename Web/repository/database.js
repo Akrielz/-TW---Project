@@ -65,7 +65,7 @@ class DatabaseHandler
     async SetMongo()
     {
         this.MongoClient = require('mongodb').MongoClient;
-        this.Client = await this.MongoClient.connect(this.databaseUrl, { useUnifiedTopology: true })
+        this.Client = await this.MongoClient.connect(this.databaseUrl, { useUnifiedTopology: true });
         setTimeout(() => {
             this.Database = this.Client.db(this.databaseName);
         }, 50);
@@ -337,6 +337,29 @@ class DatabaseHandler
         return true;
     }
 
+    async GetTree(folder_id){
+        let folderTemp = await this.GetFromFolderDataBase(folder_id);
+        let folder = folderTemp[0];
+        let tree = {
+            info:{
+                name:folder.name,
+                id:folder_id,
+                type:"folder"
+            },
+            childs: []
+        };
+        console.log("DATABASE: " + JSON.stringify(folder.childs));
+        for(let child of folder.childs){
+            if(child.type === "folder"){
+                let childTree = await this.GetTree(child.id);
+                await tree.childs.push(childTree);
+            } else{
+                await tree.childs.push({"info":child});
+            }
+        }
+
+        return tree;
+    }
 }
 
 async function UnitTesting()
@@ -367,7 +390,7 @@ async function UnitTesting()
         await handler.DeleteFromUsersDataBase(3);
 
         let users = await handler.GetAllUsers();
-        console.log(users)
+        console.log(users);
 
         handler.UnInit();
     }, 150);

@@ -41,8 +41,8 @@ class Node2 {
         else{
             div.className = 'tree-node';
         }
-        for(var i in this.childs){
-            div.appendChild(this.childs[i].generate(depth+1));
+        for(let child of this.childs){
+            div.appendChild(child.generate(depth+1));
         }
 
         return div;
@@ -55,7 +55,7 @@ class Tree2{
     }
 
     generate(){
-        var div = document.createElement('div');
+        let div = document.createElement('div');
         div.className = 'tree';
         div.appendChild(this.root.generate(0));
         return div;
@@ -64,25 +64,24 @@ class Tree2{
 
 function generateTree(json) {
     console.log("started to generate Tree");
-    var pre_tree = JSON.parse(json);
-    var pre_root = pre_tree.root;
+    let pre_tree = JSON.parse(json);
+    let pre_root = pre_tree.root;
 
     console.log("json read");
 
-    var tree_root = new Node2(pre_root.info);
-    var s = [];
-    var t = [];
-    var current_node;
-    var current_element;
+    let tree_root = new Node2(pre_root.info);
+    let s = [];
+    let t = [];
+    let current_node;
+    let current_element;
     s.push(pre_root);
     t.push(tree_root);
     while(s.length > 0){
         current_element = s.pop();
         current_node = t.pop();
-        for (var i in current_element.childs){
-            var child = current_element.childs[i];
+        for (let child of current_element.childs){
             s.push(child);
-            var child_node = new Node2(child.info);
+            let child_node = new Node2(child.info);
             current_node.addChild(child_node);
             t.push(child_node);
         }
