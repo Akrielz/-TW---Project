@@ -1,0 +1,31 @@
+ports:
+GD:
+OD:
+DB:
+
+paths:
+
+/user : {
+    POST: queryParams: refresh token
+    returns ok/created or already exists
+
+    DELETE: queryParams: refresh token
+    returns ok/deleted or not found
+}
+
+/file/{filename} : { // filename is without any extension (.stol will be added by the server)
+    POST: queryParams: refresh token; body - application/json {content:B64string}
+    creates file(.stol) in users account
+    returns ok/created or already exists
+
+    DELETE: queryParams: refresh token
+    deletes file(.stol) in users account
+    returns ok/deleted or not found
+
+    PUT: queryParams: refresh token; body - application/json {content:B64string}
+    updates file(.stol) in users account
+    returns ok/updated or not found
+
+    GET: queryParams: refresh token
+    returns not found or json{B64content}
+}
