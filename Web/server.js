@@ -1,6 +1,6 @@
 const HTTP = require('http');
 const HOSTNAME = '127.0.0.1';
-const PORT = 3001;
+const PORT = 3000;
 
 async function parseGetRequest(req, dbHandler) {
     const {v4: uuidv4} = require('uuid');
@@ -75,7 +75,6 @@ async function parseGetRequest(req, dbHandler) {
         }
 
         if(parsedURL[2] === "user" && parsedURL[3] === "1") {
-            console.log(parsedURL[1]);
             let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
             let userJSON = userTEMP[0];
             console.log(userJSON);

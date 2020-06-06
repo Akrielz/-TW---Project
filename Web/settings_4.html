@@ -146,12 +146,12 @@
         {
             let userID = localStorage.getItem("stol_owner_id");
 
-            let google = document.getElementById("preference1").value;
-            let dropbox = document.getElementById("preference2").value;
-            let onedrive = document.getElementById("preference3").value;
+            google = document.getElementById("preference1").value;
+            dropbox = document.getElementById("preference2").value;
+            onedrive = document.getElementById("preference3").value;
 
-            let download = document.getElementById("download").value;
-            let upload = document.getElementById("upload").value;
+            download = document.getElementById("download").value;
+            upload = document.getElementById("upload").value;
 
             var url = 'http://127.0.0.1:3000/' + userID + '/user/4';
             console.log(url);

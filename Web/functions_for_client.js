@@ -66,6 +66,7 @@ async function uploadFile(userID, folderID, filePath)
         for(let counter = 0; counter < fileChunks; counter++)
         {
             console.log(data.length)
+            console.log(typeof data)
             let x = counter * 1024;
             let y = counter * 1024 + 1024;
             if(y >= fileSizeInBytes)

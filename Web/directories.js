@@ -156,13 +156,27 @@ function element(node) {
     return element;
 }
 
+function _arrayBufferToBase64( buffer ) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
 let uploadChunks = async function(file, folderID, readerEvent)
 {
     let content = readerEvent.target.result; // this is the content!
     console.log(content);
+    content = _arrayBufferToBase64(content);
+
 
     let fileSizeInBytes = content.length;
     console.log("Size in bytes: " + fileSizeInBytes + " " + file.size);
+
+
     let fileName = file.name;
     console.log("File name: " + fileName);
 
@@ -191,19 +205,18 @@ let uploadChunks = async function(file, folderID, readerEvent)
 
         let buffer = content.slice(x, y);
 
-        let dataToUpload = btoa(buffer);
-
         let uploadRequestUrl = "http://127.0.0.1:3000" + '/' + userID + '/upload-chunk';
         const response = await fetch(uploadRequestUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({owner_id : userID, file_id: requestResponse['ID'], chunk_number : counter, data : dataToUpload, data_size : dataToUpload.length, md5 : "dummy"})
+            body: JSON.stringify({owner_id : userID, file_id: requestResponse['ID'], chunk_number : counter, data : buffer, data_size : buffer.length, md5 : "dummy"})
         });
         let result = await response.json();
         console.log(result);
     }
+
 
 }
 
@@ -217,7 +230,7 @@ let uploadFile = async function(node) {
         console.log(file);
 
         const reader = new FileReader();
-        await reader.readAsBinaryString(file);
+        await reader.readAsArrayBuffer(file);
         reader.onload = (readerEvent) => uploadChunks(file, node.parent.info.id, readerEvent);
     }
 
@@ -260,10 +273,67 @@ function hideContent(){
     cont.innerHTML = "";
 }
 
+function downloadPopUp(filename, text) {
+
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;base64,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+
+}
+
 async function downloadItem(node)
 {
     console.log(node)
     console.log("Download pornit pe nodul " + node.info.name);
+
+    let userID = localStorage.getItem("stol_owner_id");
+    let fileID = node.info.id;
+
+
+    let uploadRequestUrl = "http://127.0.0.1:3000/" + userID + '/download-request/' + fileID;
+    const response = await fetch(uploadRequestUrl, {
+        method: 'GET'
+    });
+    let requestResponseBuff = await response.json();
+
+    let requestResponse = requestResponseBuff['data'];
+    console.log(requestResponseBuff);
+    let numberOfChunks = requestResponse['number_of_chunks'];
+
+    let fileData = "";
+
+    for(let counter = 0; counter < numberOfChunks; counter++)
+    {
+        let chunkData;
+
+        for(let counter2 = 0; counter2 < numberOfChunks; counter2++)
+        {
+            if(counter === requestResponse['chunks'][counter2]['chunk_number'])
+            {
+                chunkData = requestResponse['chunks'][counter2];
+            }
+        }
+
+        console.log(chunkData);
+        let uploadRequestUrl = "http://127.0.0.1:3000/" + userID + '/download-chunk/' + chunkData['name'];
+
+        const response = await fetch(uploadRequestUrl, {
+            method: 'GET'
+        });
+
+        let result = await response.json();
+        fileData = fileData + result['data'];
+    }
+    console.log(fileData);
+    downloadPopUp(node.info.name, fileData);
+
 }
 
 async function removeItem(node)
