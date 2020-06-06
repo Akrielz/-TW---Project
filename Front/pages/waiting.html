@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Waiting</title>
+    <link href="../styles/style.css" rel="stylesheet" />
+    <script src="../scripts/address.js" type="application/javascript"></script>
+</head>
+<body>
+    <h1>Please wait until we process your request...</h1>
+    <form action="#" method="post">
+        <input name="target_cloud" type="hidden" value="#{target_cloud}">
+        <input name="owner_id" type="hidden">
+        <input name="access_token" type="hidden" value="#{access_token}">
+        <script src="../scripts/waiting.js" type="text/javascript"></script>
+        <input id="'hidden_click" onclick="doo()" style="display: none" type="submit">
+    </form>
+</body>
+</html>

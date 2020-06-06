@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title> Register Page </title>
+    <link href="../styles/style.css" rel="stylesheet" />
+    <script src="../scripts/address.js" type="application/javascript"></script>
+</head>
+<body>
+    <div class = "loginBackground">
+    </div>
+    <div class = "backgroundDim">
+    </div>
+
+    <div class = "registerForm">
+
+        <div class = "registerTitle">
+            <p> <u> <b> Register </b> </u> </p>
+        </div>
+
+        <div class = "inputFormRegister"> 
+            <form>
+                <label for = "username"> Username </label>
+                <input id="username" name="username" type= "text">
+
+                <label for = "email"> Email </label>
+                <input id="email" name="email" type= "text">
+                
+                <label for = "password"> Password </label>
+                <input id="password" name="password" type= "password">
+
+                <label for = "confirm_password"> Confirm Password </label>
+                <input id="confirm_password" name="confirm_password" type= "password">
+            </form>
+        </div>
+
+        <div class = "registerButtonSection">
+            <div class = "registerButtonCenter">
+                <a class="registerButton" href="#">
+                    <p class ="registerButtonText" onclick="registerFunction()">
+                        Create Account!
+                    </p> 
+                </a>
+            </div>
+        </div>
+
+        <script src="../scripts/register.js" type="application/javascript"></script>
+
+        <div class = "registerRedirect">
+            <p> <a href="prehome"> Back to PreHome </a> </p>
+            <p> <a href="login"> Already have an account? </a> </p>
+        </div>
+
+    </div>
+</body>
+</html>

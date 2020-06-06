@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tree</title>
+    <link href="../styles/style.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="../scripts/address.js" type="application/javascript"></script>
+    <script src="readFile.js" type="application/javascript"></script>
+    <script src="../scripts/directories.js" type="application/javascript"></script>
+</head>
+<body>
+
+    <div class= "settingsBackground">
+    </div>
+    <div class = "backgroundDim">
+    </div>
+    
+    <nav class = "navigationMenu">
+    <div>
+    <ul>
+        <li><a href="home" title="Home"> Home </a></li>
+        <li><a href="linking" title="Linking"> Linking </a></li>
+        <li><a href="history" title="My History"> My History </a></li>
+        <li><a href="file_manager" title="File Manager"> File Manager</a></li>
+        <li><a href="settings_1" title="Account Settings"> Account Settings</a></li>
+        <li><a href="prehome" title="Logout"> Logout </a></li>
+    </ul>
+    </div>
+    </nav>
+
+    <div class = "file-manager-frame">
+
+    <div class = "file-manager">
+        <div class="content_nav">
+            <a class="button" onclick="showNode(tree.root)">Root</a>
+            <a class="button" onclick="showNode(currentNode.parent)">Back</a>
+            <a class="button" id = "showTree">Show Tree</a>
+            <input placeholder="Search.." type="text">
+        </div>
+
+        <div class="side_nav">
+            <!--<pre id = "pre_info"></pre>-->
+            <div id = "tree_div"></div>
+        </div>
+
+        <div class = "full_content">
+            <div class="content_show" id = "content_show">
+
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script src="directories_util.js" type="application/javascript">
+    </script>
+
+</body>
+</html>

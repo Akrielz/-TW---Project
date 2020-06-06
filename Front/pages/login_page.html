@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title> Login Page </title>
+    <link href="../styles/style.css" rel="stylesheet" />
+    <script src="../scripts/address.js" type="application/javascript"></script>
+</head>
+<body>
+    <div class = "loginBackground">
+    </div>
+    <div class = "backgroundDim">
+    </div>
+
+    <div class = "loginForm">
+
+        <div class = "loginTitle">
+            <p> <u> <b> Sign In </b> </u> </p>
+        </div>
+
+        <div class = "inputFormLogin"> 
+        <form>
+            <label for = "username"> Username </label>
+            <input id="username" name="username" type="text">
+            
+            <label for = "password"> Password </label>
+            <input id="password" name="password" type="password">
+        </form>
+        </div>
+
+        <script src="../scripts/login.js" type="application/javascript"></script>
+
+        <div class= "loginButtonSection">
+        <div class = "flexContainer">
+            <div>
+                <a class = "loginButton" onclick="loginFunction()">
+                    <i class="arrow"> </i> 
+                </a>
+            </div>
+        </div>
+        </div>
+
+        <div class = "loginRedirect">
+            <p> <a href="prehome"> Back to PreHome </a> </p>
+            <p> <a href="register"> Don't have an account? </a> </p>
+        </div>
+
+    </div>
+</body>
+</html>

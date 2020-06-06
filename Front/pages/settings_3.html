@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Accout Settings</title>
+    <link href="../styles/style.css" rel="stylesheet" />
+    <script src="../scripts/address.js" type="application/javascript"></script>
+</head>
+<body onload="getValuesFromDatabase()">
+    <div class= "settingsBackground">
+    </div>
+    <div class = "backgroundDim">
+    </div>
+    
+    <nav class = "navigationMenu">
+    <div>
+        <ul>
+            <li><a href="home" title="Home"> Home </a></li>
+            <li><a href="linking" title="Linking"> Linking </a></li>
+            <li><a href="history" title="My History"> My History </a></li>
+            <li><a href="file_manager" title="File Manager"> File Manager</a></li>
+            <li><a href="settings_1" title="Account Settings"> Account Settings</a></li>
+            <li><a href="prehome" title="Logout"> Logout </a></li>
+        </ul>
+    </div>
+    </nav>
+
+    <div class = "settingsFrame">
+
+        <div class = "settingsMenu">
+            <nav class = "navigationSettings">
+            <div>
+                <ul>
+                    <li><a href="settings_1">
+                        <img alt = "logo personal info" class = "ico" src="../images/settings/personal_info2.svg">
+                        Personal Info
+                    </a></li>
+
+                    <li><a href="settings_2">
+                        <img alt = "logo account security" class = "ico" src="../images/settings/account_security.svg">
+                        Account Security
+                    </a></li>
+
+                    <li><a href="settings_3">
+                        <img alt = "logo clouds settings" class = "ico" src="../images/settings/clouds_settings.svg">
+                        Clouds Settings
+                    </a></li>
+
+                    <li><a href="settings_4">
+                        <img alt = "logo advanced settings" class = "ico" src="../images/settings/advanced_settings.svg">
+                        Bandwidth
+                    </a></li>
+                </ul>
+            </div>
+            </nav>
+        </div>
+
+
+        <div class = "settingsContent">
+        <div class = "settingsPersonalInfo">
+        
+            <div class = "settingsTopSide">
+                <p>Clouds Settings</p>
+                <button class="button" onclick="applyValues()">Apply</button>
+            </div>
+
+            <div class = "settingsBotSide">
+            <div class = "flexContainerSettings2">
+                <div> <br>
+                <label for="Upload method">Upload method</label>
+
+                <label class="container">
+                    Focus all the files uploaded towards the prefered cloud (if possible)
+                    <input checked="checked" id="checked1" name="radio" type="radio">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="container">
+                    Split the uploaded files in equal chunks for available clouds
+                    <input id="checked2" name="radio" type="radio">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="container">
+                    Split the uploaded files in chunks proportional to the size of each cloud
+                    <input id="checked3" name="radio" type="radio">
+                    <span class="checkmark"></span>
+                </label>
+                </div>
+
+                <div> <br>
+                    <label for="preferedOrder"> Preference Order</label>
+                    
+                    <div class = "flexContainerPreference">
+                    
+                    <div> <br>
+                        <img alt="Google Drive Logo" class="minilogo" src="../images/prehome/Google_Drive_Icon.png">
+                        <input id="preference1" max="3" min="1" name="quantity" type="number" value="1">
+                        <br>
+                    </div>
+                    
+                    <div> <br>
+                        <img alt="DropBox Logo" class="minilogo" src="../images/prehome/Dropbox_Icon.png">
+                        <input id="preference2" max="3" min="1" name="quantity" type="number" value="2">
+                        <br>
+                    </div>
+                    
+                    <div> <br>
+                        <img alt="Microsoft OneDrive" class="minilogo" src="../images/prehome/Microsoft_OneDrive_Icon.png">
+                        <input id="preference3" max="3" min="1" name="quantity" type="number" value="3">
+                        <br>
+                    </div> 
+                    
+                    </div>
+                </div>
+
+
+
+            </div>
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+    <script src="../scripts/settings3.js" type="application/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Accout Settings</title>
+    <link href="../styles/style.css" rel="stylesheet" />
+    <script src="../scripts/address.js" type="application/javascript"></script>
+</head>
+<body onload="getValuesFromDatabase()">
+    <div class= "settingsBackground">
+    </div>
+    <div class = "backgroundDim">
+    </div>
+    
+    <nav class = "navigationMenu">
+    <div>
+        <ul>
+            <li><a href="home" title="Home"> Home </a></li>
+            <li><a href="linking" title="Linking"> Linking </a></li>
+            <li><a href="history" title="My History"> My History </a></li>
+            <li><a href="file_manager" title="File Manager"> File Manager</a></li>
+            <li><a href="settings_1" title="Account Settings"> Account Settings</a></li>
+            <li><a href="prehome" title="Logout"> Logout </a></li>
+        </ul>
+    </div>
+    </nav>
+
+    <div class = "settingsFrame">
+
+        <div class = "settingsMenu">
+            <nav class = "navigationSettings">
+            <div>
+            <ul>
+                <li><a href="settings_1">
+                <img alt = "logo personal info" class = "ico" src="../images/settings/personal_info2.svg">
+                Personal Info 
+                </a></li>
+
+                <li><a href="settings_2">
+                <img alt = "logo account security" class = "ico" src="../images/settings/account_security.svg">
+                Account Security 
+                </a></li>
+
+                <li><a href="settings_3">
+                <img alt = "logo clouds settings" class = "ico" src="../images/settings/clouds_settings.svg">
+                Clouds Settings 
+                </a></li>
+                
+                <li><a href="settings_4">
+                <img alt = "logo advanced settings" class = "ico" src="../images/settings/advanced_settings.svg">
+                Bandwidth
+                </a></li>
+            </ul>
+            </div>
+            </nav>
+        </div>
+
+
+        <div class = "settingsContent">
+        <div class = "settingsPersonalInfo">
+        
+            <div class = "settingsTopSide">
+                <p>Personal Info</p>
+                <button class="button" onclick="applyValues()">Apply</button>
+            </div>
+
+            <div class = "settingsBotSide">
+            <div class = "flexContainerSettings">
+                <div> <br>
+                <label for="firstName"> First name</label>
+                <input id="firstName" name="firstName" type="text">
+                </div>
+
+                <div> <br>
+                <label for="lastName"> Last name</label>
+                <input id="lastName" name="lastName" type="text">
+                </div>
+
+                <div> <br>
+                <label for="gender"> Gender </label>
+                <input id="gender" name="gender" type="text">
+                </div>
+
+                <div> <br>
+                <label for="country"> Country </label>
+                <input id="country" name="country" type="text">
+                </div>
+
+                <div> <br>
+                <label for="birthday"> Birthday</label>
+                <input id="birthday" name="birthday" type="date">
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+    <script src="../scripts/settings1.js" type="application/javascript"></script>
+
+</body>
+</html>

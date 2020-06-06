@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Linking</title>
+    <link href="../styles/style.css" rel="stylesheet" />
+    <script src="../scripts/address.js" type="application/javascript"></script>
+</head>
+<body>
+    <script src="linking.js"></script>
+
+    <div class = "linkingBackground">
+    </div>
+    <div class = "backgroundDim">
+    </div>
+
+    <nav class = "navigationMenu">
+    <div>
+        <ul>
+            <li><a href="home" title="Home"> Home </a></li>
+            <li><a href="linking" title="Linking"> Linking </a></li>
+            <li><a href="history" title="My History"> My History </a></li>
+            <li><a href="file_manager" title="File Manager"> File Manager</a></li>
+            <li><a href="settings_1" title="Account Settings"> Account Settings</a></li>
+            <li><a href="prehome" title="Logout"> Logout </a></li>
+        </ul>
+    </div>
+    </nav>
+
+
+    <div class = "linkingFrame">
+    <div>
+    <div class = "flexContainerLinking">
+        <div>
+            <br><br>
+            <p> Google Drive </p>
+            <img alt="Google Drive Logo" class="logo accessCode" src="../images/prehome/Google_Drive_Icon.png">
+            <br><br>
+            <label for = "code1"> Access Code </label>
+            <input id="code1" name="code1" type="text">
+            <a class="button" href="#" id ="button3">Submit</a>
+            <br><br>
+            <p id = "status1"> Status: Not Linked </p>
+            <br><br>
+        </div>
+        <div>
+            <br><br>
+            <p> DropBox </p>
+            <img alt="DropBox Logo" class="logo accessCode" onclick="getAccess()" src="../images/prehome/Dropbox_Icon.png">
+            <br><br>
+            <label for = "code2"> Access Code </label>
+            <input id="code2" name="code2" type="text">
+            <a class="button" href="#" id ="button2" onclick="getToken()">Submit</a>
+            <br><br>
+            <p id = "status2"> Status: Not Linked </p>
+            <br><br>
+        </div>
+        <div>
+            <br><br>
+            <p> Microsoft OneDrive </p>
+            <img alt="Microsoft OneDrive" class="logo accessCode" src="../images/prehome/Microsoft_OneDrive_Icon.png">
+            <br><br>
+            <label for = "code3"> Access Code </label>
+            <input id="code3" name="code3" type="text">
+            <a class="button" href="#" id ="button3">Submit</a>
+            <br><br>
+            <p id = "status3"> Status: Not Linked </p>
+            <br><br>
+        </div> 
+    </div>
+    </div>
+    </div>
+
+</body>
+</html>
