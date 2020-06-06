@@ -55,7 +55,7 @@ async function getValuesFromDatabase()
     document.getElementById("total_data_downloaded").innerHTML = (myJson["statistics"]["total_download"]/(1024*1024*1024)).toFixed(2) + " GB";
     document.getElementById("name_statistics").innerHTML = myJson["name"] + "'s profile";
 
-    document.getElementById("total_space_consumed").innerHTML = "Space consumed: " + (((myJson["statistics"]["total_onedrive"] + myJson["statistics"]["total_google"] + myJson["statistics"]["total_dropbox"])/(1024*1024*1024))).toFixed(2) + "/" + ((myJson["bandwidth"]["storage_onedrive"] + myJson["bandwidth"]["storage_dropbox"] + myJson["bandwidth"]["storage_google"]) / 1024).toFixed(2) + "GB";
+    document.getElementById("total_space_consumed").innerHTML = "Space consumed: " + (((myJson["statistics"]["total_onedrive"] + myJson["statistics"]["total_google"] + myJson["statistics"]["total_dropbox"])/(1024*1024*1024))).toFixed(2) + "/" + ((myJson["bandwidth"]["storage_onedrive"] / 1024 + myJson["bandwidth"]["storage_dropbox"] / 1024 + myJson["bandwidth"]["storage_google"] / 1024)).toFixed(2) + "GB";
     document.getElementById("loadedBar0").innerHTML = (((myJson["statistics"]["total_onedrive"] + myJson["statistics"]["total_google"] + myJson["statistics"]["total_dropbox"])/(1024*1024*1024)) / ((myJson["bandwidth"]["storage_onedrive"] + myJson["bandwidth"]["storage_dropbox"] + myJson["bandwidth"]["storage_google"]) / 1024) * 100).toFixed(2) + "%";
 
     console.log(document.getElementById("total_space_one").innerHTML);

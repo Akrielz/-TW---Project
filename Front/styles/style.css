@@ -54,7 +54,7 @@ div.blankSpace {
     position: relative;
     width: 100%;
     height: 120px;
-    background-color: white;
+    background-color: rgba(0,0,0,0);
 }
 
 .button {
@@ -86,17 +86,17 @@ div.blankSpace {
     width: 10px;
     background-color:rgba(0,0,0,0.2);
 }
-  
+
 ::-webkit-scrollbar-track {
     background-color:rgba(0,0,0,0.5);
     border-radius: 25px;
 }
-   
+
 ::-webkit-scrollbar-thumb {
     background-color: rgba(66, 66, 66, 0.9);
     border-radius: 25px;
 }
-  
+
 ::-webkit-scrollbar-thumb:hover {
     background-color: rgb(55, 55, 55);
 }
@@ -113,7 +113,7 @@ div.prehomeStartTop {
 
 div.prehomeSubTitleBox {
     position: absolute;
-    left: 1300px;
+    right: 20px;
     top: 150px;
     width: 500px;
     height: 300px;
@@ -168,6 +168,62 @@ p.prehomeMotationText {
     opacity: 1;
 }
 
+@media only screen and (max-width: 800px){
+    div.prehomeSubTitleBox {
+        align-self: center;
+        text-align: center;
+        right: 0px;
+        width: 100%;
+    }
+    div.prehomeSubTitleBox p.prehomeStartTitle{
+        position: initial;
+        font-size: 60px;
+        text-align: center;
+    }
+    div.prehomeSubTitleBox p.prehomeStartSubTitle{
+        position: initial;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    div.prehomeStartTop{
+        height: 500px;
+    }
+
+    img.logo {
+        width: 120px;
+        height: 120px;
+    }
+
+    div.generalDescription {
+        margin: auto;
+        width: 80%;
+        padding: 10px;
+    }
+
+    div.prehomePreEnd {
+        position: relative;
+        width: 100%;
+        height: 0px;
+        background-image: url("../images/prehome/Digitalization.png");
+        background-size: 1920px 705px;
+    }
+
+    div.flexContainer p {
+        font-size: 12px;
+        position: relative;
+    }
+
+    div.flexContainer{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    div.blankSpace{
+        height: 60px;
+    }
+}
+
 /* LOGIN AND REGISTER STYLE */
 div.loginBackground {
     position: absolute;
@@ -196,7 +252,7 @@ div.loginForm {
     top: 15%;
     width: 30%;
     height: 70%;
-    border: 2px solid rgb(33, 33, 33);
+    border: 2px solid rgba(33, 33, 33, 1);
     background-color: rgba(66, 66, 66, 0.95);
     border-radius: 25px;
 }
@@ -232,7 +288,7 @@ div.registerTitle {
     left: 0px;
     top: 2%;
     width: 100%;
-    height: 8%;
+    height: auto;
 }
 
 div.registerTitle > p {
@@ -258,7 +314,7 @@ div.inputFormRegister {
     left: 0px;
     top: 5%;
     width: 100%;
-    height: 50%;
+    height: auto;
 }
 
 input[type=text] {
@@ -316,15 +372,15 @@ div.loginButtonSection {
     left: 0px;
     top: 5%;
     width: 100%;
-    height: 20%;
+    height: auto;
 }
 
 div.registerButtonSection {
     position: relative;
     left: 0px;
     width: 100%;
-    height: 80px;
-    top: 5%;
+    height: auto;
+    top: 8%;
 }
 
 div.loginRedirect {
@@ -467,6 +523,116 @@ div.registerRedirect > p > a {
     padding: 0px 2px;
 }
 
+
+@media only screen and (max-height: 920px){
+    div.loginForm{
+        position: absolute;
+        left: 0%;
+        top: 0%;
+        width: 100%;
+        height: 100%;
+        border: 0px solid rgba(33, 33, 33, 0);
+        background-color: rgba(66, 66, 66, 0);
+        border-radius: 25px;
+        overflow-y: hidden;
+    }
+}
+
+@media only screen and (max-width: 900px){
+    div.loginForm, div.registerForm {
+        position: absolute;
+        left: 0%;
+        top: 0%;
+        width: 100%;
+        height: 100%;
+        border: 0px solid rgba(33, 33, 33, 0);
+        background-color: rgba(66, 66, 66, 0);
+        border-radius: 25px;
+    }
+
+    div.registerForm {
+        overflow-x: hidden;
+    }
+}
+
+@media only screen and (max-height: 900px){
+    div.registerForm {
+        position: absolute;
+        left: 0%;
+        top: 0%;
+        width: 100%;
+        height: 100%;
+        border: 0px solid rgba(33, 33, 33, 0);
+        background-color: rgba(66, 66, 66, 0);
+        border-radius: 25px;
+        overflow-x: hidden;
+    }
+}
+
+@media only screen and (max-height: 520px){
+    div.loginForm{
+        position: absolute;
+        left: 0%;
+        top: 0%;
+        width: 100%;
+        height: 100%;
+        border: 0px solid rgba(33, 33, 33, 0);
+        background-color: rgba(66, 66, 66, 0);
+        border-radius: 25px;
+    }
+
+    div.loginTitle {
+        position: relative;
+        left: 0px;
+        top: 0%;
+        width: 100%;
+        height: 20%;
+    }
+
+    div.inputFormLogin {
+        position: relative;
+        left: 0px;
+        top: -10%;
+        width: 100%;
+        height: auto;
+    }
+
+    div.loginTitle {
+        position: relative;
+        left: 0px;
+        top: -10%;
+        width: 100%;
+        height: auto;
+    }
+
+    div.loginButtonSection {
+        position: absolute;
+        left: -40px;
+        top: 65%;
+        width: 50%;
+        height: auto;
+    }
+
+    div.loginRedirect {
+        position: absolute;
+        left: 0px;
+        top: 70%;
+        width: 90%;
+        height: 15%;
+        text-align: right;
+    }
+}
+
+@media only screen and (max-height: 420px){
+    div.inputFormLogin {
+        position: relative;
+        left: 0px;
+        top: -20%;
+        width: 100%;
+        height: auto;
+    }
+}
+
 /* NAVIGATION MENU STYLE */
 
 nav.navigationMenu {
@@ -505,11 +671,11 @@ nav.navigationMenu ul {
 
 nav.navigationMenu ul li {
     background-image: linear-gradient(
-      to bottom,
-      transparent 50%,
-      rgba(68,140,203, 1) 50%,
-      rgba(68,140,203,1) 95%,
-      rgba(0,114,188,1) 95%
+            to bottom,
+            transparent 50%,
+            rgba(68,140,203, 1) 50%,
+            rgba(68,140,203,1) 95%,
+            rgba(0,114,188,1) 95%
     );
     flex: 1 1 auto;
     background-size: 100% 200%;
@@ -542,7 +708,7 @@ nav.navigationMenu ul li a:hover {
 /* HOME STYLE */
 
 div.preStatistics {
-    position: absolute;
+    position: relative;
     left: 15%;
     width: 70%;
     height: 16%;
@@ -557,7 +723,7 @@ div.preStatistics p {
 }
 
 div.statistics {
-    position: absolute;
+    position: relative;
     left: 15%;
     width: 70%;
     height: 700px;
@@ -585,13 +751,13 @@ div.procentExplainer p{
 }
 
 div.progressBar {
-	position: absolute;
-	background: #555;
-	-moz-border-radius: 25px;
-	-webkit-border-radius: 25px;
-	border-radius: 25px;
-	padding: 10px;
-	box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+    position: absolute;
+    background: #555;
+    -moz-border-radius: 25px;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    padding: 10px;
+    box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
     width: 100%;
     left: -3.5%;
 }
@@ -609,9 +775,9 @@ div.loadedBar {
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     background-color: rgb(43,194,83);
-    box-shadow: 
-        inset 0 2px 9px  rgba(255,255,255,0.3),
-        inset 0 -2px 6px rgba(0,0,0,0.4);
+    box-shadow:
+            inset 0 2px 9px  rgba(255,255,255,0.3),
+            inset 0 -2px 6px rgba(0,0,0,0.4);
     position: relative;
     overflow: hidden;
 }
@@ -723,7 +889,7 @@ div.pie {
 }
 
 div.homeBackground {
-    position: absolute;
+    position: fixed;
     left: 0px;
     top: 0px;
     width: 100%;
@@ -731,6 +897,104 @@ div.homeBackground {
     background-image: url("../images/home/home_background3.png");
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+
+@media only screen and (max-width: 1000px){
+    div.preStatistics {
+        position: relative;
+    }
+
+    div.preStatistics p {
+        position: relative;
+        font-size: 28px;
+        color: white;
+    }
+
+    #statistic0, #statistic1, #statistic2,
+    #statistic3, #statistic4, #statistic5,
+    #statistic6, #statistic7, #statistic8 {
+        position: relative;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        margin-bottom: 8%;
+        height: 25%;
+    }
+
+    #statistic5 {
+        height: 90%;
+    }
+
+    div.pieFrame {
+        position: absolute;
+        top: 20%;
+        width: 100%;
+        height: 90%;
+    }
+
+    #statistic0 p, #statistic1 p, #statistic2 p,
+    #statistic3 p, #statistic4 p, #statistic5 p,
+    #statistic6 p, #statistic7 p, #statistic8 p {
+        top: 0%;
+        font-size: 20px;
+    }
+
+    div.statistics {
+        position: relative;
+        left: 15%;
+        width: 70%;
+        height: 700px;
+        top: 24%;
+    }
+}
+
+@media only screen and (max-width: 400px){
+    div.preStatistics {
+        position: relative;
+    }
+
+    div.preStatistics p {
+        position: relative;
+        font-size: 28px;
+        color: white;
+    }
+
+    #statistic0, #statistic1, #statistic2,
+    #statistic3, #statistic4, #statistic5,
+    #statistic6, #statistic7, #statistic8 {
+        position: relative;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        margin-bottom: 8%;
+        height: 18%;
+    }
+
+    #statistic5 {
+        height: 45%;
+    }
+
+    div.pieFrame {
+        position: absolute;
+        top: 20%;
+        width: 100%;
+        height: 90%;
+    }
+
+    #statistic0 p, #statistic1 p, #statistic2 p,
+    #statistic3 p, #statistic4 p, #statistic5 p,
+    #statistic6 p, #statistic7 p, #statistic8 p {
+        font-size: 15px;
+    }
+
+    div.statistics {
+        position: relative;
+        left: 15%;
+        width: 70%;
+        height: 700px;
+        top: 24%;
+    }
 }
 
 /* LINKING STYLE */
@@ -913,11 +1177,11 @@ nav.navigationSettings ul li:hover {
     transform: scale(1.05);
     transition: all .25s ease-in-out;
     background-image: linear-gradient(
-      to bottom,
-      transparent 50%,
-      rgba(68,140,203, 1) 50%,
-      rgba(68,140,203, 1) 95%,
-      rgba(0 ,114,188, 1) 95%
+            to bottom,
+            transparent 50%,
+            rgba(68,140,203, 1) 50%,
+            rgba(68,140,203, 1) 95%,
+            rgba(0 ,114,188, 1) 95%
     );
 }
 
@@ -991,7 +1255,7 @@ div.settingsBotSide::-webkit-scrollbar-thumb {
     background-color: rgba(200, 200, 200, 0.8);
     border-radius: 25px;
 }
-  
+
 div.settingsBotSide::-webkit-scrollbar-thumb:hover {
     background-color: rgb(55, 55, 55);
 }
@@ -1000,7 +1264,7 @@ div.settingsBotSide::-webkit-scrollbar {
     width: 10px;
     background-color:rgba(0,0,0,0.2);
 }
-  
+
 div.settingsBotSide::-webkit-scrollbar-track {
     background-color:rgba(0,0,0,0.5);
     border-radius: 25px;
@@ -1080,9 +1344,9 @@ div.settingsBotSide::-webkit-scrollbar-track {
 
 [class^="flexContainerSettings"] input[type="date"] {
     position: relative;
-    background: rgba(44, 44, 44, 0) 
-        url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png) 
-        92% 50% no-repeat;
+    background: rgba(44, 44, 44, 0)
+    url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)
+    92% 50% no-repeat;
     color: white;
     width: 115%;
     padding: 12px 20px;
@@ -1136,7 +1400,7 @@ div.settingsBotSide::-webkit-scrollbar-track {
     background-color: #eee;
     border-radius: 50%;
 }
-  
+
 [class^="flexContainerSettings"] .container:hover input ~ .checkmark {
     background-color: #ccc;
 }
