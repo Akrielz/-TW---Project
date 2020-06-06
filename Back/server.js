@@ -75,7 +75,6 @@ async function parseGetRequest(req, dbHandler) {
         }
 
         if(parsedURL[2] === "user" && parsedURL[3] === "1") {
-            console.log(parsedURL[1]);
             let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
             let userJSON = userTEMP[0];
             console.log(userJSON);
