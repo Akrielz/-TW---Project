@@ -47,6 +47,9 @@ async function uploadFile(userID, folderID, filePath)
     let fileChunks = (fileSizeInBytes / 1024) + (fileSizeInBytes % 1024 !== 0);
     fileChunks = fileChunks - fileChunks % 1;
 
+    console.log("File chunks: " + fileChunks);
+    console.log("File Size: " + fileSizeInBytes);
+
     let uploadRequestUrl = defaultUrl + '/' + userID + '/upload-request';
     const response = await fetch(uploadRequestUrl, {
         method: 'POST',
@@ -62,7 +65,7 @@ async function uploadFile(userID, folderID, filePath)
     fs.readFile(filePath, async (err, data) => {
         for(let counter = 0; counter < fileChunks; counter++)
         {
-
+            console.log(data.length)
             let x = counter * 1024;
             let y = counter * 1024 + 1024;
             if(y >= fileSizeInBytes)
@@ -189,8 +192,8 @@ async function UnitTester()
     const fs = require("fs");
     const fetch = require('node-fetch');
 
-    await createUser("test@gmail.com", "k0kalaru47", "420hecar69");
-    let result = await sendLogin("", "k0kalaru47", "420hecar69");
+    //await createUser("test@gmail.com", "ruben23", "b04e95d0b09d1c3846dc2c1df871b44c780a47844534e36cfee5212f181660ae");
+    let result = await sendLogin("", "ruben23", "b04e95d0b09d1c3846dc2c1df871b44c780a47844534e36cfee5212f181660ae");
 
     console.log(result);
 
@@ -201,10 +204,10 @@ async function UnitTester()
     //await fs.unlinkSync("C:\\Users\\rsimion\\Desktop\\proof2.png");
 
     setTimeout(async () => {
-        await downloadFile(result['owner_id'], fileUploadResult, "C:\\Users\\rsimion\\Desktop\\target");
+        //await downloadFile(result['owner_id'], fileUploadResult, "C:\\Users\\rsimion\\Desktop\\target");
 
         setTimeout(async () => {
-            await removeFile(fileUploadResult, result['owner_id'], result['root']);
+            //await removeFile(fileUploadResult, result['owner_id'], result['root']);
         }, 3000);
 
     }, 3000);

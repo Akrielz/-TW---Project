@@ -86,7 +86,7 @@ class Tree{
     }
 }
 
-function generateTree(json) {
+async function generateTree(json) {
     console.log("started to generate Tree");
     var pre_tree = JSON.parse(json);
     var pre_root = pre_tree.root;
@@ -98,17 +98,18 @@ function generateTree(json) {
     var t = [];
     var current_node;
     var current_element;
-    s.push(pre_root);
-    t.push(tree_root);
+    await s.push(pre_root);
+    await t.push(tree_root);
     while(s.length > 0){
-        current_element = s.pop();
-        current_node = t.pop();
-        for (var child of current_element.childs){
-            s.push(child);
-            var child_node = new Node(child.info);
-            current_node.addChild(child_node);
-            t.push(child_node);
-        }
+        current_element = await s.pop();
+        current_node = await t.pop();
+        if("childs" in current_element)
+            for (var child of current_element.childs){
+                s.push(child);
+                var child_node = new Node(child.info);
+                current_node.addChild(child_node);
+                t.push(child_node);
+            }
     }
     return new Tree(tree_root);
 }
@@ -145,9 +146,7 @@ function element(node) {
     }
     else{
         if(node.type==="new_file") {
-            element.onclick = () => {
-                console.log("creating new " + node.type);
-            }
+            element.onclick = () => uploadFile(node);
         }
         else{
             element.onclick = () => createFolder(node);
@@ -156,6 +155,75 @@ function element(node) {
 
     return element;
 }
+
+let uploadChunks = async function(file, folderID, readerEvent)
+{
+    let content = readerEvent.target.result; // this is the content!
+    console.log(content);
+
+    let fileSizeInBytes = content.length;
+    console.log("Size in bytes: " + fileSizeInBytes + " " + file.size);
+    let fileName = file.name;
+    console.log("File name: " + fileName);
+
+    let fileChunks = (fileSizeInBytes / 1024) + (fileSizeInBytes % 1024 !== 0);
+    fileChunks = fileChunks - fileChunks % 1;
+    console.log("File chunks: " + fileChunks);
+
+    let userID = localStorage.getItem("stol_owner_id");
+    let uploadRequestUrl = "http://127.0.0.1:3000" + '/' + userID + '/upload-request';
+
+    const response = await fetch(uploadRequestUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({owner_id : userID, folder_id : folderID, name : fileName, file_size : fileSizeInBytes, number_of_chunks : fileChunks})
+    });
+    let requestResponse = await response.json();
+
+    for(let counter = 0; counter < fileChunks; counter++)
+    {
+        let x = counter * 1024;
+        let y = counter * 1024 + 1024;
+        if(y >= fileSizeInBytes)
+            y = fileSizeInBytes;
+
+        let buffer = content.slice(x, y);
+
+        let dataToUpload = btoa(buffer);
+
+        let uploadRequestUrl = "http://127.0.0.1:3000" + '/' + userID + '/upload-chunk';
+        const response = await fetch(uploadRequestUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({owner_id : userID, file_id: requestResponse['ID'], chunk_number : counter, data : dataToUpload, data_size : dataToUpload.length, md5 : "dummy"})
+        });
+        let result = await response.json();
+        console.log(result);
+    }
+
+}
+
+let uploadFile = async function(node) {
+    console.log("creating new " + node.type);
+    const input = document.createElement('input');
+    input.type = 'file';
+
+    input.onchange = async e => {
+        const file = e.target.files[0];
+        console.log(file);
+
+        const reader = new FileReader();
+        await reader.readAsBinaryString(file);
+        reader.onload = (readerEvent) => uploadChunks(file, node.parent.info.id, readerEvent);
+    }
+
+    input.click();
+}
+
 
 let createFolder = async function(node){
     let uid = localStorage.getItem("stol_owner_id");
@@ -192,14 +260,52 @@ function hideContent(){
     cont.innerHTML = "";
 }
 
+async function downloadItem(node)
+{
+    console.log(node)
+    console.log("Download pornit pe nodul " + node.info.name);
+}
+
+async function removeItem(node)
+{
+    console.log(node)
+
+    let uid = localStorage.getItem("stol_owner_id");
+    let url = "http://127.0.0.1:3000/" + uid + "/remove-file";
+
+    let response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({owner_id : uid, file_id : node.info.id, folder_id : node.parent.info.id})
+    });
+    const myJson = await response.json();
+
+    console.log(myJson);
+}
+
+
 function content(node){
     let content = document.createElement('div');
     content.className = 'content flexContainer';
 
     if(node.info.type === "file"){
-        let p = document.createElement('p');
-        p.innerText = "TODO preview...";
-        content.appendChild(p);
+
+        content.appendChild(document.createElement('br'));
+
+        let btnRemove = document.createElement("BUTTON");   // Create a <button> element
+        btnRemove.innerHTML = " Remove Item ";
+        btnRemove.onclick = () => removeItem(node);
+        content.appendChild(btnRemove);
+
+        content.appendChild(document.createElement('br'));
+
+        let btnDownload = document.createElement("BUTTON");   // Create a <button> element
+        btnDownload.innerHTML = "Download Item";
+        btnDownload.onclick = () => downloadItem(node);
+        content.appendChild(btnDownload);
+
         return content;
     }
 
