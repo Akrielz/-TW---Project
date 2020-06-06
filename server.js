@@ -1,6 +1,6 @@
 const HTTP = require('http');
 const HOSTNAME = '127.0.0.1';
-const PORT = 3002;
+const PORT = 3001;
 
 async function parseGetRequest(req, dbHandler) {
     const {v4: uuidv4} = require('uuid');
