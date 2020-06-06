@@ -185,7 +185,7 @@ let uploadChunks = async function(file, folderID, readerEvent)
     console.log("File chunks: " + fileChunks);
 
     let userID = localStorage.getItem("stol_owner_id");
-    let uploadRequestUrl = "http://127.0.0.1:3000" + '/' + userID + '/upload-request';
+    let uploadRequestUrl = "http://127.0.0.1:3001" + '/' + userID + '/upload-request';
 
     const response = await fetch(uploadRequestUrl, {
         method: 'POST',
@@ -205,7 +205,7 @@ let uploadChunks = async function(file, folderID, readerEvent)
 
         let buffer = content.slice(x, y);
 
-        let uploadRequestUrl = "http://127.0.0.1:3000" + '/' + userID + '/upload-chunk';
+        let uploadRequestUrl = "http://127.0.0.1:3001" + '/' + userID + '/upload-chunk';
         const response = await fetch(uploadRequestUrl, {
             method: 'POST',
             headers: {
@@ -246,7 +246,7 @@ let createFolder = async function(node){
     if (folder == null || folder === "") {
         alert("Folder creation cancelled");
     } else {
-        let url = "http://127.0.0.1:3000/" + uid + "/create-dir";
+        let url = "http://127.0.0.1:3001/" + uid + "/create-dir";
         let options = {
             method: "POST",
             headers: {
@@ -297,7 +297,7 @@ async function downloadItem(node)
     let fileID = node.info.id;
 
 
-    let uploadRequestUrl = "http://127.0.0.1:3000/" + userID + '/download-request/' + fileID;
+    let uploadRequestUrl = "http://127.0.0.1:3001/" + userID + '/download-request/' + fileID;
     const response = await fetch(uploadRequestUrl, {
         method: 'GET'
     });
@@ -322,7 +322,7 @@ async function downloadItem(node)
         }
 
         console.log(chunkData);
-        let uploadRequestUrl = "http://127.0.0.1:3000/" + userID + '/download-chunk/' + chunkData['name'];
+        let uploadRequestUrl = "http://127.0.0.1:3001/" + userID + '/download-chunk/' + chunkData['name'];
 
         const response = await fetch(uploadRequestUrl, {
             method: 'GET'
@@ -341,7 +341,7 @@ async function removeItem(node)
     console.log(node)
 
     let uid = localStorage.getItem("stol_owner_id");
-    let url = "http://127.0.0.1:3000/" + uid + "/remove-file";
+    let url = "http://127.0.0.1:3001/" + uid + "/remove-file";
 
     let response = await fetch(url, {
         method: 'DELETE',
@@ -397,7 +397,7 @@ function content(node){
 
 async function getJsonTree(){
     let uid = localStorage.getItem("stol_owner_id");
-    let url = "http://127.0.0.1:3000/" + uid + "/tree";
+    let url = "http://127.0.0.1:3001/" + uid + "/tree";
     let response = await fetch(url);
     return response.json();
 }
