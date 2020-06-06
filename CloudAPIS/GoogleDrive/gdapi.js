@@ -103,16 +103,25 @@ class Server {
 
             while(!obj) await sleep(100);
             obj.refresh = q.refresh;
+            obj.code = q.code;
             //console.log(URL.parse(req.url, true));
 
             if(path === "/users"){
                 console.log(JSON.stringify(obj));
                 //body = JSON.parse(JSON);
                 if(!obj.refresh){
-                    res.writeHead(400,predefinedHead);
-                    res.write('{"message":"Bad request: refresh not provided"}');
-                    res.end();
-                    return;
+                    if(obj.code){
+                        console.log("found the code");
+                        let codes = await serv.getRefreshToken(obj.code);
+                        console.log(codes);
+                        obj.refresh = codes.refresh;
+                    }
+                    else {
+                        res.writeHead(400, predefinedHead);
+                        res.write('{"message":"Bad request: refresh/code not provided"}');
+                        res.end();
+                        return;
+                    }
                 }
                 if(req.method === "POST"){
                     serv.createUser(obj.refresh).then(x =>{
@@ -124,7 +133,7 @@ class Server {
                                 break;
                             case 1:
                                 res.writeHead(200,predefinedHead);
-                                res.write('{"message":"created"}');
+                                res.write('{"message":"created","refresh":"' + obj.refresh + '"}');
                                 res.end();
                                 break;
                             case -1:
@@ -339,6 +348,48 @@ class Server {
         while (!this.db_on) await sleep(100);
         this.db.insert(user).then(r => console.log(r));
         return 1;
+    }
+
+    async getRefreshToken(access_code){
+        let form = {
+            code: access_code,
+            grant_type: "authorization_code",
+            redirect_uri: "http://localhost:3000/linking?target=gd",
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret
+        };
+        let formData = queryString.stringify(form);
+        let data = "";
+        let obj = 0;
+        let req = await HTTPS.request(
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": formData.length
+                },
+                hostname: "oauth2.googleapis.com",
+                path: "/token",
+                method: "POST",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    console.log(data);
+                    obj = {};
+                    obj.access = JSON.parse(data)['access_token'];
+                    obj.refresh = JSON.parse(data)['refresh_token'];
+                });
+            }
+        );
+        await req.write(formData);
+        await req.end();
+        let ok = 0;
+        while(!ok){
+            if(obj){ok=1;}
+            await sleep(100);
+        }
+        return obj;
     }
 }
 let server = new Server();

@@ -43,3 +43,61 @@ function getToken(){
         console.error('Error:', error);
     });
 }
+
+async function getFromDatabase(){
+    let userId = localStorage.getItem("stol_owner_id");
+
+    let url = backAddress + userId + '/user/accounts';
+    const response = await fetch(url);
+    const myJson = await response.json();
+
+    console.log(myJson);
+
+    let accounts = myJson.accounts;
+    for(let acc of accounts){
+        if(acc.cloud === "gd") disable(1);
+        if(acc.cloud === "db") disable(2);
+        if(acc.cloud === "od") disable(3);
+    }
+}
+
+function disable(index){
+    let input = document.getElementById('code' + index);
+    let button = document.getElementById('button' + index);
+    let text = document.getElementById("status" + index);
+
+    input.disabled = true;
+
+    button.disabled = true;
+    button.style.backgroundColor = "rgb(44, 44, 44)";
+    button.style.cursor = "context-menu";
+    button.innerHTML = "Already Submited";
+
+    text.innerHTML = "STATUS: LINKED";
+
+}
+
+async function sendGD(){
+    let owner_id = localStorage.getItem("stol_owner_id");
+    let code = document.getElementById('code1').value;
+    if(code.length < 10){alert("The code provided is not valid!");}
+    let url = backAddress + owner_id + "/accounts";
+    let body=JSON.stringify({
+        "owner_id":owner_id,
+        "access_code":code,
+        "target":"gd"
+    });
+    let options = {
+        method:"POST",
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body:body
+    };
+    let response = await fetch(url,options);
+    if(response){
+        document.location.reload();
+    }else{
+        alert("Something went wrong!");
+    }
+}
