@@ -360,6 +360,23 @@ class DatabaseHandler
 
         return tree;
     }
+
+    async GetUserAccounts(owner_id) {
+        let userTemp = await this.GetFromUsersDataBaseByUserID(owner_id);
+        let user = userTemp[0];
+
+        return user.accounts;
+    }
+
+    async InsertIntoUserAccounts(owner_id, account){
+        console.log("DATABASE: id: " + owner_id);
+        console.log("DATABASE: acc: " + JSON.stringify(account));
+        let collection = this.Database.collection('Users');
+        let newData = {$push:{accounts:account}};
+
+        collection.updateOne({owner_id:owner_id},newData);
+
+    }
 }
 
 async function UnitTesting()

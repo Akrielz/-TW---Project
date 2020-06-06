@@ -7,8 +7,7 @@
     <link href="../styles/style.css" rel="stylesheet" />
     <script src="../scripts/address.js" type="application/javascript"></script>
 </head>
-<body>
-    <script src="linking.js"></script>
+<body onload="getFromDatabase()">
 
     <div class = "linkingBackground">
     </div>
@@ -35,11 +34,11 @@
         <div>
             <br><br>
             <p> Google Drive </p>
-            <img alt="Google Drive Logo" class="logo accessCode" src="../images/prehome/Google_Drive_Icon.png">
+            <img alt="Google Drive Logo" class="logo accessCode" onclick="redirect('gd')" src="../images/prehome/Google_Drive_Icon.png">
             <br><br>
             <label for = "code1"> Access Code </label>
             <input id="code1" name="code1" type="text">
-            <a class="button" href="#" id ="button3">Submit</a>
+            <a class="button" href="#" id ="button1" onclick="sendGD()">Submit</a>
             <br><br>
             <p id = "status1"> Status: Not Linked </p>
             <br><br>
@@ -59,7 +58,7 @@
         <div>
             <br><br>
             <p> Microsoft OneDrive </p>
-            <img alt="Microsoft OneDrive" class="logo accessCode" src="../images/prehome/Microsoft_OneDrive_Icon.png">
+            <img alt="Microsoft OneDrive" class="logo accessCode" onclick="redirect('od')" src="../images/prehome/Microsoft_OneDrive_Icon.png">
             <br><br>
             <label for = "code3"> Access Code </label>
             <input id="code3" name="code3" type="text">
@@ -72,5 +71,7 @@
     </div>
     </div>
 
+    <script src="../scripts/linking.js"></script>
+    <script src="../scripts/linking2.js"></script>
 </body>
 </html>
