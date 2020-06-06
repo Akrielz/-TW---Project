@@ -9,17 +9,9 @@ let currentNode;
 let navMap = new Map();
 let contentMap = new Map();
 
-/*
-
-readTextFile("tree.json",async function (text) {
-    json = text;
-    tree = await generateTree(json);
-    showNode(tree.root);
-});
-*/
-
 async function initTree(){
     json = await getJsonTree();
+    console.log(json);
     tree = await generateTree(JSON.stringify(json));
     showNode(tree.root);
 }

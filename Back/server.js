@@ -2,8 +2,6 @@ const HTTP = require('http');
 const HOSTNAME = '127.0.0.1';
 const PORT = 3001;
 
-const {clouds} = require("./clouds");
-
 async function parseGetRequest(req, dbHandler) {
     const {v4: uuidv4} = require('uuid');
 
@@ -77,7 +75,6 @@ async function parseGetRequest(req, dbHandler) {
         }
 
         if(parsedURL[2] === "user" && parsedURL[3] === "1") {
-            console.log(parsedURL[1]);
             let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
             let userJSON = userTEMP[0];
             console.log(userJSON);
@@ -123,12 +120,6 @@ async function parseGetRequest(req, dbHandler) {
             resolve();
         }
 
-        if(parsedURL[2] === "user" && parsedURL[3] === "accounts") {
-            let accounts = await dbHandler.GetUserAccounts(parsedURL[1]);
-            resultJSON = JSON.stringify({Status: "OK", accounts:accounts});
-            resolve();
-        }
-
     }).then( async () => {
 
         if (resultJSON === "") {
@@ -141,8 +132,6 @@ async function parseGetRequest(req, dbHandler) {
 
 async function parsePostRequest(req, dbHandler) {
     let parsedURL = req.url.split("/");
-
-    console.log(JSON.stringify(parsedURL));
 
     let data = "";
     let resultJSON = "";
@@ -188,7 +177,6 @@ async function parsePostRequest(req, dbHandler) {
             jsonObject["statistics"].total_onedrive = 0;
             jsonObject["statistics"].total_dropbox = 0;
 
-            jsonObject.accounts = [];
 
             // TODO: de verificat daca mail-ul nu este deja folosit, trebuie scrisa o functie noua pentru DB
 
@@ -204,22 +192,6 @@ async function parsePostRequest(req, dbHandler) {
             await dbHandler.InsertIntoFolderDataBase(folderJSON);
 
             resultJSON = JSON.stringify({Status: "OK", Message: "User created! Please login!"});
-        }
-
-        if (parsedURL[2] === "accounts" && parsedURL[1] === jsonObject['owner_id']) {
-            console.log("we-re here");
-            let code = jsonObject['access_code'];
-            let target = jsonObject['target'];
-            let owner_id = jsonObject['owner_id'];
-
-            let ok = await createCloudUser(owner_id,target,code,dbHandler);
-
-            if(ok){
-                resultJSON = JSON.stringify({Status: "OK"});
-            }
-            else{
-                resultJSON = JSON.stringify({Status:"error"});
-            }
         }
 
         if (parsedURL[2] === "upload-request" && parsedURL[1] === jsonObject['owner_id']) {
@@ -449,14 +421,6 @@ async function parseDeleteRequest(req, dbHandler) {
     return resultJSON;
 }
 
-async function createCloudUser(owner_id,target,code,db){
-    let cloud = new clouds(target);
-    let refresh = await cloud.createUserByCode(code);
-    if(!refresh) return 0;
-    await db.InsertIntoUserAccounts(owner_id, {cloud:target,refresh:code});
-    return 1;
-}
-
 
 async function main() {
 
@@ -468,7 +432,7 @@ async function main() {
 
     setTimeout(async () => {
         HTTP.createServer((req, res) => {
-            console.log("dafuq");
+
             if (req.url) {
                 console.log("Mare request incoming");
                 console.log("=============================================================================");
