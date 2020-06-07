@@ -4,6 +4,23 @@ function toDateTime(miliSecs) {
     return t;
 }
 
+async function removeAction(action)
+{
+    console.log("God bless")
+    console.log(action);
+    let id = localStorage.getItem("stol_owner_id");
+    let url = backAddress + id + '/remove-action';
+    console.log(action.id);
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({owner_id: id, action_id: action.id})
+    });
+    return await response.json();
+}
+
 function createTimeDivider(title, historyElements){
     let historyPanel = document.getElementsByClassName("historyPanel")[0];
     let timeDivider = document.createElement("div");
@@ -29,20 +46,19 @@ function createTimeDivider(title, historyElements){
 
         let elementTime = document.createElement("div");
         elementTime.classList.add("elementTime");
-
-        let postMeridian = parseInt(historyElements[i].time.getHours/12);
-        
+ 
         let date = toDateTime(historyElements[i].time);
+        let postMeridian = parseInt(date.getHours()/12);
         let timeFormated;
         if (postMeridian){
             timeFormated = (date.getHours()-12) + ":";
             timeFormated += date.getMinutes();
-            timeFormated += " PM";
+            timeFormated += "PM";
         }
         else{
-            timeFormated = (date.getHours()-12) + ":";
+            timeFormated = date.getHours() + ":";
             timeFormated += date.getMinutes();
-            timeFormated += " AM";
+            timeFormated += "AM";
         }
         elementTime.innerHTML = "<p>" + timeFormated + "</p>";
 
@@ -59,15 +75,20 @@ function createTimeDivider(title, historyElements){
         closeImg.alt = "close";
         
         aClose.appendChild(closeImg);
-        aClose.addEventListener('click', () => {
-            timeDivider.removeChild(elements[i]);
-            contor++;
+        aClose.addEventListener('click', () =>  {
 
-            elements[i] = undefined;
+            removeAction(historyElements[i]).then((result) => {
+                console.log(result)
+                timeDivider.removeChild(elements[i]);
+                contor++;
 
-            if (contor == historyElements.length){
-                historyPanel.removeChild(timeDivider);
-            }
+                elements[i] = undefined;
+
+                if (contor === historyElements.length){
+                    historyPanel.removeChild(timeDivider);
+                }
+            });
+
         });
 
         elementButtons.appendChild(aClose);
@@ -103,12 +124,24 @@ function splitOnTimeDividers(historyElements){
     }
 }
 
-//Astea vor fi datele preluate de la server
-let historyElements = [
-    {type : "T1", name : "N1", time : 1590936937383},
-    {type : "T2", name : "N2", time : 1590934939383},
-    {type : "T3", name : "N3", time : 1590954934383},
-    {type : "T4", name : "N4", time : 1590534934383}
-];
+async function getHistoryFromServer()
+{
+    let id = localStorage.getItem("stol_owner_id");
+    let url = backAddress + id + "/history";
+    console.log(url)
+    const response = await fetch(url);
 
-splitOnTimeDividers(historyElements);
+    let myJSON = await response.json();
+    console.log(myJSON);
+    return myJSON["actions"];
+}
+let historyElements;
+
+async function split()
+{
+    historyElements = await getHistoryFromServer();
+    splitOnTimeDividers(historyElements);
+}
+split();
+
+

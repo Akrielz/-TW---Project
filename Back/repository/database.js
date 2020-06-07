@@ -184,6 +184,27 @@ class DatabaseHandler
         return result.toArray();
     }
 
+    async GetAllFolders()
+    {
+        let collection = this.Database.collection('Folders');
+        let result = await collection.find();
+        return result.toArray();
+    }
+
+    async GetAllFiles()
+    {
+        let collection = this.Database.collection('Files');
+        let result = await collection.find();
+        return result.toArray();
+    }
+
+    async GetAllActions()
+    {
+        let collection = this.Database.collection('Actions');
+        let result = await collection.find();
+        return result.toArray();
+    }
+
     async DeleteFromFolderDataBase(folderID)
     {
         this.Database.collection('Folders', function (err, collection) {
@@ -377,6 +398,97 @@ class DatabaseHandler
         collection.updateOne({owner_id:owner_id},newData);
 
     }
+
+    async AddUsers(json)
+    {
+        let collection = this.Database.collection('Users');
+
+        json.forEach((item) => collection.insert(item));
+
+        return true;
+    }
+
+    async AddFolders(json)
+    {
+        let collection = this.Database.collection('Folders');
+
+        json.forEach((item) => collection.insert(item));
+
+        return true;
+    }
+
+    async AddFiles(json)
+    {
+        let collection = this.Database.collection('Files');
+
+        json.forEach((item) => collection.insert(item));
+
+        return true;
+    }
+
+    async AddActions(json)
+    {
+        let collection = this.Database.collection('Actions');
+
+        json.forEach((item) => collection.insert(item));
+
+        return true;
+    }
+
+    async dumpData()
+    {
+        console.log("Dump users started");
+        let users = await this.GetAllUsers();
+        console.log("Dump users done");
+        console.log("Dump folders started");
+        let folders = await this.GetAllFolders();
+        console.log("Dump folders done");
+        console.log("Dump actions started");
+        let actions = await this.GetAllActions();
+        console.log("Dump actions done");
+        console.log("Dump files started");
+        let files = await this.GetAllFiles();
+        console.log("Dump files done");
+
+        return JSON.stringify({users: users, folders: folders, actions: actions, files: files});
+    }
+
+    async importData(json)
+    {
+        if ("folders" in json)
+        {
+            await this.AddFolders(json['folders']);
+        }
+        if("users" in json)
+        {
+            await this.AddUsers(json['users']);
+        }
+        if("files" in json)
+        {
+            await this.AddFiles(json['files']);
+        }
+        if("actions" in json)
+        {
+            await this.AddActions(json["actions"]);
+        }
+    }
+
+    async removeData()
+    {
+        let collection = this.Database.collection('Actions');
+        await collection.remove({});
+
+        collection = this.Database.collection('Folders');
+        await collection.remove({});
+
+        collection = this.Database.collection('Files');
+        await collection.remove({});
+
+        collection = this.Database.collection('Users');
+        await collection.remove({});
+    }
+
+
 }
 
 async function UnitTesting()
