@@ -28,6 +28,7 @@ function getToken(){
     })
     .then(response => response.json()).then(data => {
         accessToken[1] = data.access_token;
+        console.log("access_token: " + accessToken[1]);
         loggedIn[1] = true;
 
         let button = document.getElementById('button2');

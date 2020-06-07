@@ -12,11 +12,13 @@ class Credentials{
         switch (target) {
             case 'gd': dir = 'GoogleDrive'; break;
             case 'od': dir = 'OneDrive'; break;
+            case 'db': dir = 'DropBox'; break;
         }
         fs.readFile('./' + dir + '/resources/credentials.json','utf-8',(err,data)=>{
             if(err){
                 return console.log("Error: credentials.json missing");
             }
+            console.log("Credentials read!");
             //console.log(data);
             let json = JSON.parse(data);
             this.clientId = json.web.client_id;

@@ -21,7 +21,7 @@ class DatabaseHandler
     {
         try {
             this.SetMongo().then(result => {
-                console.log("Initialization successful!");
+                console.log("Database Initialization successful!");
             })
                 .catch(error => {
                     console.log(error.message);
@@ -71,7 +71,7 @@ class DatabaseHandler
         return user.token.value;
     }
 
-    async setToken(refresh,token){
+    async setToken(refresh,token,infinite = false){
         let user = await this.find(refresh);
         if(user==null) return this.notfound;
 
@@ -79,7 +79,7 @@ class DatabaseHandler
 
         let newValues = {$set:{token:{
             value:token,
-            created: Math.floor(Date.now()/1000)
+            created: infinite?1691538393:Math.floor(Date.now()/1000)
         }}};
 
         collection.updateOne(user,newValues);

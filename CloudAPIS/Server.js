@@ -3,6 +3,7 @@ let URL = require('url');
 const {DatabaseHandler} = require('./DBHandler/dbhandler');
 const {GDUploads} = require('./GoogleDrive/GDUploads');
 const {ODUploads} = require('./OneDrive/ODUploads');
+const {DBUploads} = require('./DropBox/DBUploads');
 
 const {Credentials} = require('./Credentials');
 
@@ -16,6 +17,7 @@ class Server {
 
     constructor(target) {
         this.credentials = new Credentials(target);
+        this.type = target;
         switch (target) {
             case 'gd':{
                 this.port = 6001;
@@ -27,12 +29,19 @@ class Server {
                 this.port = 6003;
                 this.db = new DatabaseHandler("mongodb://localhost:27017", "Mapi");
                 this.up = new ODUploads();
-                console.log(JSON.stringify(this.up));
+                //console.log(JSON.stringify(this.up));
+                break;
+            }
+            case 'db':{
+                this.port = 6002;
+                this.db = new DatabaseHandler("mongodb://localhost:27017", "Dapi");
+                this.up = new DBUploads();
+                //console.log(JSON.stringify(this.up));
                 break;
             }
         }
         this.db_on = 0;
-        this.db.Init().then(this.db_on = 1);
+        this.db.Init().then(()=>{this.db_on = 1;});
         //console.log("is db on? " + this.db_on);
     }
 
@@ -53,10 +62,10 @@ class Server {
             k++;
         }
 
-        console.log(ok);
+        await console.log(ok);
         if(!ok){
             console.log('Closing server');
-            return;
+            return "Server closed";
         }
 
         console.log("Starting server: Listening on port " + this.port);
@@ -244,11 +253,12 @@ class Server {
                 '"month":"' + q.month + '"}');
             res.end();
         }).listen(this.port);
+
     }
 
     async refreshToken(refresh) {
         let access = await this.up.refreshToken(refresh,this.credentials);
-        this.db.setToken(refresh,access).then();
+        this.db.setToken(refresh,access,this.type==='db').then();
         return access;
     }
 
@@ -328,11 +338,11 @@ class Server {
         if(!root.id) return -1;
         user = {
             refresh: refresh,
-            root: root.id,
+            root: this.type==='db'?root.name:root.id,
             files: [],
             token: {
                 value:token,
-                created:Math.floor(Date.now()/1000)
+                created:this.type==='db'?1691538393:Math.floor(Date.now()/1000)
             }
         };
         while (!this.db_on) await sleep(100);

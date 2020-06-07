@@ -1,7 +1,7 @@
 APP_KEY = "guil0597ef4f5c3";
-SECRET_KEY = "xt10z5r1i7rumdn"
+SECRET_KEY = "xt10z5r1i7rumdn";
 
-accessToken = "";
+accessToken = "blabla";
 loggedIn = false;
 
 BASE64_START = 23;
@@ -54,7 +54,7 @@ function uploadFile(){
             console.log(data.id);
             console.log(data.path_lower);
         });
-    }
+    };
     
     fileReader.readAsDataURL(file);
 }
@@ -65,7 +65,7 @@ function getFile(){
         return;
     } 
 
-    let textBoxFileName = document.getElementById("fileName")
+    let textBoxFileName = document.getElementById("fileName");
     let fileName = textBoxFileName.value;
 
     console.log(fileName);
@@ -79,7 +79,7 @@ function getFile(){
     }).then(data => {
         let reader = data.body.getReader();
         reader.read().then(({done, value}) => {
-            var string = new TextDecoder("utf-8").decode(value)
+            var string = new TextDecoder("utf-8").decode(value);
             console.log(string);
 
             var data = new Blob([string], {type: 'text/plain'});
@@ -93,6 +93,6 @@ function getFile(){
             a.download = fileName;
             a.click();
             window.URL.revokeObjectURL(url);
-        })
+        });
     });
 }
