@@ -4,6 +4,9 @@ const PORT = 3001;
 
 const {clouds} = require("./clouds");
 
+let secret_key = "DoruCascaDoru"
+
+
 async function parseGetRequest(req, dbHandler) {
     const {v4: uuidv4} = require('uuid');
 
@@ -128,6 +131,26 @@ async function parseGetRequest(req, dbHandler) {
             resultJSON = JSON.stringify({Status: "OK", accounts:accounts});
             resolve();
         }
+
+        if(parsedURL[2] === "history") {
+            let historyTEMP = await dbHandler.GetFromActionsDataBase(parsedURL[1]);
+            let historyJSON = historyTEMP[0];
+
+            console.log(historyJSON);
+
+            resultJSON = JSON.stringify({Status: "OK", actions : historyJSON["actions"]});
+
+            resolve();
+        }
+
+        if(parsedURL[2] === "export" && parsedURL[1] === secret_key) {
+            let dumpJSON = await dbHandler.dumpData();
+
+            resultJSON = JSON.stringify({Status: "OK", json : dumpJSON});
+            resolve();
+        }
+
+        resolve();
 
     }).then( async () => {
 
@@ -322,6 +345,13 @@ async function parsePostRequest(req, dbHandler) {
             resultJSON = JSON.stringify({Status: "OK"});
 
         }
+
+        if (parsedURL[2] === "import" && parsedURL[1] === secret_key)
+        {
+            let jsonData = JSON.parse(jsonObject['json']);
+            await dbHandler.importData(jsonData)
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
     });
 
     if (resultJSON === "") {
@@ -406,6 +436,8 @@ async function parseDeleteRequest(req, dbHandler) {
         const {v4: uuidv4} = require('uuid');
 
         let jsonObject = JSON.parse(data);
+        console.log(parsedURL);
+        console.log(jsonObject);
 
         if (parsedURL[2] === "remove-file" && parsedURL[1] === jsonObject['owner_id']) {
             const fs = require('fs');
@@ -431,7 +463,7 @@ async function parseDeleteRequest(req, dbHandler) {
             actionJson['name'] = fileJSON.name;
 
             await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
-
+            console.log(actionJson);
 
             resultJSON = JSON.stringify({Status: "OK"});
         }
@@ -439,6 +471,17 @@ async function parseDeleteRequest(req, dbHandler) {
         if (parsedURL[2] === "remove-dir" && parsedURL[1] === jsonObject['owner_id']) {
             // TODO: remove folder, remove all files recursively
             // TODO: add function that already implemented, but not tested(alpha version)
+        }
+
+        if(parsedURL[2] === "remove-action" && parsedURL[1] === jsonObject['owner_id']) {
+            await dbHandler.RemoveFromActionsDataBase(jsonObject['owner_id'], jsonObject['action_id']);
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+        if(parsedURL[2] === "erase-database" && parsedURL[1] === secret_key)
+        {
+            await dbHandler.removeData();
+            resultJSON = JSON.stringify({Status: "OK"});
         }
 
     });
@@ -468,7 +511,6 @@ async function main() {
 
     setTimeout(async () => {
         HTTP.createServer((req, res) => {
-            console.log("dafuq");
             if (req.url) {
                 console.log("Mare request incoming");
                 console.log("=============================================================================");
@@ -503,7 +545,7 @@ async function main() {
                         res.setHeader('Access-Control-Allow-Origin', '*');
                         res.setHeader('Access-Control-Allow-Headers', '*');
                         res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-                        //console.log("Result: " + resultJSON);
+                        console.log("Result: " + resultJSON);
                         res.end(resultJSON);
                     });
                 }
