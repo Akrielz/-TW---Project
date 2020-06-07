@@ -29,20 +29,19 @@ function createTimeDivider(title, historyElements){
 
         let elementTime = document.createElement("div");
         elementTime.classList.add("elementTime");
-
-        let postMeridian = parseInt(historyElements[i].time.getHours/12);
-        
+ 
         let date = toDateTime(historyElements[i].time);
+        let postMeridian = parseInt(date.getHours()/12);
         let timeFormated;
         if (postMeridian){
             timeFormated = (date.getHours()-12) + ":";
             timeFormated += date.getMinutes();
-            timeFormated += " PM";
+            timeFormated += "PM";
         }
         else{
-            timeFormated = (date.getHours()-12) + ":";
+            timeFormated = date.getHours() + ":";
             timeFormated += date.getMinutes();
-            timeFormated += " AM";
+            timeFormated += "AM";
         }
         elementTime.innerHTML = "<p>" + timeFormated + "</p>";
 
@@ -105,10 +104,10 @@ function splitOnTimeDividers(historyElements){
 
 //Astea vor fi datele preluate de la server
 let historyElements = [
-    {type : "T1", name : "N1", time : 1590936937383},
-    {type : "T2", name : "N2", time : 1590934939383},
-    {type : "T3", name : "N3", time : 1590954934383},
-    {type : "T4", name : "N4", time : 1590534934383}
+    {type : "Update", name : "Convex Hull.cpp", time : 1590936937383},
+    {type : "Delete", name : "Recipes.txt", time : 1590934939383},
+    {type : "Upload", name : "Background.png", time : 1590954934383},
+    {type : "Download", name : "Video.mp4", time : 1590534934383}
 ];
 
 splitOnTimeDividers(historyElements);
