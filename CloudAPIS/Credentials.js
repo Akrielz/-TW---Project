@@ -1,14 +1,19 @@
 const fs = require('fs');
 
-class GDCredentials{
-    constructor(){
+class Credentials{
+    constructor(target){
         this.clientSecret = "";
         this.clientId = "";
-        this.init().then();
+        this.init(target).then();
     }
 
-    async init(){
-        fs.readFile('./resources/credentials.json','utf-8',(err,data)=>{
+    async init(target){
+        let dir = "";
+        switch (target) {
+            case 'gd': dir = 'GoogleDrive'; break;
+            case 'od': dir = 'OneDrive'; break;
+        }
+        fs.readFile('./' + dir + '/resources/credentials.json','utf-8',(err,data)=>{
             if(err){
                 return console.log("Error: credentials.json missing");
             }
@@ -20,10 +25,10 @@ class GDCredentials{
     }
 }
 
-module.exports = {GDCredentials};
-
-let client = new GDCredentials();
+module.exports = {Credentials};
+/*
+let client = new Credentials();
 setTimeout(()=>{
     console.log(JSON.stringify(client));
 },200);
-
+*/

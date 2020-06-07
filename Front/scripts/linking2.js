@@ -3,14 +3,14 @@ function getAuthURL(target){
         let url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
         let params = {
             client_id: "805095245840-9l20ad91leq7bjsmk2fe1ofgd3hodp6i.apps.googleusercontent.com",
-            redirect_uri: "http://localhost:3000/linking?target=gd",
+            redirect_uri: "http://localhost:3000/linking",
             response_type: "code",
             scope: "https://www.googleapis.com/auth/contacts.readonly " +
                 "https://www.googleapis.com/auth/drive.appdata " +
                 "https://www.googleapis.com/auth/drive.file",
             access_type: "offline",
             prompt: "consent",
-            state: "123456",
+            state: "gd",
         };
         url.search = new URLSearchParams(params);
         //fetch(url).then(response=>response.json()).then(data => console.log(data));
@@ -27,6 +27,7 @@ function getAuthURL(target){
             redirect_uri:"http://localhost:3000/linking",
             response_type:"code",
             prompt: "select_account",
+            state: "od",
             scope:"User.Read " +
                 "Files.ReadWrite " +
                 "offline_access"
@@ -57,7 +58,7 @@ function getQueryVariable(variable)
 }
 
 function addInput(){
-    let target = getQueryVariable("target")||"od";
+    let target = getQueryVariable("state")||"od";
     let code = getQueryVariable("code");
 
     console.log("target: " + target);

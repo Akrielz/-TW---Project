@@ -1,12 +1,12 @@
 ports:
-GD:
-OD:
-DB:
+GD: 6001
+DB: 6002
+OD: 6003
 
 paths:
 
 /user : {
-    POST: queryParams: refresh token
+    POST: queryParams: refresh token or access_code
     returns ok/created or already exists
 
     DELETE: queryParams: refresh token

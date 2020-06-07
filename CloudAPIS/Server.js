@@ -1,9 +1,10 @@
 let HTTP = require('http');
 let URL = require('url');
-const {DatabaseHandler} = require('../DBHandler/dbhandler');
-const {GDUploads} = require('./GDUploads');
+const {DatabaseHandler} = require('./DBHandler/dbhandler');
+const {GDUploads} = require('./GoogleDrive/GDUploads');
+const {ODUploads} = require('./OneDrive/ODUploads');
 
-const PORT = 6001;
+const {Credentials} = require('./Credentials');
 
 function sleep(ms) {
     return new Promise((resolve) => {
@@ -13,21 +14,26 @@ function sleep(ms) {
 
 class Server {
 
-    constructor(port) {
-        this.port = port;
+    constructor(target) {
+        this.credentials = new Credentials(target);
+        switch (target) {
+            case 'gd':{
+                this.port = 6001;
+                this.db = new DatabaseHandler("mongodb://localhost:27017", "Gapi");
+                this.up = new GDUploads();
+                break;
+            }
+            case 'od':{
+                this.port = 6003;
+                this.db = new DatabaseHandler("mongodb://localhost:27017", "Mapi");
+                this.up = new ODUploads();
+                console.log(JSON.stringify(this.up));
+                break;
+            }
+        }
         this.db_on = 0;
-        this.db = new DatabaseHandler("mongodb://localhost:27017", "Gapi");
         this.db.Init().then(this.db_on = 1);
-        console.log("is db on? " + this.db_on);
-        this.up = new GDUploads();
-
-        const {Credentials} = require('./Credentials');
-        this.credentials = new Credentials();
-        setTimeout(()=>{
-            if(this.credentials.clientId) console.log("Credentials read");
-            else console.log("Error reading credentials");
-        },500);
-
+        //console.log("is db on? " + this.db_on);
     }
 
 
@@ -39,10 +45,23 @@ class Server {
             'Access-Control-Allow-Origin': 'http://localhost:3001'
         };
 
-        while(!this.db.Database) await sleep(100);
+        let ok = 0;
+        let k = 0;
+        while(!ok && k < 20){
+            if(this.credentials.clientId && this.db.Database) ok = 1;
+            await sleep(100);
+            k++;
+        }
+
+        console.log(ok);
+        if(!ok){
+            console.log('Closing server');
+            return;
+        }
+
+        console.log("Starting server: Listening on port " + this.port);
 
         HTTP.createServer(async function (req, res) {
-
             let q = URL.parse(req.url, true).query;
             let path = URL.parse(req.url, true).pathname;
 
@@ -61,7 +80,7 @@ class Server {
                 //body = JSON.parse(JSON);
                 if(!obj.refresh){
                     if(obj.code){
-                        console.log("found the code");
+                        console.log("found the code: " + obj.code);
                         let codes = await serv.up.getRefreshToken(obj.code,serv.credentials);
                         console.log(codes);
                         obj.refresh = codes.refresh;
@@ -103,13 +122,13 @@ class Server {
                 }else if(req.method === "DELETE"){
                     await serv.db.delete(obj.refresh);
                     res.writeHead(200,predefinedHead);
-                    res.write('{"message":"deleted"}');
+                    res.write('{"message":"Deleted"}');
                     res.end();
                     return;
                 }
                 else{
                     res.writeHead(405,predefinedHead);
-                    res.write({"message":"Method not allowed!"});
+                    res.write('{"message":"Method not allowed!"}');
                     res.end();
                     return;
                 }
@@ -146,7 +165,7 @@ class Server {
                         let x = await serv.addFile(obj.refresh,fileName,obj.content);
                         if(x === 1){
                             res.writeHead(200,predefinedHead);
-                            res.write('{"message":"uploaded"}');
+                            res.write('{"message":"Success"}');
                             res.end();
                             return;
                         }
@@ -303,13 +322,18 @@ class Server {
         }
 
         let token = await this.refreshToken(refresh);
+        console.log('token: ' + token.substr(0,50));
         if(token === "not found") return -1;
         let root = await this.up.createFolder(token, 'stol_files');
         if(!root.id) return -1;
         user = {
             refresh: refresh,
             root: root.id,
-            files: []
+            files: [],
+            token: {
+                value:token,
+                created:Math.floor(Date.now()/1000)
+            }
         };
         while (!this.db_on) await sleep(100);
         this.db.insert(user).then(r => console.log(r));
@@ -317,6 +341,5 @@ class Server {
     }
 }
 
-let server = new Server(PORT);
-server.start().then();
+module.exports = {Server};
 //server.createUser(REF).then();

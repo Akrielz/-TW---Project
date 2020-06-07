@@ -1,9 +1,19 @@
 let HTTP = require('http');
 let URL = require('url');
 const {DatabaseHandler} = require('../DBHandler/dbhandler');
-const {GDUploads} = require('./GDUploads');
+const {ODUploads} = require('./ODUploads');
+const {Credentials} = require('./Credentials');
 
-const PORT = 6001;
+const HTTPS = require('https');
+const queryString = require('querystring');
+
+const credentials = new Credentials();
+setTimeout(()=>{
+    if(credentials.clientId) console.log("Credentials read");
+    else console.log("Error reading credentials");
+},500);
+
+const PORT = 6003;
 
 function sleep(ms) {
     return new Promise((resolve) => {
@@ -13,25 +23,67 @@ function sleep(ms) {
 
 class Server {
 
-    constructor(port) {
-        this.port = port;
+    constructor() {
         this.db_on = 0;
-        this.db = new DatabaseHandler("mongodb://localhost:27017", "Gapi");
+        this.db = new DatabaseHandler("mongodb://localhost:27017", "Mapi");
         this.db.Init().then(this.db_on = 1);
         console.log("is db on? " + this.db_on);
-        this.up = new GDUploads();
-
-        const {Credentials} = require('./Credentials');
-        this.credentials = new Credentials();
-        setTimeout(()=>{
-            if(this.credentials.clientId) console.log("Credentials read");
-            else console.log("Error reading credentials");
-        },500);
-
+        this.up = new ODUploads();
     }
 
 
-    async start() {
+    async refreshToken(refresh) {
+        let form = {
+            refresh_token: refresh,
+            grant_type: "refresh_token",
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret
+        };
+        let formData = queryString.stringify(form);
+        let data = "";
+        let access = "";
+        let req = await HTTPS.request(
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": formData.length
+                },
+                hostname: "oauth2.googleapis.com",
+                path: "/token",
+                method: "POST",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    access = JSON.parse(data)['access_token']||"not found";
+                    console.log(access);
+                });
+            }
+        );
+        await req.write(formData);
+        await req.end();
+        let ok = 0;
+        while (!ok) {
+            if (access) ok = 1;
+            await sleep(100);
+            //console.log('not yet');
+        }
+        this.db.setToken(refresh,access).then();
+        return access;
+    }
+
+    async getToken(refresh){
+        console.log("refresh: " + refresh);
+        let token = await this.db.getToken(refresh);
+        console.log("token from db: " + token);
+        if(token === this.db.expired) return this.refreshToken(refresh);
+        else{
+            return token;
+        }
+    }
+
+    async start(port) {
         let serv = this;
 
         let predefinedHead = {
@@ -62,7 +114,7 @@ class Server {
                 if(!obj.refresh){
                     if(obj.code){
                         console.log("found the code");
-                        let codes = await serv.up.getRefreshToken(obj.code,serv.credentials);
+                        let codes = await serv.getRefreshToken(obj.code);
                         console.log(codes);
                         obj.refresh = codes.refresh;
                     }
@@ -224,23 +276,7 @@ class Server {
                 '"year":"' + q.year + '",' +
                 '"month":"' + q.month + '"}');
             res.end();
-        }).listen(this.port);
-    }
-
-    async refreshToken(refresh) {
-        let access = await this.up.refreshToken(refresh,this.credentials);
-        this.db.setToken(refresh,access).then();
-        return access;
-    }
-
-    async getToken(refresh){
-        console.log("refresh: " + refresh);
-        let token = await this.db.getToken(refresh);
-        console.log("token from db: " + token);
-        if(token === this.db.expired) return this.refreshToken(refresh);
-        else{
-            return token;
-        }
+        }).listen(port);
     }
 
     async findFile(user,name){
@@ -315,8 +351,49 @@ class Server {
         this.db.insert(user).then(r => console.log(r));
         return 1;
     }
-}
 
-let server = new Server(PORT);
-server.start().then();
+    async getRefreshToken(access_code){
+        let form = {
+            code: access_code,
+            grant_type: "authorization_code",
+            redirect_uri: "http://localhost:3000/linking",
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret
+        };
+        let formData = queryString.stringify(form);
+        let data = "";
+        let obj = 0;
+        let req = await HTTPS.request(
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": formData.length
+                },
+                hostname: "oauth2.googleapis.com",
+                path: "/token",
+                method: "POST",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    console.log(data);
+                    obj = {};
+                    obj.access = JSON.parse(data)['access_token'];
+                    obj.refresh = JSON.parse(data)['refresh_token'];
+                });
+            }
+        );
+        await req.write(formData);
+        await req.end();
+        let ok = 0;
+        while(!ok){
+            if(obj){ok=1;}
+            await sleep(100);
+        }
+        return obj;
+    }
+}
+let server = new Server();
+server.start(PORT).then();
 //server.createUser(REF).then();

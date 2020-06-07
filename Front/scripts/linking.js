@@ -77,15 +77,14 @@ function disable(index){
 
 }
 
-async function sendGD(){
+async function sendAuth(code,target){
     let owner_id = localStorage.getItem("stol_owner_id");
-    let code = document.getElementById('code1').value;
     if(code.length < 10){alert("The code provided is not valid!");}
     let url = backAddress + owner_id + "/accounts";
     let body=JSON.stringify({
         "owner_id":owner_id,
         "access_code":code,
-        "target":"gd"
+        "target":target
     });
     let options = {
         method:"POST",
@@ -100,4 +99,19 @@ async function sendGD(){
     }else{
         alert("Something went wrong!");
     }
+}
+
+async function sendGD(){
+    let code = document.getElementById('code1').value;
+    await sendAuth(code, 'gd');
+}
+
+async function sendDB(){
+    let code = document.getElementById('code2').value;
+    await sendAuth(code, 'db');
+}
+
+async function sendOD(){
+    let code = document.getElementById('code3').value;
+    await sendAuth(code, 'od');
 }

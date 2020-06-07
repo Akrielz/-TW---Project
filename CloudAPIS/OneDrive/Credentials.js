@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-class Credentials{
+class ODCredentials{
     constructor(){
         this.clientSecret = "";
         this.clientId = "";
@@ -20,7 +20,7 @@ class Credentials{
     }
 }
 
-module.exports = {Credentials};
+module.exports = {ODCredentials};
 /*
 let client = new Credentials();
 setTimeout(()=>{

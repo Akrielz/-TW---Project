@@ -1,4 +1,5 @@
 const https = require('https');
+const queryString = require('querystring');
 
 function sleep(ms) {
     return new Promise((resolve) => {
@@ -9,10 +10,10 @@ function sleep(ms) {
 class ODUploads{
 
     constructor() {
-        this.driveHost = "graph.microsoft.com/v1.0";
-        this.uploadPath = "/me/drive/items/{item-id}/children";
-        this.folderPath = "/me/drive/root/children";
-        this.otherPath = "/drive/v3/files";
+        this.driveHost = "graph.microsoft.com";
+        this.uploadPath = "/v1.0/me/drive/items/{item-id}/children";
+        this.folderPath = "/v1.0/me/drive/root/children";
+        console.log("ODUPLOADS");
     }
 
 
@@ -24,6 +25,8 @@ class ODUploads{
             "@microsoft.graph.conflictBehavior": "rename"
         };
 
+        let path = this.uploadPath.replace('{items-id}',parents[0]||'root');
+
         const boundary = '-----123581321222334@#$';
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";
@@ -31,7 +34,7 @@ class ODUploads{
         let options = {
             'method': 'POST',
             'hostname': this.driveHost,
-            'path': this.uploadPath + '?uploadType=multipart',
+            'path': path + '?uploadType=multipart',
             'headers': {
                 'uploadType': 'multipart',
                 'Authorization': 'Bearer ' + token,
@@ -98,6 +101,8 @@ class ODUploads{
         let data = "";
         let obj = 0;
 
+        console.log("ODU: making request create folder: " + metadata);
+
         let req = https.request(
             {
                 headers: {
@@ -112,7 +117,7 @@ class ODUploads{
             res => {
                 res.on('data', d => data += d);
                 res.on('end', () => {
-                    //console.log(data);
+                    console.log("ODU: data: " + data);
                     obj = JSON.parse(data);
                 });
             }
@@ -127,9 +132,6 @@ class ODUploads{
             //console.log('not yet');
         }
         return obj;
-
-        //return waitFor(obj);
-
     }
 
     async deleteFile(token,gid){
@@ -196,6 +198,88 @@ class ODUploads{
         return obj;
     }
 
+    async getRefreshToken(access_code,credentials){
+        let form = {
+            code: access_code,
+            grant_type: "authorization_code",
+            redirect_uri: "http://localhost:3000/linking",
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret
+        };
+        let formData = queryString.stringify(form);
+        let data = "";
+        let obj = 0;
+        let req = await https.request(
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": formData.length
+                },
+                hostname: "login.microsoftonline.com",
+                path: "/consumers/oauth2/v2.0/token",
+                method: "POST",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    console.log(data);
+                    obj = {};
+                    obj.access = JSON.parse(data)['access_token'];
+                    obj.refresh = JSON.parse(data)['refresh_token'];
+                });
+            }
+        );
+        await req.write(formData);
+        await req.end();
+        let ok = 0;
+        while(!ok){
+            if(obj){ok=1;}
+            await sleep(100);
+        }
+        return obj;
+    }
+
+    async refreshToken(refresh,credentials) {
+        let form = {
+            refresh_token: refresh,
+            grant_type: "refresh_token",
+            redirect_uri: "http://localhost:3000/linking",
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret
+        };
+        let formData = queryString.stringify(form);
+        let data = "";
+        let access = "";
+        let req = await https.request(
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": formData.length
+                },
+                hostname: "login.microsoftonline.com",
+                path: "/consumers/oauth2/v2.0/token",
+                method: "POST",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    access = JSON.parse(data)['access_token'] || "not found";
+                    console.log(access);
+                });
+            }
+        );
+        await req.write(formData);
+        await req.end();
+        let ok = 0;
+        while (!ok) {
+            if (access) ok = 1;
+            await sleep(100);
+            //console.log('not yet');
+        }
+        return access;
+    }
 }
 
 module.exports = {ODUploads};

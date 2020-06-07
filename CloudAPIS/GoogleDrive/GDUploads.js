@@ -1,4 +1,5 @@
 const https = require('https');
+const queryString = require('querystring');
 
 function sleep(ms) {
     return new Promise((resolve) => {
@@ -215,6 +216,87 @@ class GDUploads{
         return obj;
     }
 
+    async getRefreshToken(access_code,credentials){
+        let form = {
+            code: access_code,
+            grant_type: "authorization_code",
+            redirect_uri: "http://localhost:3000/linking",
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret
+        };
+        let formData = queryString.stringify(form);
+        let data = "";
+        let obj = 0;
+        let req = await https.request(
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": formData.length
+                },
+                hostname: "oauth2.googleapis.com",
+                path: "/token",
+                method: "POST",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    console.log(data);
+                    obj = {};
+                    obj.access = JSON.parse(data)['access_token'];
+                    obj.refresh = JSON.parse(data)['refresh_token'];
+                });
+            }
+        );
+        await req.write(formData);
+        await req.end();
+        let ok = 0;
+        while(!ok){
+            if(obj){ok=1;}
+            await sleep(100);
+        }
+        return obj;
+    }
+
+    async refreshToken(refresh,credentials) {
+        let form = {
+            refresh_token: refresh,
+            grant_type: "refresh_token",
+            client_id: credentials.clientId,
+            client_secret: credentials.clientSecret
+        };
+        let formData = queryString.stringify(form);
+        let data = "";
+        let access = "";
+        let req = await https.request(
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": formData.length
+                },
+                hostname: "oauth2.googleapis.com",
+                path: "/token",
+                method: "POST",
+                port: 443
+            },
+            res => {
+                res.on('data', d => data += d);
+                res.on('end', () => {
+                    access = JSON.parse(data)['access_token'] || "not found";
+                    console.log(access);
+                });
+            }
+        );
+        await req.write(formData);
+        await req.end();
+        let ok = 0;
+        while (!ok) {
+            if (access) ok = 1;
+            await sleep(100);
+            //console.log('not yet');
+        }
+        return access;
+    }
 }
 
 module.exports = {GDUploads};
