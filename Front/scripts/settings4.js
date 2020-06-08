@@ -45,7 +45,7 @@ async function applyValues()
     let download = document.getElementById("download").value;
     let upload = document.getElementById("upload").value;
 
-    var url = 'http://127.0.0.1:3000/' + userID + '/user/4';
+    var url = 'http://127.0.0.1:3001/' + userID + '/user/4';
     console.log(url);
     const response = await fetch(url, {
         method: 'PUT',

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide</title>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <h1>User Guide - STOL</h1>
+    </header>
+
+    <div class = "contentInfo">
+    <dt> Indexes </dt>
+    <ol>
+        <li> <a href="#a1"> Prehome </a></li>
+        <li> <a href="#a2"> Register </a></li>
+        <li> <a href="#a3"> Login </a></li>
+        <li> <a href="#a4"> Navigation Bar</a></li>
+        <li> <a href="#a5"> Home </a></li>
+        <li> <a href="#a6"> Linking </a></li>
+        <li> <a href="#a7"> My History </a></li>
+        <li> <a href="#a8"> File Manager </a></li>
+        <li> <a href="#a9"> Settings </a>
+            <ol>
+                <li><a href="#a91"> Personal Info </a></li>
+                <li><a href="#a92"> Account Security </a></li>
+                <li><a href="#a93"> Clouds Settings </a></li>
+                <li><a href="#a94"> Bandwidth </a></li>
+            </ol>
+        </li>
+    </ol>
+
+    <dt> Authors </dt>
+    <dd> Balauca Stefan-Razvan </dd>
+    <dd> Siminon Ruben Andrei </dd>
+    <dd> Stirbu Alexandru Ilie </dd>
+    </div>
+
+    <section>
+    <h2 id = "a1">1. Prehome</h2>
+    <p>On prehome there is a general description of the application</p>
+    <p>The only interactive buttons are the ones from the end of the page:</p>
+    <img src="./images/prehome.png" alt="prehome">
+    <p>The left one Redirects the user to Register Page</p>
+    <p>The right one Redirects the user to Login Page</p>
+    </section>
+
+    <section>
+    <h2 id = "a2">2. Register</h2>
+    <p>On the register page the user can create an account for the STOL application</p>
+    <img src="./images/register.png" alt="register">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li> <b>Username input field </b>- The input for the desired username</li>
+        <li> <b>Email input field </b>- The input for the valid email adress of the user</li>
+        <li> <b>Password field </b>- The input for choosing a password inside the STOL APP</li>
+        <li> <b>Confirm password field </b>- The user must retype the same password to make
+            sure that there is no mistake</li>
+
+        <li> <b>Create Account Button </b>- The user must press the button after he has completed
+            all the field in order to create an account. If the account is succesfully created
+            the user will be notifed and redirected to Settings Page</li>
+
+        <li> <b>Back to PreHome Button </b>- Redirects the user to PreHome page</li>
+        <li> <b>Already have an account? Button </b>- Redirects the user to Login Page</li>
+    </ul>
+    </section>
+
+    <section>
+    <h2 id = "a3">3. Login</h2>
+    <p>On the login page the user can input his created account and enter in the STOL main page</p>
+    <img src="./images/login.png" alt="login">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li> <b>Username input field </b>- The user has to put the username of a valid created account</li>
+        <li> <b>Password field </b>- The user has to put the password that matches the picked username</li>
+
+        <li><b> Login button (the arrow shape)</b>- The user must press the button in orded to send the
+        given username and the crypted password towards the server. If the given information is valid,
+        the the user will be redirected to home page, otherwise the user will be warned that the
+        given information is invalid and will remain on the same page.</li>
+
+        <li> <b>Back to PreHome button </b>- Redirects the user to PreHome page</li>
+        <li> <b>Don't have an account? button </b>- Redirects the user to Register Page</li>
+    </ul>
+    <p></p>
+    </section>
+
+    <section>
+    <h2 id = "a4">4. Navigation bar</h2>
+    <p>The navigation bar has 5 diferent buttons that will redirect the user to the clicked location,
+        and a logout button that the user can use in order to log out from the current session in the
+        STOL Application
+    </p>
+    <p>The possible locations are:
+    <ul>
+        <li>Home</li>
+        <li>Linking</li>
+        <li>My History</li>
+        <li>File Manager</li>
+        <li>Account Settings</li>
+    </ul>
+    </p>
+    <p>Pictures with the navigation bar will can be seen in the following sections</p>
+    </section>
+
+    <section>
+    <h2 id = "a5">5. Home</h2>
+    <p>Home is the main page where the user can see statistics about his actions</p>
+    <img src="./images/home.png" alt="home">
+    </section>
+
+    <section>
+    <h2 id = "a6">6. Linking</h2>
+    <p>
+        This is the main place where any users can link their clouds accounts to their STOL account.
+        The application will later use the given information to put the future uploaded files.
+    </p>
+    <img src="./images/linking.png" alt="linking">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li><b>The Logo Button</b> - Redirects the user to the login page of the specific API</li>
+        <li><b>The code input</b> - In this input, the access code will be put in order to gain
+        authority from the requested API.The Google Drive and Microsoft OneDrive will autocomplete 
+        the access code, after you access them.
+        </li>
+        <li><b>Submit Button</b> - The user must press this button to submit the acces code to 
+        the STOL server. If the code is invalid or expired, the user will be warned. Once the acces
+        code are correct, the submit button will be disabled.
+        </li>
+    </ul>
+    </section>
+
+    <section>
+    <h2 id = "a7">7. My History</h2>
+    <p>
+        Any relevant action will be saved and displayed on this page. The user can choose to clean
+        up any action from the history and can navigate through the actions
+    </p>
+    <img src="./images/history.png" alt="history">
+    <p>
+        All actions are saved under the next format:
+        <ul>
+            <li><b>Action Type</b>: Upload / Update / Download / Delete </li>
+            <li><b>Name</b>: File's name that had the action applied</li>
+            <li><b>Time</b>: Action's hours and minutes that they were registred on</li>
+            <li><b>Remove Button</b>: The user can use it to clear the action from the history</li>
+        </ul>
+    </p>
+    </section>
+
+    <section>
+    <h2 id = "a8">8. File Manager</h2>
+    <p>The main place where the user can upload / download / rename / delete files</p>
+    <img src="./images/file_manager.png" alt="file_manager">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li><b>Root button</b></li>
+        <li><b>Back button</b></li>
+        <li><b>Hide/Show Tree button</b></li>
+        <li><b>Any file from the manager</b></li>
+        <li><b>Any folder from the manger</b></li>
+        <li><b>Create new folder</b></li>
+        <li><b>Upload new file</b></li>
+        <li><b>Any file from tree</b></li>
+        <li><b>Any folder from tree</b></li>
+    </ul>
+    </section>
+
+    <section>
+    <h2 id = "a9">9. Settings</h2>
+    <p>
+        The user can edit and specify any settings that are required, and can also navigate
+        through the 4 tabs of settings using the left-sided menu.
+    </p>
+    <p>Any actions will be saved only after the apply button is pressed by the user.</p>
+
+    <p>The left sided menu can navigate any user through a simple click to:</p>
+
+    <h3 id = "a91">9.1. Personal Info</h3>
+    <p>The user can modify the personal data given to STOL</p>
+    <img src="./images/settings1.png" alt="settings">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li><b>First name input field</b></li>
+        <li><b>Last name input field</b></li>
+        <li><b>Gender input field</b></li>
+        <li><b>Country input field</b></li>
+        <li><b>Birthday selector field</b></li>
+    </ul>
+    
+    <h id = "a92"3>9.2. Account Security</h3>
+    <p>The user can modify his email and/or password</p>
+    <img src="./images/settings2.png" alt="settings">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li><b>Email input field</b></li>
+        <li><b>New Password input field</b></li>
+        <li><b>Old Password input field</b></li>
+    </ul>
+    
+    <h3 id = "a93">9.3. Clouds Settings</h3>
+    <p>The user can specify the upload method and the preference order for the clouds</p>
+    <img src="./images/settings3.png" alt="settings">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li><b>Upload Method 1 radio button</b></li>
+        <li><b>Upload Method 2 radio button</b></li>
+        <li><b>Upload Method 3 radio button</b></li>
+
+        <li><b>Preference Input Google Drive</b></li>
+        <li><b>Preference Input DropBox</b></li>
+        <li><b>Preference Input Microsoft Onedrive</b></li>
+    </ul>
+    
+    <h3 id = "a94">9.4. Bandwidth</h3>
+    <p>
+        The user can specify the allowed bandwidth and the maximum allowed storage space 
+        for every clouds system
+    </p>
+    <img src="./images/settings4.png" alt="settings">
+    <p>The interactive parts are:</p>
+    <ul>
+        <li><b>Storage Input Google Drive</b></li>
+        <li><b>Storage Input DropBox</b></li>
+        <li><b>Storage Input Microsoft Onedrive</b></li>
+        <li><b>Maximum download speed input</b></li>
+        <li><b>Maximum upload speed input</b></li>
+    </ul>
+    </section>
+</body>
+</html>

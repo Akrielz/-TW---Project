@@ -150,6 +150,17 @@ async function parseGetRequest(req, dbHandler) {
             resolve();
         }
 
+        if(parsedURL[2] === "list-users" && parsedURL[1] === secret_key) {
+            let results = await dbHandler.GetAllUsers();
+            let response = [];
+            for(let counter = 0; counter < results.length; counter++)
+            {
+                response.push({username: results[counter]['username'], email: results[counter]['username']})
+            }
+            resultJSON = JSON.stringify({Status: "OK", json : JSON.stringify(response)});
+            resolve();
+        }
+
         resolve();
 
     }).then( async () => {
@@ -175,13 +186,19 @@ async function parsePostRequest(req, dbHandler) {
             data = data + chunk;
         });
         req.on('end', () => {
-            resolve();
+            resolve();1
         });
     }).then(async () => {
         let jsonObject = JSON.parse(data);
 
         if (parsedURL[1] === "create-user") {
             const {v4: uuidv4} = require('uuid');
+
+            if(await dbHandler.ValidateUserAndPassword(jsonObject.email, jsonObject.username) === false)
+            {
+                resultJSON = JSON.stringify({Status: "Failed", Message: "User already exists"});
+                return;
+            }
 
             jsonObject.owner_id = uuidv4();
             jsonObject.root = uuidv4();
@@ -225,6 +242,14 @@ async function parsePostRequest(req, dbHandler) {
             folderJSON.childs = [];
 
             await dbHandler.InsertIntoFolderDataBase(folderJSON);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Created user";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = jsonObject.username;
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
 
             resultJSON = JSON.stringify({Status: "OK", Message: "User created! Please login!"});
         }
@@ -378,12 +403,24 @@ async function parsePutRequest(req, dbHandler) {
         // update data
 
         if (parsedURL[2] === "user" && parsedURL[3] === "1") {
+
+            const {v4: uuidv4} = require('uuid');
+
             await dbHandler.UpdateUserInDatabasePersonal(parsedURL[1], jsonObject);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Applied settings";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = 'Profile';
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
 
             resultJSON = JSON.stringify({Status: "OK"});
         }
 
         if (parsedURL[2] === "user" && parsedURL[3] === "2") {
+            const {v4: uuidv4} = require('uuid');
 
             let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
             let userJson = userTEMP[0];
@@ -391,6 +428,15 @@ async function parsePutRequest(req, dbHandler) {
             if(userJson["hashed_password"] === jsonObject["hashed_old_password"])
             {
                 await dbHandler.UpdateUserInDataBaseSecurity(parsedURL[1], jsonObject["email"], jsonObject["hashed_new_password"]);
+
+                let actionJson = {};
+                actionJson['time'] = Date.now();
+                actionJson['type'] = "Applied settings";
+                actionJson['id'] = uuidv4();
+                actionJson['name'] = 'Security';
+
+                await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
+
                 resultJSON = JSON.stringify({Status: "OK"});
             }
             else
@@ -400,13 +446,71 @@ async function parsePutRequest(req, dbHandler) {
         }
 
         if (parsedURL[2] === "user" && parsedURL[3] === "3") {
+            const {v4: uuidv4} = require('uuid');
+
+
             await dbHandler.UpdateUserInDataBaseCloudSettings(parsedURL[1], jsonObject);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Applied settings";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = 'Cloud';
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
 
             resultJSON = JSON.stringify({Status: "OK"});
         }
 
         if (parsedURL[2] === "user" && parsedURL[3] === "4") {
+            const {v4: uuidv4} = require('uuid');
+
+
             await dbHandler.UpdateUserInDataBaseBandwidth(parsedURL[1], jsonObject);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Applied settings";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = 'Bandwidth';
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
+
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+        if(parsedURL[2] === "rename-file" && parsedURL[1] === jsonObject['owner_id']) {
+            const {v4: uuidv4} = require('uuid');
+
+
+            await dbHandler.RenameFile(jsonObject['file_id'], jsonObject['new_name']);
+            await dbHandler.RenameElementInFolder(jsonObject['file_id'], jsonObject['folder_id'], jsonObject['new_name']);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Renamed file";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = jsonObject['new_name'];
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
+
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+        if(parsedURL[2] === "rename-folder" && parsedURL[1] === jsonObject['owner_id']) {
+            const {v4: uuidv4} = require('uuid');
+
+
+            await dbHandler.RenameFolder(jsonObject['folder_id'], jsonObject['new_name']);
+            await dbHandler.RenameElementInFolder(jsonObject['folder_id'], jsonObject['parent_folder_id'], jsonObject['new_name']);
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Renamed folder";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = jsonObject['new_name'];
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
 
             resultJSON = JSON.stringify({Status: "OK"});
         }
@@ -438,9 +542,9 @@ async function parseDeleteRequest(req, dbHandler) {
         let jsonObject = JSON.parse(data);
         console.log(parsedURL);
         console.log(jsonObject);
+        const fs = require('fs');
 
         if (parsedURL[2] === "remove-file" && parsedURL[1] === jsonObject['owner_id']) {
-            const fs = require('fs');
             // TODO: remove file from folder, update current folder, return OK <DONE>
 
             await dbHandler.RemoveFileFromFolder(jsonObject['folder_id'], jsonObject['file_id']);
@@ -469,8 +573,37 @@ async function parseDeleteRequest(req, dbHandler) {
         }
 
         if (parsedURL[2] === "remove-dir" && parsedURL[1] === jsonObject['owner_id']) {
-            // TODO: remove folder, remove all files recursively
-            // TODO: add function that already implemented, but not tested(alpha version)
+
+            let folderTEMP = await dbHandler.GetFromFolderDataBase(jsonObject['folder_id']);
+            let folderJSON = folderTEMP[0];
+
+            let actionJson = {};
+            actionJson['time'] = Date.now();
+            actionJson['type'] = "Removed folder";
+            actionJson['id'] = uuidv4();
+            actionJson['name'] = folderJSON.name;
+
+            await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
+
+            await dbHandler.RemoveFolderData(jsonObject['folder_id'], jsonObject['parent_folder_id']);
+            resultJSON = JSON.stringify({Status: "OK"});
+        }
+
+        if(parsedURL[2] === "remove-user" && parsedURL[1] === secret_key) {
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByEmail(jsonObject['email'])
+            console.log(userTEMP);
+            if(userTEMP.length === 0)
+            {
+                userTEMP = await dbHandler.GetFromUsersDataBaseByUsername(jsonObject['username']);
+            }
+            if(userTEMP.length === 0)
+            {
+                return;
+            }
+            let userJSON = userTEMP[0];
+            await dbHandler.RemoveUserForever(userJSON);
+            resultJSON = JSON.stringify({Status: "OK"});
+
         }
 
         if(parsedURL[2] === "remove-action" && parsedURL[1] === jsonObject['owner_id']) {
@@ -478,8 +611,7 @@ async function parseDeleteRequest(req, dbHandler) {
             resultJSON = JSON.stringify({Status: "OK"});
         }
 
-        if(parsedURL[2] === "erase-database" && parsedURL[1] === secret_key)
-        {
+        if(parsedURL[2] === "erase-database" && parsedURL[1] === secret_key) {
             await dbHandler.removeData();
             resultJSON = JSON.stringify({Status: "OK"});
         }
@@ -503,17 +635,22 @@ async function createCloudUser(owner_id,target,code,db){
 
 async function main() {
 
+    const fs = require('fs');
     const {DatabaseHandler} = require('./repository/database.js');
 
     let dbHandler = new DatabaseHandler("mongodb://localhost:27017", "TW");
 
     await dbHandler.Init();
 
+    let timestamp = Date.now();
+    let filename = "log_" + timestamp + ".txt";
+
     setTimeout(async () => {
         HTTP.createServer((req, res) => {
             if (req.url) {
                 console.log("Mare request incoming");
                 console.log("=============================================================================");
+                fs.appendFile(filename, req.method + " " + req.url + "\n", () => {});
                 if (req.method === 'GET') {
                     parseGetRequest(req, dbHandler).then(resultJSON => {
                         res.statusCode = 200;
@@ -523,6 +660,7 @@ async function main() {
                         res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
                         //console.log("Result: " + resultJSON);
                         res.end(resultJSON);
+                        fs.appendFile(filename, JSON.stringify(resultJSON) + "\n", () => {});
                     });
                 }
                 if (req.method === 'POST') {

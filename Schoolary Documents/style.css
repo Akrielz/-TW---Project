@@ -1,0 +1,61 @@
+body {
+    position: relative;
+    display: block;
+    font-family: Roboto, sans-serif;
+    left: 100px;
+    left: 30%;
+    width: 40%;
+    top: 10%;
+    font-weight: 300;
+}
+
+h1, h2, h3 {
+    font-family: "Times New Roman", Times, serif
+}
+
+h1 {
+    color: rgba(66, 66, 66, 0.9);
+    font-size: 3em;
+    padding-top: 2em;
+    text-align: left;
+}
+
+.contentInfo a {
+    text-decoration: none
+}
+
+.contentInfo li {
+    padding-top: 0.2em;
+    padding-left: 0.2em;
+}
+
+.contentInfo dd {
+    padding-top: 0.2em;
+}
+
+.contentInfo dt {
+    font-weight: bold;
+}
+
+section {
+    padding-top: 2em;
+}
+
+h2,dt,h3 {
+    text-transform: uppercase;
+    color: gray;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+img {
+    width: 100%;
+}
+
+b {
+    color: gray;
+}
+
+li {
+    padding-top: 1em;
+}

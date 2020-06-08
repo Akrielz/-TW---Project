@@ -1249,6 +1249,53 @@ div.settingsFrame {
     background-color: rgba(66, 66, 66, 0.95);
 }
 
+@media only screen and (max-height: 600px) {
+    
+    div.settingsFrame {
+        position: absolute;
+        width: 90%;
+        left: 5%;
+        height: 76%;
+        top: 16%;
+
+        border: 2px solid rgb(33, 33, 33);
+        background-color: rgba(66, 66, 66, 0.95);
+    }
+}
+
+@media only screen and (max-height: 400px){
+    div.settingsFrame {
+        top: 56px;
+        height: 100%;
+    }
+}
+
+@media only screen and (max-width: 1200px){
+    div.settingsFrame {
+        width: 100%;
+        left: 0%;
+    }
+}
+
+@media only screen and (max-width: 600px){
+    div.settingsFrame {
+        height: 100%;
+        top: 112px;
+    }
+}
+
+@media only screen and (max-width: 400px){
+    div.settingsFrame {
+        top: 136px;
+    }
+}
+
+@media only screen and (max-width: 252px){
+    div.settingsFrame {
+        top: 160px;
+    }
+}
+
 /* NAVIGATION SETTINGS STYLE */
 div.settingsMenu {
     position: absolute;
@@ -1347,6 +1394,27 @@ nav.navigationSettings ul li a:hover {
     filter: invert(100%) sepia(5%) saturate(225%) hue-rotate(136deg) brightness(111%) contrast(100%);
 }
 
+nav.navigationSettings ul li a {
+    position: relative;
+    display: block;
+    padding: 1rem 0;
+    text-decoration: none;
+    color: white;
+    left: 6%;
+}
+
+@media only screen and (max-width: 1653px){
+    nav.navigationSettings ul li a {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 700px){
+    nav.navigationSettings ul li a {
+        font-size: 12px;
+    }
+}
+
 /* SETTINGS CONTENT STYLE */
 div.settingsContent div.settingsTopSide {
     position: absolute;
@@ -1372,6 +1440,7 @@ div.settingsContent div.settingsTopSide button {
     width: 20%;
     height: 70%;
     top: 10%;
+    padding: 0px 0px;
 }
 
 div.settingsContent div.settingsTopSide button:hover {
@@ -1653,6 +1722,101 @@ div.settingsBotSide::-webkit-scrollbar-track {
 
 .flexContainerPreference input[type=number] {
     -moz-appearance: textfield;
+}
+
+
+@media only screen and (max-height: 750px){
+    div.settingsContent div.settingsTopSide p {
+        position: relative;
+        color: white;
+        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-size: 2em;
+        left: 2%;
+        top: -50%;
+    }
+
+    
+    div.settingsContent div.settingsTopSide button {
+        position: absolute;
+        font-size: 15px;
+        padding-bottom: 15px;
+        padding: 0px 0px;
+    }
+
+    [class^="flexContainerSettings"] label {
+        position: relative;
+        left: -10%;
+        font-size: 12px;
+    }
+}
+
+@media only screen and (max-width: 1267px){
+    .flexContainerSettings div {
+        flex: 90%;
+        max-width: 93.5%;
+        padding: 0 4px;
+        align-self: auto;
+    }
+}
+
+@media only screen and (max-width: 1200px){
+    div.settingsContent div.settingsTopSide p {
+        top: -40%;
+    }
+
+    [class^="flexContainerSettings"] .container {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 600px){
+    div.settingsContent div.settingsTopSide p {
+        top: -20%;
+    }
+
+    [class^="flexContainerSettings"] label {
+        position: relative;
+        left: -10%;
+        font-size: 12px;
+    }
+
+    [class^="flexContainerSettings"] .container {
+        font-size: 12px;
+    }
+
+    .flexContainerPreference {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .flexContainerPreference div {
+        max-width: 80%;
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 480px){
+    .ico {
+        position: absolute;
+        width: 0px;
+        height: 0px;
+    }
+}
+
+@media only screen and (max-width: 400px){
+    div.settingsContent div.settingsTopSide p {
+        top: 0%;
+        font-size: 25px;
+    }
+
+    div.settingsContent div.settingsTopSide button {
+        font-size: 12px;
+        left: 70%;
+    }
+
+    [class^="flexContainerSettings"] input {
+        font-size: 14px;
+    }
 }
 
 /* HISTORY STYLE */
