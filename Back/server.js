@@ -82,10 +82,17 @@ async function parseGetRequest(req, dbHandler) {
             for(let acc of userJson.accounts){
                 if(acc.cloud===cloudName) refresh = acc.refresh;
             }
+
             let content = "";
             if(refresh) content = await cloud.downloadText(refresh,chunkID);
             if(content){
                 //console.log("\n\n\nCONTENT: " + content + " \n\n\n");
+
+                let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+                let userJSON = userTEMP[0];
+                userJSON['statistics']['total_download'] = userJSON['statistics']['total_download'] * 1 + content.length;
+                await dbHandler.UpdateUser(userJSON);
+
                 resultJSON = JSON.stringify({Status: "OK", name: parsedURL[3], data: content});
                 resolve();
                 return;
@@ -166,7 +173,7 @@ async function parseGetRequest(req, dbHandler) {
             let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
             let userJSON = userTEMP[0];
 
-            resultJSON = JSON.stringify({Status: "OK", statistics: userJSON["statistics"], bandwidth: userJSON["bandwidth"], name : userJSON["personal_info"]["last_name"]});
+            resultJSON = JSON.stringify({Status: "OK", statistics: userJSON["statistics"], bandwidth: userJSON["bandwidth"], name : userJSON["personal_info"]["last_name"], accounts: userJSON['accounts']});
 
             resolve();
         }
@@ -435,6 +442,21 @@ async function parsePostRequest(req, dbHandler) {
                     let ok = await cloud.uploadText(refresh, chunkJSON['name'], jsonObject['data']);
                     if(ok){
                         console.log("\t\t\t\t\t\t\t\t\t\t\t\t\tuploaded chunk " + chunkNumber + " in " + cloudName);
+
+                        let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+                        let userJSON = userTEMP[0];
+                        userJSON['statistics']['total_upload'] = userJSON['statistics']['total_upload'] * 1 + jsonObject['data_size'];
+                        if(cloudName === "gd") {
+                            userJSON['statistics']['total_google'] = userJSON['statistics']['total_google'] * 1 + jsonObject['data_size'];
+                        }
+                        else if(cloudName === "od") {
+                            userJSON['statistics']['total_onedrive'] = userJSON['statistics']['total_onedrive'] * 1 + jsonObject['data_size'];
+                        }
+                        else {
+                            userJSON['statistics']['total_dropbox'] = userJSON['statistics']['total_dropbox'] * 1 + jsonObject['data_size'];
+                        }
+                        await dbHandler.UpdateUser(userJSON);
+
                     }
                     else{
                         console.log("\t\t\t\t\t\t\t\t\t\t\t\t\tfailed chunk " + chunkNumber + " in " + cloudName);
@@ -687,7 +709,7 @@ async function parseDeleteRequest(req, dbHandler) {
 
                 console.log(fileJSON['chunks'][fileChunk]);
                 let path = ".\\temp\\" + fileJSON['chunks'][fileChunk]["name"] + ".stol";
-                await fs.unlinkSync(path);
+                //await fs.unlinkSync(path);
 
                 let cloudName = fileJSON.clouds.substr(fileChunk*1,1);
                 cloudName = expand(cloudName);
@@ -698,6 +720,19 @@ async function parseDeleteRequest(req, dbHandler) {
                 for(let acc of userJson.accounts){
                     if(acc.cloud===cloudName) refresh = acc.refresh;
                 }
+
+                let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+                let userJSON = userTEMP[0];
+                if(cloudName === "gd") {
+                    userJSON['statistics']['total_google'] = userJSON['statistics']['total_google'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
+                }
+                else if(cloudName === "od") {
+                    userJSON['statistics']['total_onedrive'] = userJSON['statistics']['total_onedrive'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
+                }
+                else {
+                    userJSON['statistics']['total_dropbox'] = userJSON['statistics']['total_dropbox'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
+                }
+                await dbHandler.UpdateUser(userJSON);
 
                 await cloud.deleteText(refresh, fileJSON['chunks'][fileChunk]["name"]);
             }
