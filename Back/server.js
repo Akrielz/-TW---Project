@@ -186,7 +186,8 @@ async function parsePostRequest(req, dbHandler) {
             data = data + chunk;
         });
         req.on('end', () => {
-            resolve();1
+            resolve();
+
         });
     }).then(async () => {
         let jsonObject = JSON.parse(data);
