@@ -786,7 +786,7 @@ async function main() {
     await dbHandler.Init();
 
     let timestamp = Date.now();
-    let filename = "log_" + timestamp + ".txt";
+    let filename = "logs/log_" + timestamp + ".txt";
 
     setTimeout(async () => {
         HTTP.createServer((req, res) => {

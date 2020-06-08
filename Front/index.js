@@ -65,6 +65,7 @@ routes.set("home","home");
 routes.set("file_manager","file_manager");
 routes.set("linking","linking");
 routes.set("prehome","prehome");
+routes.set("","start");
 routes.set("login","login_page");
 routes.set("register","register_page");
 routes.set("wait","waiting");

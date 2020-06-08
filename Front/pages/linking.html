@@ -6,6 +6,7 @@
     <title>Linking</title>
     <link href="../styles/style.css" rel="stylesheet" />
     <script src="../scripts/address.js" type="application/javascript"></script>
+    <script src="../scripts/navigation.js" type="application/javascript"></script>
 </head>
 <body onload="getFromDatabase()">
 
@@ -22,7 +23,7 @@
             <li><a href="history" title="My History"> My History </a></li>
             <li><a href="file_manager" title="File Manager"> File Manager</a></li>
             <li><a href="settings_1" title="Account Settings"> Account Settings</a></li>
-            <li><a href="prehome" title="Logout"> Logout </a></li>
+            <li><a href="prehome" onclick="signOut()" title="Logout"> Logout </a></li>
         </ul>
     </div>
     </nav>

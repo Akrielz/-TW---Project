@@ -123,7 +123,7 @@ class clouds{
             if(obj) ok = 1;
             await sleep(100);
         }
-        console.log("cloud " + this.type + ": " + JSON.stringify(obj));
+        //console.log("cloud " + this.type + ": " + JSON.stringify(obj));
         if(obj.message === "Success") return obj.content;
         return 0;
     }

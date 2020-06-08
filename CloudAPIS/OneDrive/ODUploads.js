@@ -74,7 +74,7 @@ class ODUploads{
                 console.log(error);
             });
         });
-        
+
         req.on('error',async (err)=>{
             if(err.code === 'ETIMEDOUT' && index < 20) {
                 //console.log(err);

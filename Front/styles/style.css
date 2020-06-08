@@ -2341,8 +2341,8 @@ div.elementButtons .ico:hover {
 
 @media only screen and (max-width: 800px) {
     .file-manager .element{
-        width: 100px;
-        height: 100px;
+        width: 150px;
+        height: 150px;
         margin-right: 10px;
         margin-left: 10px;
         margin-top: 10px;
@@ -2351,14 +2351,14 @@ div.elementButtons .ico:hover {
 
     .file-manager .element img{
         position: relative;
-        top: 15%;
-        max-height: 50px;
+        top: 10%;
+        max-height: 75px;
         border-radius: 0px;
     }
 
     .file-manager .content p{
         position: relative;
-        top: -50%;
+        top: -25%;
         align-self: center;
         color: white;
     }
@@ -2418,4 +2418,99 @@ div.elementButtons .ico:hover {
     .file-manager-frame {
         top: 160px;
     }
+}
+
+/*RightClick*/
+
+nav.rightClickMenu {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    color: #333;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 1.3em;
+    line-height: 1.6em;
+}
+
+nav.rightClickMenu > div {
+    position: relative;
+    width: 90%;
+    left: 5%;
+    top: 1.5%;
+    cursor: pointer;
+    background-color: rgba(33, 33, 33, 0.9);
+}
+
+nav.rightClickMenu ul {
+    position: relative;
+
+    border-bottom: 1px solid #ccc;
+    list-style: none;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 2rem;
+    left: -2rem;
+    width: 100%;
+}
+
+nav.rightClickMenu ul li {
+    flex: 1 1 auto;
+    background-size: 100% 200%;
+    background-position: top center;
+    color: #666;
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    border-bottom: 2px solid rgb(33, 33, 33);
+}
+
+nav.rightClickMenu ul li:hover {
+    background-position: bottom center;
+    color: rgba(0,0,0,0.75);
+    transform: scale(1.05);
+    transition: all .25s ease-in-out;
+    background-image: linear-gradient(
+            to bottom,
+            transparent 50%,
+            rgba(68,140,203, 1) 50%,
+            rgba(68,140,203, 1) 95%,
+            rgba(0 ,114,188, 1) 95%
+    );
+}
+
+nav.rightClickMenu ul li a {
+    position: relative;
+    display: block;
+    padding: 1rem 0;
+    text-decoration: none;
+    color: white;
+    left: 6%;
+}
+
+nav.rightClickMenu ul li a:hover {
+    color: #eee;
+    transition: all .25s ease-in-out;
+}
+
+.ico {
+    position: relative;
+    top: -50%;
+    width: 15px;
+    height: 15px;
+    left: -3%;
+    filter: invert(100%) sepia(5%) saturate(225%) hue-rotate(136deg) brightness(111%) contrast(100%);
+}
+
+.file-loader {
+    background-color: rgba(0,0,0,0);
+    text-align: center;
+}
+
+#stelute {
+    color: white;
 }

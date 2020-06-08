@@ -128,13 +128,24 @@ async function generateTree(json) {
     while(s.length > 0){
         current_element = await s.pop();
         current_node = await t.pop();
-        if("childs" in current_element)
-            for (var child of current_element.childs){
-                s.push(child);
-                var child_node = new Node(child.info);
-                current_node.addChild(child_node);
-                t.push(child_node);
+        if("childs" in current_element) {
+            for (let child of current_element.childs) {
+                if(child.info.type==="folder") {
+                    s.push(child);
+                    let child_node = new Node(child.info);
+                    current_node.addChild(child_node);
+                    t.push(child_node);
+                }
             }
+            for (let child of current_element.childs){
+                if(child.info.type==="file") {
+                    s.push(child);
+                    let child_node = new Node(child.info);
+                    current_node.addChild(child_node);
+                    t.push(child_node);
+                }
+            }
+        }
     }
     return new Tree(tree_root);
 }
@@ -473,8 +484,7 @@ function downloadPopUp(filename, text) {
 
 }
 
-async function downloadItem(node)
-{
+async function downloadItem(node){
     console.log(node);
     console.log("Download pornit pe nodul " + node.info.real_name);
 
@@ -493,32 +503,50 @@ async function downloadItem(node)
     let numberOfChunks = requestResponse['number_of_chunks'];
 
     let fileData = "";
-
+    let fileParts = [];
+    let downloaded = 0;
+    for(let i = 0; i < numberOfChunks; i++){
+        fileParts.push("");
+    }
     for(let counter = 0; counter < numberOfChunks; counter++)
     {
-        let chunkData;
+        let chunkData = "";
 
         for(let counter2 = 0; counter2 < numberOfChunks; counter2++)
         {
             if(counter === requestResponse['chunks'][counter2]['chunk_number'])
             {
                 chunkData = requestResponse['chunks'][counter2];
+                break;
             }
         }
 
         console.log(chunkData);
         let uploadRequestUrl = backAddress + userID + '/download-chunk/' + chunkData['name'];
 
-        const response = await fetch(uploadRequestUrl, {
-            method: 'GET'
+        fetch(uploadRequestUrl).then(r=>r.json()).then(r=>{
+            fileParts[counter] = r.data;
+            downloaded++;
         });
 
-        let result = await response.json();
-        fileData = fileData + result['data'];
     }
-    //console.log(fileData);
-    downloadPopUp(node.info.real_name, fileData);
 
+    let loading = document.getElementsByClassName('file-loader')[0];
+    loading.style.display = 'block';
+    let stelute = document.getElementById('stelute');
+    stelute.innerText = stele(0,numberOfChunks,40);
+    while(downloaded < numberOfChunks){
+        await sleep(100);
+        console.log("uploaded " + downloaded + "/" + numberOfChunks);
+        stelute.innerText = stele(downloaded,numberOfChunks,40);
+    }
+
+    for(let i = 0 ; i < numberOfChunks; i++){
+        fileData+=fileParts[i];
+    }
+
+    downloadPopUp(node.info.real_name, fileData);
+    loading.style.display = 'none';
 }
 
 async function removeItem(node)
