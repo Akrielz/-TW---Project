@@ -61,8 +61,35 @@ async function importData(filePath)  {
     });
 }
 
+async function removeUser(email, username)
+{
+    const fetch = require('node-fetch');
+
+    let url = "http://127.0.0.1:3001/" + secret_key + '/remove-user';
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({email: email, username: username})
+    });
+}
+
+async function listUsers()
+{
+    const fetch = require('node-fetch');
+
+    let url = "http://127.0.0.1:3001/" + secret_key + '/list-users';
+    const response = await fetch(url);
+
+    let users = await response.json();
+    console.log(users);
+}
+
 //exportData("C:\\Users\\rsimion\\Desktop").then(r => {});
 //eraseData().then(r => {});
-importData("C:\\Users\\rsimion\\Desktop\\export.json").then(r => {});
+//importData("C:\\Users\\rsimion\\Desktop\\export.json").then(r => {});
+//listUsers().then();
+removeUser("aky", "aky").then();
 
 
