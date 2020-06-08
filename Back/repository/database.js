@@ -113,6 +113,15 @@ class DatabaseHandler
         return result.toArray();
     }
 
+    async UpdateUser(userJSON)
+    {
+        let collection = this.Database.collection('Users');
+
+        const newValues = {$set: userJSON};
+        await collection.updateOne({owner_id : userJSON['owner_id']}, newValues);
+        return true;
+    }
+
     async DeleteFromUsersDataBase(userID)
     {
         this.Database.collection('Users', function (err, collection) {
@@ -302,6 +311,19 @@ class DatabaseHandler
                     for(let acc of userJson.accounts){
                         if(acc.cloud===cloudName) refresh = acc.refresh;
                     }
+
+                    let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+                    let userJSON = userTEMP[0];
+                    if(cloudName === "gd") {
+                        userJSON['statistics']['total_google'] = userJSON['statistics']['total_google'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
+                    }
+                    else if(cloudName === "od") {
+                        userJSON['statistics']['total_onedrive'] = userJSON['statistics']['total_onedrive'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
+                    }
+                    else {
+                        userJSON['statistics']['total_dropbox'] = userJSON['statistics']['total_dropbox'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
+                    }
+                    await dbHandler.UpdateUser(userJSON);
 
                     await cloud.deleteText(refresh, fileJSON['chunks'][fileChunk]["name"]);
 
