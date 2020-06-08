@@ -839,6 +839,7 @@ div.progressBar {
 }
 
 div.loadedBar {
+    font-size: 0px;
     width: 0%;
     text-align: center;
     line-height: 30px;

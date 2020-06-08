@@ -61,8 +61,7 @@ async function importData(filePath)  {
     });
 }
 
-async function removeUser(email, username)
-{
+async function removeUser(email, username) {
     const fetch = require('node-fetch');
 
     let url = "http://127.0.0.1:3001/" + secret_key + '/remove-user';
@@ -75,8 +74,7 @@ async function removeUser(email, username)
     });
 }
 
-async function listUsers()
-{
+async function listUsers() {
     const fetch = require('node-fetch');
 
     let url = "http://127.0.0.1:3001/" + secret_key + '/list-users';
@@ -86,10 +84,44 @@ async function listUsers()
     console.log(users);
 }
 
-//exportData("C:\\Users\\rsimion\\Desktop").then(r => {});
-//eraseData().then(r => {});
-//importData("C:\\Users\\rsimion\\Desktop\\export.json").then(r => {});
-//listUsers().then();
-removeUser("aky", "aky").then();
+async function parseArgs()
+{
+    const myArgs = process.argv.slice(2);
+    console.log('myArgs: ', myArgs);
+
+    if (myArgs[0] === "list-users")
+    {
+        listUsers().then();
+    }
+    else if (myArgs[0] === "erase-data" && myArgs[1] === secret_key)
+    {
+        eraseData().then();
+    }
+    else if (myArgs[0] === "export-data")
+    {
+        exportData(myArgs[1]).then();
+    }
+    else if (myArgs[0] === "import-data")
+    {
+        importData(myArgs[1]).then();
+    }
+    else if(myArgs[0] === "remove-user")
+    {
+        if(myArgs[1] === "-email")
+        {
+            removeUser(myArgs[2], "").then();
+        }
+        else if(myArgs[1] === "-username")
+        {
+            removeUser("", myArgs[2]).then();
+        }
+    }
+}
+
+parseArgs().then();
+
+
+
+
 
 
