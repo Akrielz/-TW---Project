@@ -180,7 +180,7 @@ function element(node) {
 
     let nav = document.createElement("nav");
     nav.id = "myContextMenu";
-    nav.className = "navigationSettings";
+    nav.className = "rightClickMenu";
     nav.style.position = "absolute";
     nav.style.width = "120px";
     nav.style.height = "auto";
