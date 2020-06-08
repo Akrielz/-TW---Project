@@ -58,6 +58,12 @@ async function getValuesFromDatabase()
     document.getElementById("total_space_consumed").innerHTML = "Space consumed: " + (((myJson["statistics"]["total_onedrive"] + myJson["statistics"]["total_google"] + myJson["statistics"]["total_dropbox"])/(1024*1024*1024))).toFixed(2) + "/" + ((myJson["bandwidth"]["storage_onedrive"] / 1024 + myJson["bandwidth"]["storage_dropbox"] / 1024 + myJson["bandwidth"]["storage_google"] / 1024)).toFixed(2) + "GB";
     document.getElementById("loadedBar0").innerHTML = (((myJson["statistics"]["total_onedrive"] + myJson["statistics"]["total_google"] + myJson["statistics"]["total_dropbox"])/(1024*1024*1024)) / ((myJson["bandwidth"]["storage_onedrive"] + myJson["bandwidth"]["storage_dropbox"] + myJson["bandwidth"]["storage_google"]) / 1024) * 100).toFixed(2) + "%";
 
+    document.getElementById("total_connected_clouds").innerHTML = "Connected Clouds: " + myJson["accounts"].length + "/3"
+    document.getElementById("loadedBar4").innerHTML = (myJson["accounts"].length / 3 * 100).toFixed(2) + "%"
+
+    document.getElementById("total_profile_completion").innerHTML = "Profile Completion: " + (50 + 50 / 3 + myJson["accounts"].length).toFixed(2) + "%"
+    document.getElementById("loadedBar3").innerHTML = (50 + 50 / 3 + myJson["accounts"].length).toFixed(2) + "%"
+
     console.log(document.getElementById("total_space_one").innerHTML);
     console.log(document.getElementById("loadedBar8").innerHTML);
     console.log(document.getElementById("total_space_drive").innerHTML);
@@ -150,10 +156,58 @@ function pieChartSlice(frequence, names){
     }
 }
 
+async function GetSizes()
+{
+    let frequence = [];
+    let names = [];
+
+    let userID = localStorage.getItem("stol_owner_id");
+
+    console.log(userID);
+
+    const url = backAddress + userID + '/user/home';
+    const response = await fetch(url, {
+        method: 'GET'
+    });
+    const myJson = await response.json();
+
+    console.log(myJson);
+
+    let od = myJson["statistics"]["total_onedrive"] + 1;
+    let dp = myJson["statistics"]["total_dropbox"] + 1;
+    let gd = myJson["statistics"]["total_google"] + 1;
+
+    let total_sum = od + dp + gd;
+
+    if(od >= total_sum / 50)
+    {
+        frequence.push(od);
+        names.push("OD");
+    }
+
+    if(dp >= total_sum / 50)
+    {
+        frequence.push(dp);
+        names.push("DP");
+    }
+
+    if(gd >= total_sum / 50)
+    {
+        frequence.push(gd);
+        names.push("GD");
+    }
+
+    console.log(frequence, names);
+
+    pieChartSlice(frequence, names);
+}
+
 
 /*let frequence = [30, 20, 10, 15, 10, 15]*/
 
-let frequence = [1500, 412, 2127, 1245, 720, 825, 1000];
-let names = [".png", ".exe", ".cpp", ".jpg", ".rar", ".html", ".ruben"];
+//let frequence = [1500, 412, 2127, 1245, 720, 825, 1000];
+//let names = [".png", ".exe", ".cpp", ".jpg", ".rar", ".html", ".ruben"];
 
-pieChartSlice(frequence, names);
+GetSizes().then()
+
+//pieChartSlice(frequence, names);
