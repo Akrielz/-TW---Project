@@ -68,6 +68,11 @@ async function applyValues()
     });
     const myJson = await response.json();
 
-    console.log(myJson);
-
+    if(myJson.Status === "OK"){
+        alert("Changes applied");
+        window.location.reload();
+    }
+    else{
+        alert(myJson.Status);
+    }
 }

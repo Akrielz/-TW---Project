@@ -177,10 +177,11 @@ class DBUploads{
     }
 
     async downloadText(token,gid){
+        console.log("I AM DROPBOX: trying to download " + gid);
         let data = "";
         let obj = 0;
         let args = {
-            path:"id:" + gid
+            path: gid
         };
         let jsonArgs = JSON.stringify(args);
         console.log(jsonArgs);
@@ -198,6 +199,9 @@ class DBUploads{
             res => {
                 res.on('data', d => data += d);
                 res.on('end', () => {
+                    console.log("\n\n");
+                    console.log("I AM DROPBOX: " + data);
+                    console.log("\n\n");
                     try{
                         obj = JSON.parse(data).error;
                     }catch (e) {

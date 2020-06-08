@@ -1,21 +1,27 @@
 function split(total_chunks,chunk_size,cloud_settings,bandwidth){
+/*
+    cloud_settings = JSON.parse(JSON.stringify(cloud_settings));
+    bandwidth = JSON.parse(JSON.stringify(bandwidth));
+*/
+
     let clouds = new Map();
     clouds.set('1',{
         name:'gd',
-        available:(bandwidth.storage_google*1024/chunk_size) | 0,
+        available:(bandwidth.storage_google*1024*1024/chunk_size) | 0,
         order:cloud_settings.order.indexOf('1') + 1
     });
     clouds.set('2',{
         name:'db',
-        available:(bandwidth.storage_dropbox*1024/chunk_size) | 0,
+        available:(bandwidth.storage_dropbox*1024*1024/chunk_size) | 0,
         order:cloud_settings.order.indexOf('2') + 1
     });
     clouds.set('3',{
         name:'od',
-        available:(bandwidth.storage_onedrive*1024/chunk_size) | 0,
+        available:(bandwidth.storage_onedrive*1024*1024/chunk_size) | 0,
         order:cloud_settings.order.indexOf('3') + 1
     });
 
+    console.log("clouds:");
     console.log(clouds);
 
     let response = new Map();
@@ -25,38 +31,44 @@ function split(total_chunks,chunk_size,cloud_settings,bandwidth){
 
     let total_available = 0;
     for (let cloud of clouds.entries()) {
-        console.log(cloud);
+        //console.log(cloud);
         total_available += cloud[1].available>0?cloud[1].available:0;
-        console.log(total_available);
+        //console.log(total_available);
     }
     if(total_available<total_chunks){
         return response;
     }
 
-    switch (cloud_settings.method) {
-        case 1:{
+    switch (cloud_settings.method.toString()) {
+        case '1':{
             let order = cloud_settings.order;
             let i = 0;
             let chunks = total_chunks;
+            //console.log("chunks: " + chunks);
             while(chunks>0 && i <3){
                 let index = order.substr(i,1);
-                console.log("index: " + index);
+                //console.log("index: " + index);
                 let pref = clouds.get(index);
-                console.log("pref: " + JSON.stringify(pref));
+                if(pref.available<=0) {i++;continue;}
+                //console.log("pref: " + JSON.stringify(pref));
                 if(pref.available>=chunks){
                     response.set(pref.name,chunks);
+                    //console.log("chunks: " + chunks);
+                    //console.log("here i am");
                     return response;
                 }
                 response.set(pref.name,pref.available);
+                //console.log("chunks1: " + chunks);
                 chunks-=pref.available;
+                //console.log("chunks2: " + chunks);
                 i++;
             }
 
             break;
         }
-        case 2:{
+        case '2':{
             let chunks = total_chunks;
-            console.log("chunks: " + chunks);
+            //console.log("chunks in mortii ma-ti: " + chunks);
             let avClouds = [];
             for(let [key,cloud] of clouds.entries()){
                 if(cloud.available>0) {
@@ -95,7 +107,7 @@ function split(total_chunks,chunk_size,cloud_settings,bandwidth){
             }
             return response;
         }
-        case 3:{
+        case '3':{
             let chunks = total_chunks;
             for(let [key,cloud] of clouds.entries()){
                 cloud.part = total_chunks*cloud.available/total_available | 0;
@@ -115,22 +127,31 @@ function split(total_chunks,chunk_size,cloud_settings,bandwidth){
             }
             return response;
         }
+        default:{
+            response.set('gd',-1);
+            response.set('db',-1);
+            response.set('od',-1);
+            return response;
+        }
     }
-    response.set('gd',-1);
-    response.set('db',-1);
-    response.set('od',-1);
-    return response;
+
 }
 
 let settings = {
-    method:2,
-    order:"321"
+    method:1,
+    order:"123"
 };
 let bandwidth = {
-    storage_google:100,
-    storage_dropbox:1000,
-    storage_onedrive:1000
+    storage_google:0,
+    storage_dropbox:-1,
+    storage_onedrive:100
 };
 
-let result = split(1550,1024,settings,bandwidth);
+module.exports = split;
+
+
+let result = split(1,1024*512,settings,bandwidth);
 console.log(result);
+
+
+

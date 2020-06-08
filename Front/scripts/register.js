@@ -37,6 +37,14 @@ async function registerFunction()
         body: JSON.stringify({email : email, username : username, hashed_password : hashed_password})
     });
     const myJson = await response.json();
-    console.log(myJson);
+    //console.log(myJson);
 
+    if(myJson.Status === "OK"){
+        localStorage.setItem("stol_owner_id",myJson.owner_id);
+        alert("Register successful! Please proceed by completing your personal info.");
+        document.location.href="/settings_1";
+    }
+    else{
+        alert(myJson.Message);
+    }
 }

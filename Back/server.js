@@ -4,8 +4,16 @@ const PORT = 3001;
 
 const {clouds} = require("./clouds");
 
-let secret_key = "DoruCascaDoru"
+let secret_key = "DoruCascaDoru";
 
+function expand(cloudName){
+    switch (cloudName) {
+        case 'g': return 'gd';
+        case 'd': return 'db';
+        case 'o': return 'od';
+        default : return 0;
+    }
+}
 
 async function parseGetRequest(req, dbHandler) {
     const {v4: uuidv4} = require('uuid');
@@ -19,7 +27,7 @@ async function parseGetRequest(req, dbHandler) {
             let userTemp = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
             let userJson = userTemp[0];
             let treeJson = await dbHandler.GetTree(userJson.root);
-            let responseJson = {root:treeJson};
+            let responseJson = {root:treeJson,accounts:userJson.accounts};
             resultJSON = JSON.stringify(responseJson);
             resolve();
         }
@@ -49,7 +57,44 @@ async function parseGetRequest(req, dbHandler) {
         }
 
         if (parsedURL[2] === "download-chunk") {
-            const fs = require('fs');
+
+            let userTemp = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJson = userTemp[0];
+
+            let chunkID = parsedURL[3];
+            console.log("\t\t\t\t\t\t\t\t\tdownloading: " + chunkID);
+            let [fileId,chunkNumber] = chunkID.split('@');
+            chunkNumber = chunkNumber*1;
+            let fileTEMP = await dbHandler.GetFromFilesDataBase(fileId);
+            let fileJSON = fileTEMP[0];
+            console.log(fileJSON.clouds);
+            console.log("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tnumber:" + chunkNumber);
+            let begin = parseInt(chunkNumber);
+            let end = begin + 1;
+            let cloudName = fileJSON.clouds.substr(chunkNumber*1,1);
+            console.log("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tcloud_name: " + cloudName);
+            cloudName = expand(cloudName);
+            console.log("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tcloud_name: " + cloudName);
+
+            const {clouds} = require('./clouds');
+            let cloud = new clouds(cloudName);
+            let refresh = "";
+            for(let acc of userJson.accounts){
+                if(acc.cloud===cloudName) refresh = acc.refresh;
+            }
+            let content = "";
+            if(refresh) content = await cloud.downloadText(refresh,chunkID);
+            if(content){
+                //console.log("\n\n\nCONTENT: " + content + " \n\n\n");
+                resultJSON = JSON.stringify({Status: "OK", name: parsedURL[3], data: content});
+                resolve();
+                return;
+            }
+
+            console.log("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tFAIL");
+
+            resultJSON = JSON.stringify({"Status":"Error"});
+            /*const fs = require('fs');
 
             let filePath = ".\\temp\\" + parsedURL[3] + ".stol";
             let fileData = "temp";
@@ -64,7 +109,7 @@ async function parseGetRequest(req, dbHandler) {
                     resultJSON = JSON.stringify({Status: "OK", name: parsedURL[3], data: fileData});
                 });
 
-            resolve();
+            resolve();*/
         }
 
         if (parsedURL[2] === "list-dir") {
@@ -186,19 +231,29 @@ async function parsePostRequest(req, dbHandler) {
             data = data + chunk;
         });
         req.on('end', () => {
-            resolve();1
+            resolve();
         });
     }).then(async () => {
         let jsonObject = JSON.parse(data);
 
         if (parsedURL[1] === "create-user") {
             const {v4: uuidv4} = require('uuid');
-
-            if(await dbHandler.ValidateUserAndPassword(jsonObject.email, jsonObject.username) === false)
+            switch (await dbHandler.ValidateUserAndPassword(jsonObject.email, jsonObject.username)) {
+                case -1:{
+                    resultJSON = JSON.stringify({Status: "Failed", Message: "This username is taken"});
+                    return;
+                }
+                case -2:{
+                    resultJSON = JSON.stringify({Status: "Failed", Message: "This email was already used"});
+                    return;
+                }
+                default: break;
+            }
+           /* if( === false)
             {
                 resultJSON = JSON.stringify({Status: "Failed", Message: "User already exists"});
                 return;
-            }
+            }*/
 
             jsonObject.owner_id = uuidv4();
             jsonObject.root = uuidv4();
@@ -251,7 +306,7 @@ async function parsePostRequest(req, dbHandler) {
 
             await dbHandler.AddToActionsDataBase(parsedURL[1], actionJson);
 
-            resultJSON = JSON.stringify({Status: "OK", Message: "User created! Please login!"});
+            resultJSON = JSON.stringify({Status: "OK", Message: "User created! Please login!",owner_id:jsonObject.owner_id});
         }
 
         if (parsedURL[2] === "accounts" && parsedURL[1] === jsonObject['owner_id']) {
@@ -277,6 +332,51 @@ async function parsePostRequest(req, dbHandler) {
 
             jsonObject.file_id = uuidv4();
 
+            let split = require("./splitter");
+            let user = await (await dbHandler.GetFromUsersDataBaseByUserID(jsonObject['owner_id']))[0];
+            console.log(jsonObject['number_of_chunks']);
+            console.log(jsonObject['chunk_size']);
+            let hasCloud = new Map();
+            hasCloud.set('gd',false);
+            hasCloud.set('db',false);
+            hasCloud.set('od',false);
+            //console.log(user.accounts);
+            for(let acc of user.accounts){
+                hasCloud.set(acc.cloud,true);
+            }
+            //console.log(hasCloud);
+            //console.log(user.bandwidth);
+
+            if(!hasCloud.get('gd')) user.bandwidth.storage_google = -1;
+            if(!hasCloud.get('db')) user.bandwidth.storage_dropbox = -1;
+            if(!hasCloud.get('od')) user.bandwidth.storage_onedrive = -1;
+
+            console.log(jsonObject['number_of_chunks']);
+                console.log(jsonObject['chunk_size']);
+                    console.log(user['cloud_settings']);
+                        console.log(user.bandwidth);
+
+
+            let result = split(
+                jsonObject['number_of_chunks'],
+                jsonObject['chunk_size'],
+                user['cloud_settings'],
+                user.bandwidth
+            );
+            console.log(result);
+            let list = "";
+            for(let [k,v] of result.entries()){
+                let ch = k.substr(0,1);
+                if(v>0){
+                    for(let i = 0; i < v; i++){
+                        list += ch;
+                    }
+                }
+            }
+            list = list.split('').sort(function(){return 0.5-Math.random()}).join('');
+            console.log(list);
+
+            jsonObject.clouds = list;
             jsonObject.chunks = [];
 
             await dbHandler.InsertIntoFilesDataBase(jsonObject);
@@ -304,15 +404,42 @@ async function parsePostRequest(req, dbHandler) {
 
             let fileTEMP = await dbHandler.GetFromFilesDataBase(jsonObject['file_id']);
             let fileJSON = fileTEMP[0];
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(jsonObject['owner_id']);
+            let userJSON = userTEMP[0];
+            //console.log(userJSON);
 
             if (fileJSON['owner_id'] === jsonObject['owner_id'] && jsonObject['data'].length === jsonObject['data_size']) {
 
                 // TODO: trebuie validat md5 si also la chunkJSON trebuie pus si un cloud service, cand va fi cazul
+                let chunkNumber = jsonObject['chunk_number'];
+                //console.log("\t\t\t\t\t\t\t\t\t\t\t\t\t" + chunkNumber);
+                //console.log("\t\t\t\t\t\t\t\t\t\t\t\t\t" + fileJSON['clouds']);
+                let cloudName = fileJSON['clouds'].substring(chunkNumber,chunkNumber+1);
+                //console.log("\t\t\t\t\t\t\t\t\t\t\t\t\t" + cloud);
+                cloudName = expand(cloudName);
                 let chunkJSON = {};
                 chunkJSON['chunk_number'] = jsonObject['chunk_number'];
                 chunkJSON['data_size'] = jsonObject['data_size'];
                 chunkJSON['md5'] = jsonObject['md5'];
-                chunkJSON['name'] = uuidv4();
+                chunkJSON['name'] = fileJSON['file_id'] + '@' + chunkNumber;
+                chunkJSON['cloud'] = cloudName;
+
+                const {clouds} = require('./clouds');
+                let cloud = new clouds(cloudName);
+                let refresh = "";
+                for(let acc of userJSON.accounts){
+                    if(acc.cloud === cloudName) refresh = acc.refresh;
+                }
+
+                if(refresh){
+                    let ok = await cloud.uploadText(refresh, chunkJSON['name'], jsonObject['data']);
+                    if(ok){
+                        console.log("\t\t\t\t\t\t\t\t\t\t\t\t\tuploaded chunk " + chunkNumber + " in " + cloudName);
+                    }
+                    else{
+                        console.log("\t\t\t\t\t\t\t\t\t\t\t\t\tfailed chunk " + chunkNumber + " in " + cloudName);
+                    }
+                }
 
                 let fileName = ".\\temp\\" + chunkJSON['name'] + ".stol";
                 fs.writeFile(fileName, jsonObject['data'], (err) => {
@@ -374,7 +501,7 @@ async function parsePostRequest(req, dbHandler) {
         if (parsedURL[2] === "import" && parsedURL[1] === secret_key)
         {
             let jsonData = JSON.parse(jsonObject['json']);
-            await dbHandler.importData(jsonData)
+            await dbHandler.importData(jsonData);
             resultJSON = JSON.stringify({Status: "OK"});
         }
     });
@@ -552,11 +679,27 @@ async function parseDeleteRequest(req, dbHandler) {
             let fileJSON = fileTemp[0];
             let fileChunk;
             console.log(fileJSON['chunks']);
+            let userTemp = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+            let userJson = userTemp[0];
+
             for (fileChunk = 0; fileChunk < fileJSON['chunks'].length; fileChunk++)
             {
+
                 console.log(fileJSON['chunks'][fileChunk]);
                 let path = ".\\temp\\" + fileJSON['chunks'][fileChunk]["name"] + ".stol";
                 await fs.unlinkSync(path);
+
+                let cloudName = fileJSON.clouds.substr(fileChunk*1,1);
+                cloudName = expand(cloudName);
+
+                const {clouds} = require('./clouds');
+                let cloud = new clouds(cloudName);
+                let refresh = "";
+                for(let acc of userJson.accounts){
+                    if(acc.cloud===cloudName) refresh = acc.refresh;
+                }
+
+                await cloud.deleteText(refresh, fileJSON['chunks'][fileChunk]["name"]);
             }
             await dbHandler.DeleteFromFilesDataBase(fileJSON['file_id']);
 
@@ -590,7 +733,7 @@ async function parseDeleteRequest(req, dbHandler) {
         }
 
         if(parsedURL[2] === "remove-user" && parsedURL[1] === secret_key) {
-            let userTEMP = await dbHandler.GetFromUsersDataBaseByEmail(jsonObject['email'])
+            let userTEMP = await dbHandler.GetFromUsersDataBaseByEmail(jsonObject['email']);
             console.log(userTEMP);
             if(userTEMP.length === 0)
             {
@@ -628,7 +771,7 @@ async function createCloudUser(owner_id,target,code,db){
     let cloud = new clouds(target);
     let refresh = await cloud.createUserByCode(code);
     if(!refresh) return 0;
-    await db.InsertIntoUserAccounts(owner_id, {cloud:target,refresh:code});
+    await db.InsertIntoUserAccounts(owner_id, {cloud:target,refresh:refresh});
     return 1;
 }
 

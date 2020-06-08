@@ -42,6 +42,12 @@ async function applyValues()
         body: JSON.stringify({first_name : firstName, last_name : lastName, gender : gender, country : country, birthday : birthday})
     });
     const myJson = await response.json();
-
+    if(myJson.Status === "OK"){
+        alert("Changes applied");
+        window.location.reload();
+    }
+    else{
+        alert(myJson.Status);
+    }
 
 }

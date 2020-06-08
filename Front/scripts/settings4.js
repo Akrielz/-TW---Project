@@ -14,7 +14,7 @@ async function getValuesFromDatabase()
     let userID = localStorage.getItem("stol_owner_id");
 
 
-    var url = 'http://127.0.0.1:3000/' + userID + '/user/4';
+    var url = backAddress + userID + '/user/4';
     const response = await fetch(url, {
         method: 'GET'
     });
@@ -45,7 +45,7 @@ async function applyValues()
     let download = document.getElementById("download").value;
     let upload = document.getElementById("upload").value;
 
-    var url = 'http://127.0.0.1:3001/' + userID + '/user/4';
+    var url = backAddress + userID + '/user/4';
     console.log(url);
     const response = await fetch(url, {
         method: 'PUT',
@@ -56,6 +56,11 @@ async function applyValues()
     });
     const myJson = await response.json();
 
-    console.log(myJson);
-
+    if(myJson.Status === "OK"){
+        alert("Changes applied");
+        window.location.reload();
+    }
+    else{
+        alert(myJson.Status);
+    }
 }

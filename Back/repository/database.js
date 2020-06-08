@@ -25,6 +25,15 @@ class MongoHandler
     }
 }
 
+function expand(cloudName){
+    switch (cloudName) {
+        case 'g': return 'gd';
+        case 'd': return 'db';
+        case 'o': return 'od';
+        default : return 0;
+    }
+}
+
 class DatabaseHandler
 {
     MongoClient;
@@ -276,11 +285,26 @@ class DatabaseHandler
                 let fileJSON = fileTemp[0];
                 let fileChunk;
                 console.log(fileJSON['chunks']);
+                let userTemp = await this.GetFromUsersDataBaseByUserID(fileJSON['owner_id']);
+                let userJson = userTemp[0];
+
                 for (fileChunk = 0; fileChunk < fileJSON['chunks'].length; fileChunk++)
                 {
                     console.log(fileJSON['chunks'][fileChunk]);
                     let path = ".\\temp\\" + fileJSON['chunks'][fileChunk]["name"] + ".stol";
                     await fs.unlinkSync(path);
+                    let cloudName = fileJSON.clouds.substr(fileChunk*1,1);
+                    cloudName = expand(cloudName);
+
+                    const {clouds} = require('../clouds');
+                    let cloud = new clouds(cloudName);
+                    let refresh = "";
+                    for(let acc of userJson.accounts){
+                        if(acc.cloud===cloudName) refresh = acc.refresh;
+                    }
+
+                    await cloud.deleteText(refresh, fileJSON['chunks'][fileChunk]["name"]);
+
                 }
                 await this.DeleteFromFilesDataBase(fileJSON['file_id']);
             }
@@ -411,13 +435,13 @@ class DatabaseHandler
     {
         let collection = this.Database.collection('Users');
 
-        if(collection.findOne({username: username}))
+        if(collection.findOne({username: username}).username)
         {
-            return false;
+            return -1;
         }
-        else if(collection.findOne({email: email}))
+        else if(collection.findOne({email: email}).email)
         {
-            return false;
+            return -2;
         }
         else
         {
@@ -561,7 +585,23 @@ class DatabaseHandler
         await collection.remove({});
     }
 
+    async createSession(user_id){
+        let collection = this.Database.collection('Sessions');
+        let x = await collection.insertOne({user_id:user_id});
+        return x.insertedId;
+    }
 
+    async getUserIdBySession(session_id) {
+        let collection = this.Database.collection('Sessions');
+        let x = await collection.findOne({_id: session_id});
+        return x.user_id;
+    }
+
+    async getUserBySession(session_id){
+        let user_id = this.getUserIdBySession(session_id);
+        let collection = this.Database.collection('Users');
+        return await collection.findOne({owner_id: user_id});
+    }
 }
 
 async function UnitTesting()

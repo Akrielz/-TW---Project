@@ -37,8 +37,8 @@ async function loginFunction()
             localStorage.setItem('stol_user_root', myJson["root"]);
             localStorage.setItem('stol_current_folder', myJson["root"]);
 
-            window.location.href = "home";
-        }, 3000);
+            window.location.href = "/home";
+        }, 300);
     }
 
 }

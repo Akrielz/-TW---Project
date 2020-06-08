@@ -8,6 +8,7 @@ function sleep(ms) {
 
 class clouds{
     constructor(type){
+        this.type = type;
         this.base = "http://localhost:";
         this.host = "localhost";
         console.log(type);
@@ -28,13 +29,13 @@ class clouds{
                 break;
             }
         }
-        console.log("port: " + this.port);
+        //console.log("port: " + this.port);
         this.url = this.base + this.port;
     }
 
     async createUserByCode(code){
         let path = "/users?code=" + code;
-        console.log(this.url + path);
+        //console.log(this.url + path);
         let data = "";
         let obj = 0;
         http.request(
@@ -95,8 +96,9 @@ class clouds{
     }
 
     async downloadText(refresh,name){
+        console.log("I AM CLOUD");
         let path = "/files/" + name + "?refresh=" + refresh;
-        console.log(this.url + path);
+        //console.log(this.url + path);
         let data = "";
         let obj = 0;
         let req = http.request(
@@ -109,6 +111,7 @@ class clouds{
             res =>{
                 res.on('data', d => data += d);
                 res.on('end', () => {
+                    data = data.replace(/\s/g, "");
                     console.log(data);
                     obj = JSON.parse(data);
                 });
@@ -120,6 +123,7 @@ class clouds{
             if(obj) ok = 1;
             await sleep(100);
         }
+        console.log("cloud " + this.type + ": " + JSON.stringify(obj));
         if(obj.message === "Success") return obj.content;
         return 0;
     }

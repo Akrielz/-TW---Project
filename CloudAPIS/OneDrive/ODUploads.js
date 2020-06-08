@@ -10,14 +10,95 @@ function sleep(ms) {
 class ODUploads{
 
     constructor() {
+        this.connections = 0;
+        this.max = 10;
         this.driveHost = "graph.microsoft.com";
+        this.uploadHost = "consumer.microsoft.com";
         this.uploadPath = "/v1.0/me/drive/items/{item-id}/children";
+        this.uploadPath2 = "/v1.0/me/drive/items/{parent-id}:/{filename}:/content";
+        this.downloadPath = "/v1.0/me/drive/items/{item-id}/content";
         this.folderPath = "/v1.0/me/drive/root/children";
+        this.otherPath = "/v1.0/me/drive/items";
         console.log("ODUPLOADS");
     }
 
+    async waitConnection(){
+        while(this.connections >= this.max) {
+            await sleep(100);
+            //console.log("connections  : " + this.connections);
+        }
+        this.connections++;
+        console.log("connections++: " + this.connections);
+    }
 
-    async uploadText(token, content, name, parents = []){
+    async connectionReady(){
+        this.connections--;
+        console.log("connections--: " + this.connections);
+    }
+
+    async uploadText(token, content, name, parents = [], index = 0){
+        let serv = this;
+        await this.waitConnection();
+        let path = this.uploadPath2.replace('{parent-id}',parents[0]||'root');
+        name = name + ".stol";
+        path = path.replace('{filename}',name);
+
+        let options = {
+            'method': 'PUT',
+            'hostname': this.driveHost,
+            'path': path,
+            'headers': {
+                'Authorization': 'Bearer ' + token,
+                //'Content-Type': 'multipart/related; boundary: "' + boundary + '"'
+                'Content-Type':'text/plain'
+            },
+            'maxRedirects': 20
+        };
+
+        let obj = 0;
+
+        let req = https.request(options, function (res) {
+            let chunks = [];
+
+            res.on("data", function (chunk) {
+                chunks.push(chunk);
+            });
+
+            res.on("end", function (chunk) {
+                let body = Buffer.concat(chunks);
+                //console.log(body.toString());
+                obj = JSON.parse(body);
+            });
+
+            res.on("error", function (error) {
+                console.log(error);
+            });
+        });
+        
+        req.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                //console.log(err);
+                //console.log("file number: " + name);
+                obj = await serv.uploadText(token, content, name, parents, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }
+        });
+        req.write(content);
+        req.end();
+
+        let ok = 0;
+        while (!ok) {
+            if (obj) ok = 1;
+            await sleep(100);
+            //console.log('not yet');
+        }
+        await this.connectionReady();
+        return obj;
+    }
+
+    async uploadText2(token, content, name, parents = [],index = 0){
+        let serv = this;
+        await this.waitConnection();
         let metadata = {
             "name": name + ".stol",
             "file": {},
@@ -25,7 +106,9 @@ class ODUploads{
             "@microsoft.graph.conflictBehavior": "rename"
         };
 
-        let path = this.uploadPath.replace('{items-id}',parents[0]||'root');
+        let path = this.uploadPath.replace('{item-id}',parents[0]||'root');
+
+        //console.log("path: " + path);
 
         const boundary = '-----123581321222334@#$';
         const delimiter = "\r\n--" + boundary + "\r\n";
@@ -33,23 +116,26 @@ class ODUploads{
 
         let options = {
             'method': 'POST',
-            'hostname': this.driveHost,
+            'hostname': this.uploadHost,
             'path': path + '?uploadType=multipart',
             'headers': {
                 'uploadType': 'multipart',
                 'Authorization': 'Bearer ' + token,
-                'Content-Type': 'multipart/related; boundary=' + boundary
+                //'Content-Type': 'multipart/related; boundary: "' + boundary + '"'
+                'Content-Type':'application/json'
             },
             'maxRedirects': 20
         };
 
         let postData = delimiter +
             'Content-ID: <metadata>\r\n' +
+            "Content-Disposition: form-data; name=\"metadata\"\r\n" +
             "Content-Type: application/json\r\n" +
             "\r\n" +
             JSON.stringify(metadata) + "\r\n" +
             delimiter +
             "Content-ID: <content>\r\n" +
+            "Content-Disposition: form-data; name=\"content\"\r\n" +
             "Content-Type: text/plain\r\n" +
             "\r\n" +
             content +
@@ -67,7 +153,7 @@ class ODUploads{
 
             res.on("end", function (chunk) {
                 let body = Buffer.concat(chunks);
-                console.log(body.toString());
+                //console.log(body.toString());
                 obj = JSON.parse(body);
             });
 
@@ -75,7 +161,12 @@ class ODUploads{
                 console.error(error);
             });
         });
-
+        req.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                obj = await serv.uploadText2(token, content, name, parents, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }
+        });
         req.write(postData);
         req.end();
 
@@ -85,11 +176,14 @@ class ODUploads{
             await sleep(100);
             //console.log('not yet');
         }
+        await this.connectionReady();
         return obj;
     }
 
 
-    async createFolder(token, name, parents = []) {
+    async createFolder(token, name, parents = [], index = 0) {
+        let serv = this;
+        await this.waitConnection();
         let fileMetadata = {
             "name": name,
             "folder": { },
@@ -117,12 +211,20 @@ class ODUploads{
             res => {
                 res.on('data', d => data += d);
                 res.on('end', () => {
-                    console.log("ODU: data: " + data);
+                    //console.log("ODU: data: " + data);
                     obj = JSON.parse(data);
                 });
             }
         );
         req.write(metadata);
+        req.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                //console.log(err);
+                //console.log("file number: " + name);
+                obj = await serv.createFolder(token, name, parents, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }
+        });
         req.end();
 
         let ok = 0;
@@ -131,10 +233,13 @@ class ODUploads{
             await sleep(100);
             //console.log('not yet');
         }
+        await this.connectionReady();
         return obj;
     }
 
-    async deleteFile(token,gid){
+    async deleteFile(token,gid, index = 0){
+        let serv = this;
+        await this.waitConnection();
         let data = "";
         let obj = 0;
         let req = https.request(
@@ -152,6 +257,14 @@ class ODUploads{
                 res.on('end', () => {data=data||'{"ok":1}';obj = JSON.parse(data)});
             }
         );
+        req.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                //console.log(err);
+                //console.log("file number: " + name);
+                obj = await serv.deleteFile(token, gid, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }
+        });
         req.end();
 
         let ok = 0;
@@ -160,25 +273,42 @@ class ODUploads{
             await sleep(100);
             //console.log('not yet');
         }
+        await this.connectionReady();
         return obj;
     }
 
-    async downloadText(token,gid){
+    async downloadText(token,gid, index = 0){
+        let serv = this;
+        await this.waitConnection();
         let data = "";
         let obj = 0;
+        let addr = "";
+        let path = this.downloadPath.replace('{item-id}',gid);
+        //console.log("path: " + this.driveHost + path);
         let req = https.request(
             {
                 headers: {
                     "Authorization": "Bearer " + token,
+                    'Accept':'*/*',
+                    'Accept-Encoding':'gzip, deflate, br'
                 },
                 hostname: this.driveHost,
-                path: this.otherPath + "/" + gid + "?alt=media",
+                path: this.otherPath + "/" + gid + "/content",
                 method: "GET",
-                port: 443
+                //port: 443
             },
             res => {
-                res.on('data', d => data += d);
+                //console.log(res);
+                res.on('data', d => {
+                    data += d;
+                    //console.log("\n\n");
+                    //console.log("data: " + data);
+                    //console.log("\n\n");
+                });
                 res.on('end', () => {
+                    //console.log(res.headers.location);
+                    addr = res.headers.location;
+                    //console.log("\n\nsomething\n\n");
                     try{
                         obj = JSON.parse(data).error;
                     }catch (e) {
@@ -187,6 +317,14 @@ class ODUploads{
                 });
             }
         );
+        req.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                //console.log(err);
+                //console.log("file number: " + name);
+                obj = await serv.downloadText(token, gid, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }
+        });
         req.end();
 
         let ok = 0;
@@ -195,10 +333,64 @@ class ODUploads{
             await sleep(100);
             //console.log('not yet');
         }
+        //console.log(obj);
+        if(obj.content) {
+            await this.connectionReady();
+            return obj;
+        }
+        obj = await this.getText(addr);
+        await this.connectionReady();
+        //obj.addr = addr;
         return obj;
     }
 
-    async getRefreshToken(access_code,credentials){
+    async getText(addr, index = 0){
+        await this.waitConnection();
+        let serv = this;
+        console.log(addr);
+        let obj = 0;
+        let data = "";
+        let request = https.request(addr,res=>{
+            res.on('data', d => {
+                data += d;
+                //console.log("\n\n");
+                //console.log("data: " + data);
+                //console.log("\n\n");
+            });
+            res.on('end', () => {
+                //console.log(res.headers.location);
+                //addr = res.headers.location;
+                //console.log("\n\nsomething\n\n");
+                try{
+                    obj = JSON.parse(data).error;
+                }catch (e) {
+                    obj = {content:data}
+                }
+            });
+        });
+        request.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                //console.log(err);
+                //console.log("file number: " + name);
+                obj = await serv.getText(addr, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }        });
+        request.end();
+        let ok = 0;
+        obj = 0;
+        while (!obj) {
+            if (obj) ok = 1;
+            await sleep(100);
+            //console.log('not yet');
+        }
+        //console.log(obj);
+        await this.connectionReady();
+        return obj;
+    }
+
+    async getRefreshToken(access_code,credentials, index = 0){
+        let serv = this;
+        await this.waitConnection();
         let form = {
             code: access_code,
             grant_type: "authorization_code",
@@ -223,13 +415,21 @@ class ODUploads{
             res => {
                 res.on('data', d => data += d);
                 res.on('end', () => {
-                    console.log(data);
+                    //console.log(data);
                     obj = {};
                     obj.access = JSON.parse(data)['access_token'];
                     obj.refresh = JSON.parse(data)['refresh_token'];
                 });
             }
         );
+        req.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                //console.log(err);
+                //console.log("file number: " + name);
+                obj = await serv.getRefreshToken(access_code,credentials, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }
+        });
         await req.write(formData);
         await req.end();
         let ok = 0;
@@ -237,10 +437,13 @@ class ODUploads{
             if(obj){ok=1;}
             await sleep(100);
         }
+        await this.connectionReady();
         return obj;
     }
 
-    async refreshToken(refresh,credentials) {
+    async refreshToken(refresh,credentials, index = 0) {
+        let serv = this;
+        await this.waitConnection();
         let form = {
             refresh_token: refresh,
             grant_type: "refresh_token",
@@ -266,10 +469,18 @@ class ODUploads{
                 res.on('data', d => data += d);
                 res.on('end', () => {
                     access = JSON.parse(data)['access_token'] || "not found";
-                    console.log(access);
+                    //console.log(access);
                 });
             }
         );
+        req.on('error',async (err)=>{
+            if(err.code === 'ETIMEDOUT' && index < 20) {
+                //console.log(err);
+                //console.log("file number: " + name);
+                access = await serv.refreshToken(refresh,credentials, index + 1);
+                console.log("\t\t\t\tSUNT IN ERROR: " + index + " " + JSON.stringify({}));
+            }
+        });
         await req.write(formData);
         await req.end();
         let ok = 0;
@@ -278,6 +489,7 @@ class ODUploads{
             await sleep(100);
             //console.log('not yet');
         }
+        await this.connectionReady();
         return access;
     }
 }

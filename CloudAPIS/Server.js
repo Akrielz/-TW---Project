@@ -91,8 +91,16 @@ class Server {
                     if(obj.code){
                         console.log("found the code: " + obj.code);
                         let codes = await serv.up.getRefreshToken(obj.code,serv.credentials);
-                        console.log(codes);
-                        obj.refresh = codes.refresh;
+                        if(codes.access && codes.refresh) {
+                            console.log(codes);
+                            obj.refresh = codes.refresh;
+                        }
+                        else{
+                            res.writeHead(400, predefinedHead);
+                            res.write('{"message":"Bad request: invalid code"}');
+                            res.end();
+                            return;
+                        }
                     }
                     else {
                         res.writeHead(400, predefinedHead);
@@ -221,6 +229,7 @@ class Server {
                             res.end();
                             return;
                         }
+                        console.log("downloading: " + fileName);
                         let content = await serv.downloadFile(obj.refresh,gid);
                         if(content){
                             res.writeHead(200,predefinedHead);
@@ -263,9 +272,9 @@ class Server {
     }
 
     async getToken(refresh){
-        console.log("refresh: " + refresh);
+        //console.log("refresh: " + refresh);
         let token = await this.db.getToken(refresh);
-        console.log("token from db: " + token);
+        //console.log("token from db: " + token);
         if(token === this.db.expired) return this.refreshToken(refresh);
         else{
             return token;
@@ -287,9 +296,9 @@ class Server {
 
     async addFile(refresh,name,content){
         let token = await this.getToken(refresh);
-        console.log("got token: " + token);
+        //console.log("got token: " + token);
         let root = await this.getRoot(refresh);
-        console.log("root: " + root);
+        //console.log("root: " + root);
 
         let file = await this.up.uploadText(token,content,name,[root]);
         if(!file.id) return -1;
@@ -308,7 +317,9 @@ class Server {
     async downloadFile(refresh,gid){
         let token = await this.getToken(refresh);
         //console.log("got token: " + token);
+        console.log("downloading " + gid);
         let obj = await this.up.downloadText(token,gid);
+        console.log("\n\n" + obj.content + "\n\n\n");
         return obj.content||0;
     }
 

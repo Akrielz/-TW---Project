@@ -114,10 +114,21 @@ function start(){
                     return;
                 }
                 case 'images':{
+                    //console.log(req.headers['if-none-match']);
+                    if(req.headers['if-none-match'] === "123"+path){
+                        res.writeHead(304);
+                        res.end();
+                        return;
+                    }
+
                     let img = await readFile(path);
                     let ext = path.split('.')[1];
                     if(ext==="svg") ext = "svg+xml";
-                    res.writeHead(200,{'Content-Type':'image/'+ext});
+                    res.writeHead(200,{
+                        'Content-Type':'image/'+ext,
+                        'Cache-Control':'public; max-age=10000',
+                        'ETag':"123" + path
+                    });
                     res.write(img);
                     res.end();
                     return;

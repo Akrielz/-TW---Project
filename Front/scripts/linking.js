@@ -79,8 +79,12 @@ function disable(index){
 }
 
 async function sendAuth(code,target){
+    //alert("Please wait until we confirm your access code.");
     let owner_id = localStorage.getItem("stol_owner_id");
-    if(code.length < 10){alert("The code provided is not valid!");}
+    if(code.length < 10){
+        alert("The code provided is not valid!");
+        return;
+    }
     let url = backAddress + owner_id + "/accounts";
     let body=JSON.stringify({
         "owner_id":owner_id,
@@ -94,12 +98,18 @@ async function sendAuth(code,target){
         },
         body:body
     };
-    let response = await fetch(url,options);
+    fetch(url,options).then(r=>r.json()).then(r=>{
+        if(r && r.Status === "OK") document.location.href = "/linking";
+        else{
+            alert("Something went wrong!");
+        }
+    })
+    /*let response = await fetch(url,options);
     if(response){
-        document.location.reload();
+        document.location.href = "/linking";
     }else{
         alert("Something went wrong!");
-    }
+    }*/
 }
 
 async function sendGD(){
