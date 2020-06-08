@@ -237,13 +237,19 @@ class DatabaseHandler
         return true;
     }
 
-    async RemoveFolderData(folderID)
+    async RemoveFolderData(folderID, parentFolderId)
     {
+        const fs = require('fs');
+
         let collection = this.Database.collection('Files');
 
         let result = await this.GetFromFolderDataBase(folderID);
 
         let folderJson = result[0];
+        console.log(result);
+
+        if(parentFolderId.length !== 0)
+            await this.RemoveFileFromFolder(parentFolderId, folderID);
 
         let listItems = [];
 
@@ -254,17 +260,17 @@ class DatabaseHandler
             item = folderJson['childs'][counter];
             if(item['type'] === "folder")
             {
-                let temp = await this.RemoveFolderData(item['id']);
+                let temp = await this.RemoveFolderData(item['id'], folderID);
                 let buff;
-                for (buff in temp)
+                for (buff = 0; buff < temp.length; buff++)
                 {
-                    listItems.push(buff);
+                    listItems.push(temp[buff]);
                 }
             }
             else
             {
                 listItems.push(item);
-                await this.RemoveFileFromFolder(item['id']);
+                //await this.RemoveFileFromFolder(item['id']);
 
                 let fileTemp = await this.GetFromFilesDataBase(item['id']);
                 let fileJSON = fileTemp[0];
@@ -282,6 +288,18 @@ class DatabaseHandler
         await this.DeleteFromFolderDataBase(folderID);
 
         return listItems;
+    }
+
+    async RemoveUserForever(userJSON)
+    {
+        let collection = this.Database.collection('Actions');
+        await collection.remove({owner_id: userJSON['owner_id']});
+
+        await this.RemoveFolderData(userJSON['root'], "");
+
+        collection = this.Database.collection('Users');
+        await collection.remove({owner_id: userJSON['owner_id']});
+        return true;
     }
 
     async RemoveFileFromFolder(folderID, fileID)
@@ -389,6 +407,24 @@ class DatabaseHandler
         return user.accounts;
     }
 
+    async ValidateUserAndPassword(email, username)
+    {
+        let collection = this.Database.collection('Users');
+
+        if(collection.findOne({username: username}))
+        {
+            return false;
+        }
+        else if(collection.findOne({email: email}))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     async InsertIntoUserAccounts(owner_id, account){
         console.log("DATABASE: id: " + owner_id);
         console.log("DATABASE: acc: " + JSON.stringify(account));
@@ -397,6 +433,43 @@ class DatabaseHandler
 
         collection.updateOne({owner_id:owner_id},newData);
 
+    }
+
+    async RenameFile(fileID, newName) {
+        let collection = this.Database.collection('Files');
+
+        const newValues = {$set: {name: newName}};
+        await collection.updateOne({file_id : fileID}, newValues);
+    }
+
+    async RenameFolder(folderID, newName) {
+        let collection = this.Database.collection('Folders');
+
+        const newValues = {$set: {name: newName}};
+        await collection.updateOne({folder_id : folderID}, newValues);
+    }
+
+    async RenameElementInFolder(id, folderID, newName) {
+
+        let collection = this.Database.collection('Folders');
+
+        let result = await this.GetFromFolderDataBase(folderID);
+
+        console.log(result);
+
+        let folderJson = result[0];
+
+        for(let counter = 0; counter < folderJson['childs'].length; counter++)
+        {
+            if(folderJson['childs'][counter]['id'] === id)
+            {
+                folderJson['childs'][counter]['name'] = newName;
+            }
+        }
+
+        const newValues = {$set: {childs: folderJson['childs']}};
+        await collection.updateOne({folder_id : folderID}, newValues);
+        return true;
     }
 
     async AddUsers(json)
