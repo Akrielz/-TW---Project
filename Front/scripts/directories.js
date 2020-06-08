@@ -153,8 +153,122 @@ function element(node) {
         }
     }
 
+    let nav = document.createElement("nav");
+    nav.id = "myContextMenu";
+    nav.className = "navigationSettings";
+    nav.style.position = "absolute";
+    nav.style.width = "120px";
+    nav.style.height = "auto";
+
+    let div = document.createElement("div");
+    nav.appendChild(div);
+
+    let ul = document.createElement("ul");
+    div.appendChild(ul);
+
+    let o1 = document.createElement("li");
+    ul.appendChild(o1);
+
+    let a1 = document.createElement("a");
+    a1.innerHTML = "Delete";
+    o1.appendChild(a1);
+
+    let o2 = document.createElement("li");
+    ul.appendChild(o2);
+
+    let a2 = document.createElement("a");
+    a2.innerHTML = "Rename";
+    o2.appendChild(a2);
+
+    if (node.info && node.info.type === "file"){
+
+        let o3 = document.createElement("li");
+        ul.appendChild(o3);
+
+        let a3 = document.createElement("a");
+        a3.innerHTML = "Download";
+        o3.appendChild(a3);
+
+        o3.addEventListener("mousedown", e => {
+            console.log("Descarcam");
+            downloadItem(node).then();
+        });
+    }
+
+    o1.addEventListener("mousedown", e => {
+        console.log("Stergem");
+        removeItem(node).then();
+    });
+
+    o2.addEventListener("mousedown", e => {
+        console.log("Redenumim");
+        renameItem(node).then();
+
+    });
+
+
+
+    document.body.addEventListener("mousedown", e => {
+        if (document.getElementsByClassName("navigationSettings")[0] !== undefined){
+            document.body.removeChild(document.getElementById("myContextMenu"));
+        }
+    })
+
+    if (node.type===null){
+        element.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            document.body.appendChild(nav);
+
+            nav.style.left = e.x + "px";
+            nav.style.top = e.y + "px";
+        });
+    }
+
     return element;
 }
+
+async function renameItem(node)
+{
+    console.log(node);
+
+    let uid = localStorage.getItem("stol_owner_id");
+
+    let newName = prompt("Enter new name:", "New name");
+    if (newName == null || newName === "") {
+        alert("Rename action cancelled");
+    } else {
+        if(node.info.type === "file") {
+            let url = backAddress + uid + "/rename-file";
+
+            let response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({owner_id : uid, file_id : node.info.id, folder_id : node.parent.info.id, new_name: newName})
+            });
+            const myJson = await response.json();
+
+            console.log(myJson);
+        }
+        else {
+            let url = backAddress + uid + "/rename-folder";
+
+            let response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({owner_id : uid, folder_id : node.info.id, parent_folder_id : node.parent.info.id, new_name: newName})
+            });
+            const myJson = await response.json();
+
+            console.log(myJson);
+        }
+    }
+
+}
+
 
 function _arrayBufferToBase64( buffer ) {
     let binary = '';
@@ -341,19 +455,40 @@ async function removeItem(node)
     console.log(node);
 
     let uid = localStorage.getItem("stol_owner_id");
-    let url = backAddress + uid + "/remove-file";
 
-    let response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({owner_id : uid, file_id : node.info.id, folder_id : node.parent.info.id})
-    });
-    const myJson = await response.json();
+    if(node.info.type === "file") {
+        let url = backAddress + uid + "/remove-file";
 
-    console.log(myJson);
+        let response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({owner_id : uid, file_id : node.info.id, folder_id : node.parent.info.id})
+        });
+        const myJson = await response.json();
+
+        console.log(myJson);
+    }
+    else {
+        let url = backAddress + uid + "/remove-dir";
+
+        let response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({owner_id : uid, folder_id : node.info.id, parent_folder_id : node.parent.info.id})
+        });
+        const myJson = await response.json();
+
+        console.log(myJson);
+    }
+
+
 }
+
+
 
 
 function content(node){
