@@ -22,6 +22,12 @@ let newFolder = {
 class Node {
     constructor(_info) {
         this.info = _info;
+
+        if(this.info.name.length > 20)
+        {
+            this.info.name = this.info.name.substr(0, 17) + "...";
+        }
+
         this.childs = [];
         this.parent = null;
         this.type = null;

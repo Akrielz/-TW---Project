@@ -42,7 +42,16 @@ function createTimeDivider(title, historyElements){
 
         let elementName = document.createElement("div");
         elementName.classList.add("elementName");
-        elementName.innerHTML = "<p>" + historyElements[i].name + "</p>";
+
+        if(historyElements[i].name.length > 20)
+        {
+            elementName.innerHTML = "<p>" + historyElements[i].name.substr(0, 17) + "..."  + "</p>";
+        }
+        else
+        {
+            elementName.innerHTML = "<p>" + historyElements[i].name + "</p>";
+        }
+
 
         let elementTime = document.createElement("div");
         elementTime.classList.add("elementTime");
