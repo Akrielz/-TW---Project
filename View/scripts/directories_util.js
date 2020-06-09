@@ -12,7 +12,7 @@ let contentMap = new Map();
 
 async function initTree(){
 
-    resizeBar(50);
+    //resizeBar(50);
     dataTree = await getJsonTree();
     console.log(dataTree.accounts);
     if(dataTree.accounts.length === 0){
@@ -47,8 +47,8 @@ onShowTreeClicked = async function () {
         treeButton.innerText = "Hide Tree";
         treeOk = 1;
 
-        sideNav.style.width = "15%";
-        full_content.style.left = "15%";
+        sideNav.style.width = "25%";
+        full_content.style.left = "25%";
         full_content.style.width = "83%";
     } else {
         tree_div.innerHTML = "";

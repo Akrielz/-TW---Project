@@ -300,19 +300,19 @@ class DatabaseHandler
                 for (fileChunk = 0; fileChunk < fileJSON['chunks'].length; fileChunk++)
                 {
                     console.log(fileJSON['chunks'][fileChunk]);
-                    let path = ".\\temp\\" + fileJSON['chunks'][fileChunk]["name"] + ".stol";
-                    await fs.unlinkSync(path);
+                    //let path = ".\\temp\\" + fileJSON['chunks'][fileChunk]["name"] + ".stol";
+                    //await fs.unlinkSync(path);
                     let cloudName = fileJSON.clouds.substr(fileChunk*1,1);
                     cloudName = expand(cloudName);
 
-                    const {clouds} = require('../clouds');
+                    const {clouds} = require('../Controller/clouds');
                     let cloud = new clouds(cloudName);
                     let refresh = "";
                     for(let acc of userJson.accounts){
                         if(acc.cloud===cloudName) refresh = acc.refresh;
                     }
 
-                    let userTEMP = await dbHandler.GetFromUsersDataBaseByUserID(parsedURL[1]);
+                    let userTEMP = await this.GetFromUsersDataBaseByUserID(fileJSON['owner_id']);
                     let userJSON = userTEMP[0];
                     if(cloudName === "gd") {
                         userJSON['statistics']['total_google'] = userJSON['statistics']['total_google'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
@@ -323,7 +323,7 @@ class DatabaseHandler
                     else {
                         userJSON['statistics']['total_dropbox'] = userJSON['statistics']['total_dropbox'] * 1 - fileJSON['chunks'][fileChunk]['data_size'];
                     }
-                    await dbHandler.UpdateUser(userJSON);
+                    await this.UpdateUser(userJSON);
 
                     await cloud.deleteText(refresh, fileJSON['chunks'][fileChunk]["name"]);
 

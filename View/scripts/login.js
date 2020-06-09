@@ -40,5 +40,8 @@ async function loginFunction()
             window.location.href = "/home";
         }, 300);
     }
+    else{
+        alert("Invalid username or password!");
+    }
 
 }

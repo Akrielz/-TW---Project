@@ -6,7 +6,7 @@ function toDateTime(miliSecs) {
 
 async function removeAction(action)
 {
-    console.log("God bless")
+    console.log("God bless");
     console.log(action);
     let id = localStorage.getItem("stol_owner_id");
     let url = backAddress + id + '/remove-action';
@@ -87,7 +87,7 @@ function createTimeDivider(title, historyElements){
         aClose.addEventListener('click', () =>  {
 
             removeAction(historyElements[i]).then((result) => {
-                console.log(result)
+                console.log(result);
                 timeDivider.removeChild(elements[i]);
                 contor++;
 
@@ -137,7 +137,7 @@ async function getHistoryFromServer()
 {
     let id = localStorage.getItem("stol_owner_id");
     let url = backAddress + id + "/history";
-    console.log(url)
+    console.log(url);
     const response = await fetch(url);
 
     let myJSON = await response.json();
