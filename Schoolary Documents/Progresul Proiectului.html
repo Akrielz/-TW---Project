@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress</title>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <h1>Report Progress - STOL</h1>
+    </header>
+
+    <div class = "contentInfo">
+    <dt> Indexes </dt>
+    <ol>
+        <li> <a href="#a1"> Abstract </a></li>
+        <li> <a href="#a2"> Introduction </a>
+            <ol>
+                <li><a href="#a21"> Presentation </a></li>
+                <li><a href="#a22"> The arhitecture design </a></li>
+                <li><a href="#a23"> Roles distribution </a></li>
+            </ol>
+        </li>
+        <li> 
+            <a href="#"> Evolution </a>
+            <ol>
+                <li><a href="#"> The beginning</a></li>
+                <li><a href="#"> User's Interface, Design and Responsiveness</a></li>
+                <li><a href="#"> Front Server </a></li>
+                <li><a href="#"> Backend Server and Database Administration</a></li>
+                <li><a href="#"> Connecting to clouds</a></li>
+                <li><a href="#"> Merging the project</a></li>
+            </ol>
+        </li>
+        <li> <a href="#"> Technologies </a></li>
+        <li> <a href="#"> Bibliography </a></li>
+    </ol>
+
+    <dt> Authors </dt>
+    <dd> Balauca Stefan-Razvan </dd>
+    <dd> Simion Ruben Andrei </dd>
+    <dd> Stirbu Alexandru Ilie </dd>
+    </div>
+
+    <section>
+    <h2 id = "a1">1 Abstract</h2>
+    <p>
+        STOL is a proposed program that should let a user link their Cloud Storage
+        accounts into a single piece, while also providing an easy to understand interface 
+        from where the user could upload / download / delete / update any requested file
+        and the program would take care into spliting the files to the given and available
+        cloud storages.
+    </p>
+    </section>
+
+    <section>
+    <h2 id = "a2">2. Introduction</h2>
+    <h3 id = "a21">2.1 The Presentation</h3>
+    <p>
+        As the era brings more powerful components and gadgets, the digital files that we use daily
+        also increase in size due to their increased qualility. Luckily enough, not only that the
+        current tehnology gives us HDDs with more and more size, but we are also provided the use
+        of cloud storage through diverse online application such as Google Drive, Microsoft OneDrive,
+        and Dropbox.
+    </p>
+    <p>
+        Given the proposed aplication, we decide to take the chalange and unite the 3 cloud storages
+        mentioned earlier, into a single online aplication.
+    </p>
+
+    <h3 id = "a22">2.2 The arhitecture design</h3>
+    <p>
+        Shortly after we took the task, we started the design for the desired web application. The very
+        first thing we did, was to make create a simple arhitecture with simple ideas for the inernal
+        functionality of each page and each functionality.
+    </p>
+    <p>
+        The initial idea of arhitecture design included:
+        <ul>
+            <li>Prehome - Providing a short description of the app</li>
+            <li>Login - Letting people to sign in with their accounts</li>
+            <li>Register - Letting people to create their own accounts</li>
+            <li>Home - The redirect page for the logged people</li>
+            <li>Linking - Letting people to link their cloud accounts to STOL</li>
+            <li>My Uploads - Displaying your uploaded files</li>
+            <li>Upload File - Giving to user the ability to upload your own files</li>
+            <li>Settings - Letting the user to specify and change their preferences </li>
+        </ul>
+        ( The more detailed version can be found on 
+        <a href="https://github.com/Akrielz/-TW---Project/blob/master/Architecture%20Plan.html"> GitHub</a>
+        )
+    </p>
+
+    <p>
+        Afterwards, we established that we also need a more tehnical arhitecture
+        for the application to get started.
+    </p>
+    <p>
+        The simple principle was:
+        <ul>
+            <li>Having the client side</li>
+            <li>Having a server managing the clients' requets</li>
+            <li>Having a server managing the internal logic and communicating with the API</li>
+            <li>Having multiple databases for users, files and their important metadatas</li>
+            <li>Having database handlers for the backside</li>
+        </ul>
+    </p>
+
+    <h3 id ="a23">2.3. Roles distribution</h3>
+    <p>
+        Having a plan explained, all we had to do now, was to start working on different tasks.
+    </p>
+    <p>
+        The roles were therefore assigned:
+    
+    </p> 
+    <p>
+        Balauca Stefan-Razvan:
+        <ul>
+            <li>The frontend Server</li>
+            <li>The file manager arhitecture</li>
+            <li>The researches on Google and OneDrive's API</li>
+        </ul>
+    </p>
+
+    <p>
+        Simion Ruben Andrei:
+        <ul>
+            <li>The backend Server</li>
+            <li>The database handlers</li>
+            <li>The linking between front and back</li>
+        </ul>
+    </p>
+
+    <p>
+        Stirbu Alexandru-Ilie:
+        <ul>
+            <li>The design of the pages</li>
+            <li>The responsiveness of the pages</li>
+            <li>The researches on DropBox's API</li>
+        </ul>
+    </p>
+
+    <p>
+        Of course, regardless of the fact that we assigned diferent roles and tasks, we often
+        helped each others and solved things together
+    </p>
+    </section>
+
+    <section>
+    <h2>3 Evolution</h2>
+    <h3>3.1 The beginning</h3>
+    <p>
+        We alocated a lot of time to learning and researching. One of the first things we've focused on
+        was learning the basics of HTML, CSS, JavaScript and NodeJS.
+    </p>
+    <p>
+        Afterwards, we created the design for Prehome, Login and Register pages. Here are some images for reference
+    </p>
+
+    <h3>Home</h3>
+    <img src="./images/home-whole.png" alt="home">
+    
+    <h3>Login</h3>
+    <img src="./images/old_login.png" alt="old_login">
+
+    <h3>Register</h3>
+    <img src="./images/old_register.png" alt="old_register">
+
+    <p>
+        It was all pretty, but non functional. Having that in mind
+        we also redesigned the arhitecture the for the upcoming things.        
+    </p>
+    <p>
+        After having put more thoughts, we should have multiple settings,
+        statistics in home, and a file manager for managing all the allowed
+        actions inside the main aplication, instead of the simple initial
+        "upload file" system.
+    </p>
+
+    <h3>3.2 User's Interface</h3>
+    <p>
+        The first aproach that we took, was to have a minimal design that we followed
+        and created. For a better representation of what we are trying to say, we have
+        the following example:
+    </p>
+    <p>
+        For home, we have firstly drawn  the following design in Microsoft Paint:
+    </p>
+    <img src="./images/home-sketch.png" alt="home">
+    <p>Then that was the first adaptation in the actual web page</p>
+    <img src="./images/home-it1.png" alt="home">
+    <p>Afterwards we tried all kind of designs to be more appealing</p>
+    <p>Iteration 2:</p>
+    <img src="./images/home-it2.png" alt="home">
+    <p>Iteration 3:</p>
+    <img src="./images/home-it3.png" alt="home">
+    <p>Final Iteration, Ta daaaaaaaaaaaaa:</p>
+    <img src="./images/home-it4.png" alt="home">
+
+    <p>
+        After we touched a pleasing design, we sticked with it and designed everything
+        that came after, with the same design in mind.
+    </p>
+
+    <p>
+        The things that followed were the design for:
+    </p>
+
+    <h2>Linking</h2>
+    <img src="./images/linking2.png" alt="linking">
+
+    <h2>History</h2>
+    <img src="./images/history2.png" alt="history">
+
+    <h2>Settings</h2>
+    <img src="./images/settings_2.png" alt="settings">
+
+    <p>And we started the design for the <b>File manager</b></p>
+    <p>Initial Design:</p>
+    <img src="./images/file_manager1.png" alt="file_manager">
+    <p>Final Design:</p>
+    <img src="./images/file_manager2.png" alt="file_manager">
+
+    <h3>3.3 Frontend Server</h3>
+    <p>
+        Okay, now that we've established the user interface, we need to make it functional and hosted on a server.
+    </p>
+    <p>
+        This server is the only thing that interacts with the webpages. It only received <b>GET</b> requests for
+        each page and additional resources (such as styles, scripts, images).
+    </p>
+
+    <h3>3.4 Backend Server and Database Administration</h3>
+    <p>
+        The first step was starting to work with files and users. The main idea was to have a list of files
+        with their owners. 
+    </p>
+    <p>
+        Afterwads we introduced the notion of folder. And we defined a folder as a list of hyperlinks to other
+        folder and/or files. We decided to think about the folders as something similar to the web system, in order
+        to mentain the memory under control, and to have fast access from a folder to another
+    </p>
+    <p>
+        Then we defined an algorithm to generate the tree that containts the folders. Considering our arhitecture,
+        a DFS is more than enough to receive and have control over all the files and folders.
+    </p>
+    <p>
+        Then we introducted the notion of <b>Action</b>. Any action is a log of a user's command. It isn't a notification,
+        but rather a log that the user can see.
+    </p>
+    <p>
+        Then we started working on the Databases part. We decided to create 4 tables for the whole server:
+    </p>
+    <ul>
+        <li>Users</li>
+        <li>Folders</li>
+        <li>Files</li>
+        <li>Actions</li>
+    </ul>
+    <p>
+        To be easier to work and to reuse the code, we created a handler for the database that was persistent, and
+        was initialized at the runtime of the server, before receiving any propper command. This handler is basically
+        a collection of functions over the 4 tables and it represents the <b>Model</b> part of the application (in the MVC 
+        vision).
+    </p>
+    <p>
+        The server is a collection of methods specifics to the incoming requests and represents the <b>Controller</b> of the
+        STOL application. It is processing data received from the <b>Model</b>.
+    </p>
+    <p>
+        <b>GET commands</b> that the server receives:
+    </p>
+    <ul>
+        <li>UserID / Tree - Processes the data from the folder table and returns the tree for the fileManager</li>
+        <li>UserID / Download Request - Returns the metadata of a file to prepare the download from client side</li>
+        <li>UserID / Download Chunk - Downloads a chunk from cloud</li>
+        <li>UserID / ListDir - Lists the childs of a folder</li>
+        <li>UserID / User / #number - where #number is from {1, 2, 3, 4} domain, returns the data for settings_#number page</li>
+        <li>UserID / User / #type - where #type is form {"Account", "Home"} domain, returns the data for linking and home</li>
+        <li>UserID / History - returns a list of actions that are displaying in the history page</li>
+        <li>SecretKey / Export - specific for admins, returns a json with the content of the tables</li>
+        <li>Secretkey / List Users - specifc for admins, returns a list of tuples of form {username, email}</li>
+    </ul>
+
+    <p>
+        <b>POST commads</b> that the server receives:
+    </p>
+    <ul>
+        <li>Login - Verify the credentials and returns the user id if succesful, else returns "incorect password"</li>
+        <li>Create User - Creates a registered user and puts it in the database</li>
+        <li>UserID / Accounts - Retaints in the database secret keys for the cloud's accounts</li>
+        <li>UserID / Upload Request - Sends metadatas to server about the incoming uploaded file</li>
+        <li>UserID / Upload Chunk - Sends a chunk from the client to server</li>
+        <li>UserID / CreateDir - Creates a folder inside the STOL file manager</li>
+        <li>SecretKey / Import - specific for Admins, receives a json with datas for tables, and uploads them</li>
+    </ul>
+    <p>
+        <b>PUT commads</b> that the server receives:
+    </p>
+    <ul>
+        <li>UserID / User / #number - receives modified data from clients, and applies them for the user</li>
+        <li>UserID / Rename File - renames the file inside the STOL file manager</li>
+        <li>UserID / Rename Folder - renames a folder inside the STOL file manager</li>
+    </ul>
+
+    <p>
+        <b>DELETE commads</b> that the server receives:
+    </p>
+    <ul>
+        <li>UserID / Remove File - removes a file from the STOL file manager</li>
+        <li>UserID / Remove Dir - removes a directory and its files recursively</li>
+        <li>UserID / Remove Action - removes an action from the user's history</li>
+        <li>SecretKey / Erase Database - Admin specific, removes the content from the databases</li>
+        <li>SecretKey / Remove User - Admin specific, removes completely a user and all it's files</li>
+    </ul>
+
+    <h3>3.5 Connecting to Clouds</h3>
+    <p>
+        We thought the application in such a way that the server doesn't directly send the requests to the clouds,
+        but to some API endpoints that were also written by us. All 3 clouds services that we managed to integrate
+        in our application are incapsulated under the form of some API endpoints that all inherit the same abstract 
+        interface of commands defined by us.
+    </p>
+    <p>
+        There are 2 defined paths
+    </p>
+    <ul>
+        <li> Users - There exists the POST (creates a user) and DELETE (deletes a user) functionality </li>
+        <li> File / #filename - POST (uploads a file), GET (downloads a file), DELETE (deletes a file)</li>
+    </ul>
+    <p>
+        In regards of the flow system: The client uploads in the web application a file, then that file is chunked down
+        to Base64 pieces and the server receieves the chunks and decides to which cloud to send each of them.
+    </p>
+    <img src="./images/chunks_diagram.png" alt="chunks">
+    <p>
+        In this process we have studied the <a href="#">Google Drive</a>, <a href="#">DropBox</a> and <a href="#">OneDrive</a>
+        documentations
+    </p>
+    <p>
+        All the chunks are downloaded and uploaded asyncron to increase the performance.
+    </p>
+    <h2>3.6 Merging the Project</h2>
+    <p>
+        Now having all the pieces, the main point was merging the project together to be fully functional.
+        In order to do this, we had to plan in advance. This diagram really helped:
+    </p>
+    <img src="./images/big_diagram.png" alt="diagram">
+    <p>
+        We tried to define a series of inputs and outputs (communication protocols between the modules).
+    </p>
+    <p>
+        All the required datas are in json format (also stored in the NoSQL dataBase). Here is an example:
+    </p>
+    <img src="./images/exJson.png" alt="example">
+    <p>
+        Some example of the data, we send and store in this format:
+    </p>
+    <ul>
+        <li>user data (the image above)</li>
+        <li>file data</li>
+        <li>directory structure</li>
+        <li>etc..</li>
+    </ul>
+    </section>
+
+    <section>
+    <h2>4 Technologies</h2>
+    <p>The technologies we have used so far are: </p>
+    <ul>
+        <li><b>HTML 5</b></li>
+        <li><b>CSS</b></li>
+        <li><b>JavaScript</b> - (used fetch from <b>AJAX</b>)</li>
+        <li><b>Vanilla NodeJS</b> - with very few packages</li>
+        <li><b>MongoDB</b></li>
+    </ul>
+    <p>The used packages for <b>NodeJS</b> are:</p>
+    <ul>
+        <li><b>HTTP</b></li>
+        <li><b>UUID</b> - generates unique ids</li>
+        <li><b>FS</b></li>
+        <li><b>NodeFetch</b> - used in unit testing to replicate fetch in <b>NodeJS</b></li>
+        <li><b>MongoDB</b></li>
+        <li><b>QueryString</b></li>
+        <li><b>URL</b></li>
+    </ul>
+    </section>
+
+    <section>
+    <h2>5. Bibliography</h2>
+    <ul>
+        <li><a href="https://developers.google.com/drive">Google Drive API</a></li>
+        <li><a href="https://www.dropbox.com/developers/documentation/http/overview">DropBox API</a></li>
+        <li><a href="https://github.com/OneDrive/onedrive-api-docs">Microsoft OneDrive API</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Learn">Mozilla web developer</a></li>
+        <li><a href="https://www.w3schools.com/">W3School</a></li>
+    </ul>
+    </section>
+</body>
+</html>

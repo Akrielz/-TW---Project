@@ -319,14 +319,17 @@ function stele(count,max,length){
     return res;
 }
 
-function _arrayBufferToBase64( buffer ) {
-    let binary = '';
+function convertArrayBufferToBase64( buffer ) {
+    let stringBuffer = '';
+
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;
+
     for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode( bytes[ i ] );
+        stringBuffer += String.fromCharCode( bytes[ i ] );
     }
-    return window.btoa( binary );
+
+    return window.btoa( stringBuffer );
 }
 
 let uploadChunks = async function(file, folderID, readerEvent)
@@ -334,7 +337,7 @@ let uploadChunks = async function(file, folderID, readerEvent)
     let chunkSize = 1024 * 512;
     let content = readerEvent.target.result; // this is the content!
     console.log(content);
-    content = _arrayBufferToBase64(content);
+    content = convertArrayBufferToBase64(content);
 
 
     let fileSizeInBytes = content.length;

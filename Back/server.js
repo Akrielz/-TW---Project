@@ -268,8 +268,8 @@ async function parsePostRequest(req, dbHandler) {
             jsonObject.personal_info = {};
             jsonObject["personal_info"].first_name = "Doe";
             jsonObject["personal_info"].last_name = "John";
-            jsonObject["personal_info"].gender = "Apache helicopter";
-            jsonObject["personal_info"].country = "Kurlanda de Est";
+            jsonObject["personal_info"].gender = "Prefer not to mention";
+            jsonObject["personal_info"].country = "Romania";
             jsonObject["personal_info"].birthday = "1900-01-01";
 
             jsonObject.cloud_settings = {};
