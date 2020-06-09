@@ -128,24 +128,13 @@ async function generateTree(json) {
     while(s.length > 0){
         current_element = await s.pop();
         current_node = await t.pop();
-        if("childs" in current_element) {
-            for (let child of current_element.childs) {
-                if(child.info.type==="folder") {
-                    s.push(child);
-                    let child_node = new Node(child.info);
-                    current_node.addChild(child_node);
-                    t.push(child_node);
-                }
+        if("childs" in current_element)
+            for (var child of current_element.childs){
+                s.push(child);
+                var child_node = new Node(child.info);
+                current_node.addChild(child_node);
+                t.push(child_node);
             }
-            for (let child of current_element.childs){
-                if(child.info.type==="file") {
-                    s.push(child);
-                    let child_node = new Node(child.info);
-                    current_node.addChild(child_node);
-                    t.push(child_node);
-                }
-            }
-        }
     }
     return new Tree(tree_root);
 }
@@ -191,7 +180,7 @@ function element(node) {
 
     let nav = document.createElement("nav");
     nav.id = "myContextMenu";
-    nav.className = "rightClickMenu";
+    nav.className = "navigationSettings";
     nav.style.position = "absolute";
     nav.style.width = "120px";
     nav.style.height = "auto";
@@ -319,14 +308,17 @@ function stele(count,max,length){
     return res;
 }
 
-function _arrayBufferToBase64( buffer ) {
-    let binary = '';
+function convertArrayBufferToBase64( buffer ) {
+    let stringBuffer = '';
+
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;
+
     for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode( bytes[ i ] );
+        stringBuffer += String.fromCharCode( bytes[ i ] );
     }
-    return window.btoa( binary );
+
+    return window.btoa( stringBuffer );
 }
 
 let uploadChunks = async function(file, folderID, readerEvent)
@@ -334,7 +326,7 @@ let uploadChunks = async function(file, folderID, readerEvent)
     let chunkSize = 1024 * 512;
     let content = readerEvent.target.result; // this is the content!
     console.log(content);
-    content = _arrayBufferToBase64(content);
+    content = convertArrayBufferToBase64(content);
 
 
     let fileSizeInBytes = content.length;
@@ -484,7 +476,8 @@ function downloadPopUp(filename, text) {
 
 }
 
-async function downloadItem(node){
+async function downloadItem(node)
+{
     console.log(node);
     console.log("Download pornit pe nodul " + node.info.real_name);
 
@@ -503,50 +496,32 @@ async function downloadItem(node){
     let numberOfChunks = requestResponse['number_of_chunks'];
 
     let fileData = "";
-    let fileParts = [];
-    let downloaded = 0;
-    for(let i = 0; i < numberOfChunks; i++){
-        fileParts.push("");
-    }
+
     for(let counter = 0; counter < numberOfChunks; counter++)
     {
-        let chunkData = "";
+        let chunkData;
 
         for(let counter2 = 0; counter2 < numberOfChunks; counter2++)
         {
             if(counter === requestResponse['chunks'][counter2]['chunk_number'])
             {
                 chunkData = requestResponse['chunks'][counter2];
-                break;
             }
         }
 
         console.log(chunkData);
         let uploadRequestUrl = backAddress + userID + '/download-chunk/' + chunkData['name'];
 
-        fetch(uploadRequestUrl).then(r=>r.json()).then(r=>{
-            fileParts[counter] = r.data;
-            downloaded++;
+        const response = await fetch(uploadRequestUrl, {
+            method: 'GET'
         });
 
+        let result = await response.json();
+        fileData = fileData + result['data'];
     }
-
-    let loading = document.getElementsByClassName('file-loader')[0];
-    loading.style.display = 'block';
-    let stelute = document.getElementById('stelute');
-    stelute.innerText = stele(0,numberOfChunks,40);
-    while(downloaded < numberOfChunks){
-        await sleep(100);
-        console.log("uploaded " + downloaded + "/" + numberOfChunks);
-        stelute.innerText = stele(downloaded,numberOfChunks,40);
-    }
-
-    for(let i = 0 ; i < numberOfChunks; i++){
-        fileData+=fileParts[i];
-    }
-
+    //console.log(fileData);
     downloadPopUp(node.info.real_name, fileData);
-    loading.style.display = 'none';
+
 }
 
 async function removeItem(node)
