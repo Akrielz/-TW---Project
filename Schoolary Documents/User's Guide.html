@@ -153,19 +153,39 @@
 
     <section>
     <h2 id = "a8">8. File Manager</h2>
-    <p>The main place where the user can upload / download / rename / delete files</p>
+    <p>
+        The main place where the user can upload / download / rename / delete files.
+        If there is no linked account, the user will be redirected to linking page.
+    </p>
+    <p>
+        For any file, there will be a virtual path inside the STOL APP, and a physical
+        path for all the chunks of the file, indicating the location from the API.
+    </p>
     <img src="./images/file_manager.png" alt="file_manager">
     <p>The interactive parts are:</p>
     <ul>
-        <li><b>Root button</b></li>
-        <li><b>Back button</b></li>
-        <li><b>Hide/Show Tree button</b></li>
-        <li><b>Any file from the manager</b></li>
-        <li><b>Any folder from the manger</b></li>
-        <li><b>Create new folder</b></li>
-        <li><b>Upload new file</b></li>
-        <li><b>Any file from tree</b></li>
-        <li><b>Any folder from tree</b></li>
+        <li><b>Root button</b> - Sends the user to the the root of his account</li>
+        <li><b>Back button</b> - Sends the user a step backwards in the path</li>
+        <li>
+            <b>Hide/Show Tree button</b> - Will decided wether to display or not the Tree visualisation
+            of the files
+        </li>
+        <li><b>Any folder from the manger</b> Left Click - Send the user a step forward inside the selected folder</li>
+        <li>
+            <b>Create new folder</b> - Opens a dialogue asking the user for a folder name, creating it in the current
+            location the user pressed the button
+        </li>
+        <li>
+            <b>Upload new file</b> - Opens a file selector letting the user to select any file to upload.
+            While uploading, a progress bar will appear to indicate the amount of 
+        </li>
+        <li><b>Any folder from tree</b> Left Click - Send the user a step forward inside the selected folder</li>
+        <li><b>Remove item </b> Right Click Option - Removes the selected file from the user's clouds and from the STOL server</li>
+        <li><b>Rename item </b> Right Click Option - Renames the selected file from the user's logical STOL path</li>
+        <li>
+            <b>Download file </b> Right Click Option - Downloads the selected file. While downloading
+            there will be displayed a loading bar to show the progress.
+        </li>
     </ul>
     </section>
 
@@ -191,7 +211,7 @@
         <li><b>Birthday selector field</b></li>
     </ul>
     
-    <h id = "a92"3>9.2. Account Security</h3>
+    <h3 id = "a92"3>9.2. Account Security</h3>
     <p>The user can modify his email and/or password</p>
     <img src="./images/settings2.png" alt="settings">
     <p>The interactive parts are:</p>
