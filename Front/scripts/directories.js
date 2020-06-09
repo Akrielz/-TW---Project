@@ -397,13 +397,17 @@ let uploadChunks = async function(file, folderID, readerEvent)
         if(result.Status === "OK") uploaded++;*/
     }
     let loading = document.getElementsByClassName('file-loader')[0];
-    loading.style.display = 'block';
+    let loading2 = document.getElementsByClassName('file-loader2')[0];
+    loading2.style.display = 'block';
     let stelute = document.getElementById('stelute');
+    let loaderBar = document.getElementById('loaderBar');
     stelute.innerText = stele(0,fileChunks,40);
     while(uploaded < fileChunks){
         await sleep(100);
         console.log("uploaded " + uploaded + "/" + fileChunks);
         stelute.innerText = stele(uploaded,fileChunks,40);
+        loaderBar.innerText = uploaded/fileChunks*100 + "%";
+        resizeBar();
     }
     window.location.reload();
 
@@ -641,3 +645,29 @@ async function getJsonTree(){
     let response = await fetch(url);
     return response.json();
 }
+
+function resizeBar(procent = -1){
+    let bar = document.getElementById("loaderBar");
+    if(procent>0) {
+        bar.innerHTML = procent + "%";
+        document.getElementsByClassName('file-loader2')[0].style.display = 'block';
+    }
+    let intValue = parseInt(bar.innerHTML);
+
+    let colorMapBackGround = ["green", "green", "green"];
+
+    let index = parseInt(intValue/33.34);
+
+    bar.style.height = '15px';
+    bar.style.width = bar.innerHTML;
+    bar.style.backgroundColor = colorMapBackGround[index];
+    if (index === 1){
+        bar.style.color = "black"
+    }
+
+    if (intValue > 95){
+        bar.style.borderTopRightRadius = "20px";
+        bar.style.borderBottomRightRadius = "20px";
+    }
+}
+

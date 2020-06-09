@@ -11,6 +11,8 @@ let contentMap = new Map();
 
 
 async function initTree(){
+
+    resizeBar(50);
     dataTree = await getJsonTree();
     console.log(dataTree.accounts);
     if(dataTree.accounts.length === 0){
